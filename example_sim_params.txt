@@ -1,0 +1,11 @@
+name (string): example
+description (string): An example of a simulation parameter file.
+
+param_1 (int): 3
+param_2 (float): -0.5e10
+param_3 (string): "hei"
+param_4 (bool): True
+param_5 (int array): [1, 2, 3]
+param_6 (float array): [1.5, 2.5, 3.5]
+param_7 (string array): ["a", "b", "c"]
+param_8 (bool array): [True, False, True]

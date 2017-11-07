@@ -1,0 +1,16 @@
+### Settings
+
+# Parameter files
+(If no parameter file is passed to 'add_sim', the first match here is used.)
+
+sim_params.txt
+example_sim_params.txt
+
+# Databases - full paths
+(For a command the database with most simular path is used.)
+
+
+# Personalized print configurations
+(print_sim -p 'NUMBER')
+
+1 : -columns id name description 
