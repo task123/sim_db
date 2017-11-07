@@ -18,8 +18,14 @@ Usage: 'python add_sim.py' or 'python add_sim.py name_param_file.txt'
 # Licenced under the MIT License.
 
 import sqlite3
+import argparse
 import sys
 import os
+
+def get_arguments(argv):
+    parser = argparse.ArgumentParser(description='Add simulation to database.')
+    parser.add_argument('-filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
+    return parser.parse_args(argv)
 
 def search_for_parameter_file_from_settings():
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
@@ -72,13 +78,10 @@ def split_parameter_line(line, i):
     return param_name, param_type, value
 
 def add_new_column(db_cursor, i, param_type, param_name, value):
-    print param_type
     if param_type == 'int':
-        print 'int'
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
                           {} INTEGER".format(param_name))
     elif param_type == 'float':
-        print 'real'
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
                            {} REAL".format(param_name))
     elif param_type == 'string':
@@ -102,7 +105,6 @@ def add_new_column(db_cursor, i, param_type, param_name, value):
     else:
         raise ValueError("Parameter no. {} in the parameter".format(i) \
                        + "file has an INVALID type.")
-    print get_column_names_and_types(db_cursor)
             
 def check_type_matches(param_type, column_type, value, i):
     correct_type = False
@@ -167,15 +169,16 @@ def insert_value(db_cursor, param_name, last_row_id, value):
         last_row_id = db_cursor.lastrowid
     return last_row_id
 
-def main(argv):
+def main(argv=None):
+
     database_name = get_database_name_from_settings()
     if database_name == None:
         database_name = "sim.db"
     db = sqlite3.connect(database_name)
 
-    if len(argv) > 1:
-        sim_params_filename = str(argv[1])
-    else:
+    args = get_arguments(argv)
+    sim_params_filename = args.filename
+    if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_from_settings()
 
     try:
@@ -220,4 +223,4 @@ def main(argv):
     return last_row_id
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()

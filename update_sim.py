@@ -4,7 +4,7 @@
 Usage: python update_run.py -id 'ID' -columns 'COLUMN_NAME' -values 'NEW_VALUE'
     or python update_run.py -columns 'COLUMN_NAME_1' 'COLUMN_NAME_2'
                             -values 'NEW_VALUE_1' 'NEW_VALUE_2'
-                            -where 'COLUMN_NAME_1' > 10
+                            -where "'COLUMN_NAME_1' > 10"
 """
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.

@@ -91,7 +91,7 @@ def main():
                     + "interpreter, program_path, sim_runs_db_path FROM " \
                     + "runs WHERE id={}".format(id_submit)) 
         except:
-            raise ValueError("ID {} in sim_runs.db is ".format(id_submit) \
+            raise ValueError("ID {} in the database is ".format(id_submit) \
                     + "missing neccessary parameters to submit job script.")
         job_script_variables = db_cursor.fetchall()[0]
         job_script_name = make_job_script(job_script_variables) 

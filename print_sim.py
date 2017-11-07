@@ -11,9 +11,10 @@ from add_sim import get_column_names_and_types
 import sqlite3
 import argparse
 import os
+import sys
 import numpy as np
 
-def get_arguments():
+def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Print content in sim_runs.db.')
     parser.add_argument('-id', type=int, nargs='+', help="List of ID's.")
     parser.add_argument('-id_no_print', type=int, nargs='+', help="List of ID's not to print.")
@@ -28,7 +29,7 @@ def get_arguments():
     parser.add_argument('--no_headers', action='store_true', help="Print without any headers.")
     parser.add_argument('-max_width', type=int, default=None, help="Upper limit for the width of each column. Default is no limit.")
     parser.add_argument('-p', type=int, default=None, help="Personal print configuration. Apply the print configuration in 'settings.txt' corresponding to the provided number.")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 def get_personalized_print_config(number):
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
@@ -159,15 +160,12 @@ def print_selected_parameters(selected_output, column_names, no_headers, max_wid
             line += column_value
         print line
         
-def main():
-    args = get_arguments()
+def main(argv=None):
+    args = get_arguments(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
-        sim_db_dir = os.path.dirname(os.path.abspath(__file__))
-        sim_db_dir = sim_db_dir.replace(" ", "\ ")
-        cmd = "python {0}/print_sim.py {1}".format(sim_db_dir, print_config)
-        os.system(cmd)
+        main(print_config.split())
         exit(0)
 
     database_name = get_database_name_from_settings()

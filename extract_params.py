@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Extract the parameters in sim_runs.db to a parameter file.
+""" Extract the parameters from the database to a parameter file.
 
 The parameter file can be used to add a new equal simulation, but more usefully
 modified to run a slightly different simulation.
