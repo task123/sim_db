@@ -57,7 +57,15 @@ def convert_text_to_correct_type(value, check_that_type_is):
 
     return value, correct_type
     
-def read_param(db_id, column, check_that_type_is=''):
+def read_param_from_db(db_id, column, check_that_type_is=''):
+    """Read parameter with id 'db_id' and column name 'column' from the database.
+
+    check_that_type_is (string or type): Throws ValueError if type does not 
+        match 'check_that_type_is'. The valid types the strings 'int', 'float', 
+        'bool', 'string' and 'int/float/bool/string array' or the types int, 
+        float, bool, str and list.
+    """
+        
     database_name = get_database_name_from_settings()
     if database_name:
         db = sqlite3.connect(database_name)
