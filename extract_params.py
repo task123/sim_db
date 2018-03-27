@@ -7,26 +7,17 @@ modified to run a slightly different simulation.
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-from add_sim import get_database_name_from_settings
+import helpers
 import sqlite3
 import argparse
 import os.path
 
-def get_arguments():
+def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Extract parameter file from sim_runs.db.')
     parser.add_argument('-id', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
-    parser.add_argument('-filename', type=str, default=None, help="Name of paramter file generated.")
+    parser.add_argument('-filename', '-f', type=str, default=None, help="Name of paramter file generated.")
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default if to only extract non empty parameters to parameter file.")
-    return parser.parse_args()
-
-def get_column_names_and_types(db_cursor):
-    table_info = db_cursor.execute("PRAGMA table_info('runs')")
-    column_names = []
-    column_types = []
-    for row in table_info:
-        column_names.append(row[1])
-        column_types.append(row[2])
-    return column_names, column_types
+    return parser.parse_args(argv)
 
 def get_param_type_as_string(col_type, value):
     if col_type == 'INTEGER':
@@ -44,8 +35,8 @@ def get_param_type_as_string(col_type, value):
     else:
         raise ValueError()        
 
-def main():
-    args = get_arguments()
+def extract_params(argv=None):
+    args = get_arguments(argv)
 
     if args.filename == None:
         filename = 'sim_params.txt'
@@ -53,19 +44,14 @@ def main():
         filename = args.filename
     params_file = open(filename, 'w')
 
-    database_name = get_database_name_from_settings()
-    if database_name:
-        db = sqlite3.connect(database_name)
-    else:
-        print "Could NOT find a path to a database in 'settings.txt'." \
-            + "Add path to the database to 'settings.txt'."
-   
+    sim_db_dir = helpers.get_closest_sim_db_path()
+    db = sqlite3.connect(sim_db_dir + 'sim.db')
     db_cursor = db.cursor()
 
     db_cursor.execute("SELECT * FROM runs WHERE id={}".format(args.id))
     extracted_row = db_cursor.fetchall()
     
-    column_names, column_types = get_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
 
     for col_name, col_type, value in zip(column_names, column_types, 
                                          extracted_row[0]):
@@ -91,4 +77,4 @@ def main():
     db.close()
 
 if __name__ == '__main__':
-    main()
+    extract_params()

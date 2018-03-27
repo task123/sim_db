@@ -9,37 +9,35 @@ Usage: python update_run.py -id 'ID' -columns 'COLUMN_NAME' -values 'NEW_VALUE'
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-from add_sim import get_database_name_from_settings
-from add_sim import get_column_names_and_types
+import helpers
 import sqlite3
 import argparse
 import os.path
 
-def get_arguments():
+def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Print content in sim_runs.db.')
     parser.add_argument('-id', type=int, default=None, help="ID of run to update.")
-    parser.add_argument('-where', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
+    parser.add_argument('-where', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
     parser.add_argument('-columns', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
     parser.add_argument('-values', type=str, nargs='+', required=True, help="<Required> New value updated at run with id and column as specifed.")
-    args = parser.parse_args()
+    parser.add_argument('-db_path', type=str, defult=None, help="Full path to the database used.")
+    args = parser.parse_args(argv)
     if args.id == None and args.where == "id > -1":
         print "Nothing was updated. -id 'ID' or -where 'CONDITION' must be passed to the program."
         exit(0)
     return args
 
-def main():
-    args = get_arguments()
+def update_sim(argv=None):
+    args = get_arguments(argv)
 
-    database_name = get_database_name_from_settings()
-    if database_name:
-        db = sqlite3.connect(database_name)
+    if args.db_path == None:
+        database_path = helpes.get_closest_sim_db_path() + '/sim.db'
     else:
-        print "Could NOT find a path to a database in 'settings.txt'." \
-            + "Add path to the database to 'settings.txt'."
-
+        database_path = args.db_path
+    db = sqlite3.connect(database_path)
     db_cursor = db.cursor()
 
-    column_names, column_types = get_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
     type_dict = dict(zip(column_names, column_types))
 
     condition = args.where
@@ -56,7 +54,7 @@ def main():
     db.close()
 
 if __name__ == '__main__':
-    main()
+    update_sim()
 
 
 

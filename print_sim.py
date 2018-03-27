@@ -6,8 +6,7 @@ Print the content of database with a number of possible restrictions.
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-from add_sim import get_database_name_from_settings
-from add_sim import get_column_names_and_types
+import helpers
 import sqlite3
 import argparse
 import os
@@ -22,7 +21,7 @@ def get_arguments(argv):
     parser.add_argument('-columns', type=str, nargs='+', default=None, help="Name of the columns to print. All non empty columns are printed by default.")
     parser.add_argument('-columns_no_print', type=str, nargs='+', default=None, help="Name of the columns not to print.")
     parser.add_argument('-col_by_num', type=int, nargs='+', default=None, help="Number of the columns to print. All non empty columns are printed by default.")
-    parser.add_argument('-where', default='id > -1', help="Add constraints to which columns to print. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT search.")
+    parser.add_argument('-where', default='id > -1', help="Add constraints to which columns to print. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
     parser.add_argument('-sort_by', default='id', help="What to sort the output by. Must be a valid SQL (sqlite3) command when added after ORDER BY in a SELECT search. Defalut is id.")
     parser.add_argument('--column_names', action='store_true', help="Print name and type of all columns.")
     parser.add_argument('--all_columns', action='store_true', help="Print all columns. Otherwise only non empty columns are printed.")
@@ -32,7 +31,7 @@ def get_arguments(argv):
     return parser.parse_args(argv)
 
 def get_personalized_print_config(number):
-    sim_db_dir = os.path.dirname(os.path.abspath(__file__))
+    sim_db_dir = helpers.get_closest_sim_db_path()
     settings_file = open(sim_db_dir + '/settings.txt', 'r')
     for line in settings_file:
         split_line = line.split(':')
@@ -55,6 +54,7 @@ def select_command(db_cursor, args, column_names):
                 columns += "{}, ".format(column_names[i])
 
     if args.id == None:
+        
         db_cursor.execute("SELECT {0} FROM runs WHERE {1} ORDER BY {2}" \
                           .format(columns, args.where, args.sort_by))
         selected_output = db_cursor.fetchall()
@@ -160,24 +160,19 @@ def print_selected_parameters(selected_output, column_names, no_headers, max_wid
             line += column_value
         print line
         
-def main(argv=None):
+def print_sim(argv=None):
     args = get_arguments(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
-        main(print_config.split())
+        print_sim(print_config.split())
         exit(0)
 
-    database_name = get_database_name_from_settings()
-    if database_name:
-        db = sqlite3.connect(database_name)
-    else:
-        print "Could NOT find a path to a database in 'settings.txt'." \
-            + "Add path to the database to 'settings.txt'."
-
+    sim_db_dir = helpers.get_closest_sim_db_path()
+    db = sqlite3.connect(sim_db_dir + 'sim.db')
     db_cursor = db.cursor()
 
-    column_names, column_types = get_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
     type_dict = dict(zip(column_names, column_types))
 
     selected_output, column_names = select_command(db_cursor, args, column_names)
@@ -197,4 +192,4 @@ def main(argv=None):
     db.close()
 
 if __name__ == '__main__':
-    main()
+    print_sim()

@@ -17,6 +17,7 @@ Usage: 'python add_sim.py' or 'python add_sim.py name_param_file.txt'
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
+import helpers
 import sqlite3
 import argparse
 import sys
@@ -27,9 +28,8 @@ def get_arguments(argv):
     parser.add_argument('-filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     return parser.parse_args(argv)
 
-def search_for_parameter_file_from_settings():
-    sim_db_dir = os.path.dirname(os.path.abspath(__file__))
-    settings_file = open(sim_db_dir + '/settings.txt', 'r')
+def search_for_parameter_file_matching_settings():
+    settings_file = open(helpers.get_closest_sim_db_path() + '/settings.txt', 'r')
     line = ""
     while len(line) < 11 or line[:11] != "# Databases":
         line = settings_file.readline()
@@ -37,33 +37,6 @@ def search_for_parameter_file_from_settings():
             if file_in_current_dir == line.strip():
                 return file_in_current_dir
     return None
-
-def get_database_name_from_settings():
-    currect_dir = os.getcwd()
-    sim_db_dir = os.path.dirname(os.path.abspath(__file__))
-    settings_file = open(sim_db_dir + '/settings.txt', 'r')
-    longest_match_length = 1
-    database_name = None
-    for line in settings_file:
-        line = line.strip()
-        match_length = 0
-        for i in range(min(len(line), len(currect_dir))):
-            if line[i] == currect_dir[i]:
-                match_length += 1
-        if match_length > longest_match_length:
-            longest_match_length = match_length
-            database_name = line
-    settings_file.close()
-    return database_name
-
-def get_column_names_and_types(db_cursor):
-    table_info = db_cursor.execute("PRAGMA table_info('runs')")
-    column_names = []
-    column_types = []
-    for row in table_info:
-        column_names.append(row[1])
-        column_types.append(row[2])
-    return column_names, column_types
 
 def split_parameter_line(line, i):
     line_split = line.split(':', 1)
@@ -130,7 +103,7 @@ def check_type_matches(param_type, column_type, value, i):
         raise ValueError("Parameter no. {} in the parameter".format(i) \
                        + "file has an INVALID type.")
 
-def normalize_value(value, param_type):
+def standardize_value(value, param_type):
     if param_type == 'bool':
         if value == "False" or value == "false" or value == "FALSE" or value == 0:
             value = "False"
@@ -169,17 +142,14 @@ def insert_value(db_cursor, param_name, last_row_id, value):
         last_row_id = db_cursor.lastrowid
     return last_row_id
 
-def main(argv=None):
-
-    database_name = get_database_name_from_settings()
-    if database_name == None:
-        database_name = "sim.db"
-    db = sqlite3.connect(database_name)
+def add_sim(argv=None):
+    sim_db_dir = helpers.get_closest_sim_db_path()
+    db = sqlite3.connect(sim_db_dir + 'sim.db')
 
     args = get_arguments(argv)
     sim_params_filename = args.filename
     if sim_params_filename == None:
-        sim_params_filename = search_for_parameter_file_from_settings()
+        sim_params_filename = search_for_parameter_file_matching_settings()
 
     try:
         sim_params_file = open(sim_params_filename, 'r')
@@ -192,10 +162,16 @@ def main(argv=None):
                                                      + "status TEXT, "
                                                      + "name TEXT, "
                                                      + "description TEXT, "
+                                                     + "program_path TEXT,"
+                                                     + "time_submitted TEXT,"
                                                      + "used_walltime REAL, "
-                                                     + "job_id INTEGER);")
+                                                     + "job_id INTEGER,"
+                                                     + "git_hash TEXT,"
+                                                     + "commit_message TEXT,"
+                                                     + "sha1 TEXT,"
+                                                     + "git_diff TEXT);")
 
-    column_names, column_types = get_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_column_names_and_types(db_cursor)
 
     last_row_id = None
     for i, line in enumerate(sim_params_file.readlines()):
@@ -212,7 +188,7 @@ def main(argv=None):
             else:
                 check_type_matches(param_type, column_types[row_index], value, i)
 
-            value = normalize_value(value, param_type)
+            value = standarize_value(value, param_type)
             
             last_row_id = insert_value(db_cursor, param_name, last_row_id, value)
 
@@ -223,4 +199,4 @@ def main(argv=None):
     return last_row_id
 
 if __name__ == '__main__':
-    main()
+    add_sim()

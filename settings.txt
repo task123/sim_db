@@ -1,16 +1,43 @@
-### Settings
+# Settings
+(Comments are encapseled in parantheses.)
 
-# Parameter files
+## Parameter filenames
 (If no parameter file is passed to 'add_sim', the first match here is used.)
 
 sim_params.txt
 example_sim_params.txt
 
-# Databases - full paths
-(For a command the database with most simular path is used.)
-
-
-# Personalized print configurations
+## Personalized print configurations
 (print_sim -p 'NUMBER')
+(format: "'NUMBER' : 'print_sim arguments'")
 
 1 : -columns id name description 
+
+## Python interpreter
+
+gpaw-python
+
+## Settings for job script submitted
+
+### Batch system
+(SLURM or PBS)
+
+SLURM
+
+### Number of cores per node
+
+### Memory per node
+(in GB)
+
+### Hypertreaded
+(yes/no)
+
+### Email for notifications
+
+### Added to all job scripts submitted:
+(import/load statements etc.)
+(Can be multiple lines.)
+
+
+## Other local sim_db copies
+

@@ -23,6 +23,7 @@ Usage: 'python add_and_submit.py'
 # Licenced under the MIT License.
 
 import add_sim
+import submit_vilje
 import sqlite3
 import argparse
 import sys

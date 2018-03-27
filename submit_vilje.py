@@ -15,15 +15,15 @@ import sqlite3
 import argparse
 import time
 import subprocess
-import os.path
+import sys
 
-def get_arguments():
+def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Submit job')
     parser.add_argument('-id', type=int, default=None, nargs='+', help="ID of simulations to submit.")
     parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
-def make_job_script(job_script_variables):
+def make_job_script(job_script_variables, id_submit):
     name = job_script_variables[0]
     max_walltime = job_script_variables[1]
     n_nodes = job_script_variables[2]
@@ -36,7 +36,7 @@ def make_job_script(job_script_variables):
         export_paths = export_paths[7:-1].split(',')
     interpreter = job_script_variables[6]  
     program_path = job_script_variables[7]   
-    sim_runs_db_path = job_script_variables[8]    
+    sim_db_path = job_script_variables[8]    
     job_script_name = 'job_script_' + name \
                     + time.strftime("_%Y-%b-%d_%H-%M-%S") + ".sh"
     job_script_file = open(job_script_name, 'w')    
@@ -51,13 +51,13 @@ def make_job_script(job_script_variables):
         job_script_file.write("module load {}\n".format(module))
     for path in export_paths:
         job_script_file.write("export {}\n".format(path))
-    job_script_file.write("\nmpirun -np {0} {1} {2} {3}\n"
-            .format(16*n_nodes, interpreter, program_path, sim_runs_db_path))
+    job_script_file.write("\nmpirun -np {0} {1} {2} {3} {4}\n"
+            .format(16*n_nodes, interpreter, program_path, sim_db_path, id_submit))
     job_script_file.close()
     return job_script_name
 
-def main():
-    args = get_arguments()
+def main(argv):
+    args = get_arguments(argv)
     ids = args.id
 
     database_name = get_database_name_from_settings()
@@ -94,7 +94,7 @@ def main():
             raise ValueError("ID {} in the database is ".format(id_submit) \
                     + "missing neccessary parameters to submit job script.")
         job_script_variables = db_cursor.fetchall()[0]
-        job_script_name = make_job_script(job_script_variables) 
+        job_script_name = make_job_script(job_script_variables, id_submit) 
         subprocess.call(["qsub", job_script_name])
         p = subprocess.Popen(["qsub", job_script_name], stdout=subprocess.PIPE)
         (out, err) = p.communicate()
@@ -108,5 +108,4 @@ def main():
     db.close()
 
 if __name__ == '__main__':
-    main()
-
+    main(sys.argv)
