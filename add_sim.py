@@ -154,7 +154,7 @@ def add_sim(argv=None):
     try:
         sim_params_file = open(sim_params_filename, 'r')
     except:
-        print "Could NOT open {}.".format(sim_params_filename)
+        print("Could NOT open {}.".format(sim_params_filename))
         exit(1)
 
     db_cursor = db.cursor()

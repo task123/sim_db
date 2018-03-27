@@ -36,7 +36,7 @@ def add_path(where_to_add_path):
         bash_file.close()
         os.system("source {}".format(where_to_add_path))
     else:
-        print "No changes were made to {}".format(where_to_add_path)
+        print("No changes were made to {}".format(where_to_add_path))
 
 def share_paths_between_sim_dbs(previous_path):
     answer = raw_input("\nWould you like to add path to the settings of the " \
@@ -54,8 +54,8 @@ def share_paths_between_sim_dbs(previous_path):
             settings.add('other_sim_db_copies', path_this_settings,
                          path_settings=copy + '/settings.txt')
     else:
-        print "\nNo changes were made to the settings of any the other local" \
-            + "copies of 'sim_db'."
+        print("\nNo changes were made to the settings of any the other local" \
+            + "copies of 'sim_db'.")
            
 def main():
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
@@ -82,7 +82,7 @@ def main():
         if previous_path == None:
             add_path()
         else:
-            print "There is already a sim_db added to {}.".format(where_to_add_path)
+            print("There is already a sim_db added to {}.".format(where_to_add_path))
             share_paths_between_sim_dbs(previous_path)
             
 if __name__ == '__main__':

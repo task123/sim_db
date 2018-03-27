@@ -23,7 +23,7 @@ def get_arguments(argv):
     parser.add_argument('-db_path', type=str, defult=None, help="Full path to the database used.")
     args = parser.parse_args(argv)
     if args.id == None and args.where == "id > -1":
-        print "Nothing was updated. -id 'ID' or -where 'CONDITION' must be passed to the program."
+        print("Nothing was updated. -id 'ID' or -where 'CONDITION' must be passed to the program.")
         exit(0)
     return args
 

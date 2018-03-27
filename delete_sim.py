@@ -20,7 +20,7 @@ def get_arguments(argv):
     parser.add_argument('-where', type=str, default=None, help="Condition for which entries should be deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
     args = parser.parse_args(argv) 
     if len(args.id) == 0 and args.where == None:
-        print "Nothing was deleted. -id 'ID' or -where 'CONDITION' must be passed to the program."
+        print("Nothing was deleted. -id 'ID' or -where 'CONDITION' must be passed to the program.")
         exit(0)
     return args
 

@@ -149,8 +149,8 @@ def print_selected_parameters(selected_output, column_names, no_headers, max_wid
             else:
                 total_width += w
             headers += column_header
-        print headers
-        print total_width*"="
+        print(headers)
+        print(total_width*"=")
     for row in selected_output:
         line = ""
         for w, value in zip(widths, row):
@@ -158,7 +158,7 @@ def print_selected_parameters(selected_output, column_names, no_headers, max_wid
             if max_width and w > max_width:
                 column_value = column_value[:max_width] + extra_space*" "
             line += column_value
-        print line
+        print(line)
         
 def print_sim(argv=None):
     args = get_arguments(argv)
@@ -181,11 +181,11 @@ def print_sim(argv=None):
                               args.max_width)
 
     if args.column_names:
-        print ""
-        print "Column names and types in database:"
+        print("")
+        print("Column names and types in database:")
         for col_name in column_names:
             col_type = type_dict[col_name]
-            print col_name, col_type
+            print("{0}, {1}".format(col_name, col_type))
 
     db.commit()
     db_cursor.close()

@@ -64,8 +64,8 @@ def main(argv):
     if database_name:
         db = sqlite3.connect(database_name)
     else:
-        print "Could NOT find a path to a database in 'settings.txt'." \
-            + "Add path to the database to 'settings.txt'."
+        print("Could NOT find a path to a database in 'settings.txt'." \
+            + "Add path to the database to 'settings.txt'.")
 
     db_cursor = db.cursor()
 
