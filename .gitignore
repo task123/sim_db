@@ -1,0 +1,26 @@
+# Database 
+sim.db
+
+# Generated Commands
+add_and_submit
+add_and_run
+add_column
+add_comment
+add_sim
+add_run
+combine_dbs
+delete_empty_columns
+delete_sim
+extract_params
+list_sim_db_commands
+print_sim
+submit_sim
+run_sim
+update_sim
+
+# Temporary files
+*.pyc
+*.swp
+
+# Other
+.DS_Store

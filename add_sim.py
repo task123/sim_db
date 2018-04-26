@@ -7,14 +7,14 @@ with parameter file from 'settings.txt' is used.
 The format of the parameter file is for each parameter as following:
 parameter_name (type): parameter_value
 'type' can be int, float, string, bool or int/float/string/bool array.
-Lines without any semicolon is ignored.
+Lines without any colon is ignored.
 
 The database used is the one which path given in 'settings.txt', closest 
 matches the currect directory.
 
-Usage: 'python add_sim.py' or 'python add_sim.py name_param_file.txt'
+Usage: 'python add_sim.py' or 'python add_sim.py -filename name_param_file.txt'
 """
-# Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import helpers
@@ -22,21 +22,12 @@ import sqlite3
 import argparse
 import sys
 import os
+import subprocess
 
 def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Add simulation to database.')
-    parser.add_argument('-filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
+    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     return parser.parse_args(argv)
-
-def search_for_parameter_file_matching_settings():
-    settings_file = open(helpers.get_closest_sim_db_path() + '/settings.txt', 'r')
-    line = ""
-    while len(line) < 11 or line[:11] != "# Databases":
-        line = settings_file.readline()
-        for file_in_current_dir in os.listdir('.'):
-            if file_in_current_dir == line.strip():
-                return file_in_current_dir
-    return None
 
 def split_parameter_line(line, i):
     line_split = line.split(':', 1)
@@ -134,7 +125,7 @@ def standardize_value(value, param_type):
 
 def insert_value(db_cursor, param_name, last_row_id, value):
     if last_row_id:
-        db_cursor.execute("UPDATE runs SET {0} = {1} WHERE id = {2}" \
+        db_cursor.execute("UPDATE runs SET {0} = {1} WHERE id = {2};" \
                           .format(param_name, value, last_row_id))
     else:
         db_cursor.execute("INSERT INTO runs (status, {0}) VALUES ('new', {1});" \
@@ -142,14 +133,31 @@ def insert_value(db_cursor, param_name, last_row_id, value):
         last_row_id = db_cursor.lastrowid
     return last_row_id
 
+def make_path_relative_to_sim_db(run_command, sim_params_filename):
+    """Make all paths starting with './' relative to 'sim_db'."""
+    sim_params_filename = os.getcwd() + '/' + sim_params_filename
+    sim_params_dir = sim_params_filename.split('/')[:-1]
+    sim_db_dir = helpers.get_closest_sim_db_dir_path().split('/')
+    i = 0
+    while(i < len(sim_params_dir) and i < len(sim_db_dir) 
+          and sim_params_dir[i] == sim_db_dir[i]):
+        i += 1
+    rel_path = ""
+    for j in range(len(sim_db_dir) - i - 1):
+        rel_path += "../"
+    for dir_name in sim_params_dir[i:]:
+        rel_path += dir_name + "/"
+
+    run_command = run_command.replace(' ./', ' sim_db/' + rel_path)
+    return run_command
+
 def add_sim(argv=None):
-    sim_db_dir = helpers.get_closest_sim_db_path()
-    db = sqlite3.connect(sim_db_dir + 'sim.db')
+    db = helpers.connect_sim_db()
 
     args = get_arguments(argv)
     sim_params_filename = args.filename
     if sim_params_filename == None:
-        sim_params_filename = search_for_parameter_file_matching_settings()
+        sim_params_filename = helpers.search_for_parameter_file_matching_settings()
 
     try:
         sim_params_file = open(sim_params_filename, 'r')
@@ -158,25 +166,21 @@ def add_sim(argv=None):
         exit(1)
 
     db_cursor = db.cursor()
-    db_cursor.execute("CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, "
-                                                     + "status TEXT, "
-                                                     + "name TEXT, "
-                                                     + "description TEXT, "
-                                                     + "program_path TEXT,"
-                                                     + "time_submitted TEXT,"
-                                                     + "used_walltime REAL, "
-                                                     + "job_id INTEGER,"
-                                                     + "git_hash TEXT,"
-                                                     + "commit_message TEXT,"
-                                                     + "sha1 TEXT,"
-                                                     + "git_diff TEXT);")
+    default_db_columns = ""
+    for key in helpers.default_db_columns:
+        default_db_columns += key + " " + str(helpers.default_db_columns[key]) + ", "
+    default_db_columns = default_db_columns[:-2]
+    db_cursor.execute("CREATE TABLE IF NOT EXISTS runs ({});".format(default_db_columns))
 
-    column_names, column_types = helpers.get_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
 
     last_row_id = None
     for i, line in enumerate(sim_params_file.readlines()):
         if len(line.split(':')) > 1:
             param_name, param_type, value = split_parameter_line(line, i)
+
+            if param_name == 'run_command':
+                value = make_path_relative_to_sim_db(value, sim_params_filename)
 
             try:
                 row_index = column_names.index(param_name)
@@ -188,8 +192,7 @@ def add_sim(argv=None):
             else:
                 check_type_matches(param_type, column_types[row_index], value, i)
 
-            value = standarize_value(value, param_type)
-            
+            value = standardize_value(value, param_type)
             last_row_id = insert_value(db_cursor, param_name, last_row_id, value)
 
     db.commit()

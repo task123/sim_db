@@ -8,36 +8,43 @@ sim_params.txt
 example_sim_params.txt
 
 ## Personalized print configurations
-(print_sim -p 'NUMBER')
-(format: "'NUMBER' : 'print_sim arguments'")
+(print_sim -p 'KEY_STRING', print_sim == print_sim -p default)
+(format: "'key_string': 'print_sim arguments'")
 
-1 : -columns id name description 
+default: --columns_no_print time_submitted time_started used_walltime job_id cpu_info git_hash commit_message git_diff_stat git_diff sha1_executable
+description: --columns id name description 
+status: --columns id name status job_id
+time: --columns id name status time_submitted time_started used_walltime job_id
+git: --columns id name git_hash commit_message git_diff_stat sha1_executable
+cpu: -v --columns id name used_walltime cpu_info
 
-## Python interpreter
+## Prefix for 'run_command' for multithreaded/core simulations 
+(Added to the start of 'run_command' when run or submitted with >1 tasks.)
+(' # ' is replaced with ' N ', where 'N' is the number of tasks.)
 
-gpaw-python
+## Settings for job scheduler
 
-## Settings for job script submitted
-
-### Batch system
+### Which job scheduler
 (SLURM or PBS)
 
 SLURM
 
-### Number of cores per node
+### Number of logical cpus per node
 
 ### Memory per node
 (in GB)
+(Probably have to be slightly lower than the actual memory on a node.)
 
-### Hypertreaded
-(yes/no)
+### Account 
+(user account batch system)
 
 ### Email for notifications
 
-### Added to all job scripts submitted:
-(import/load statements etc.)
+### Add to all job scripts submitted:
+(import/load statements etc. or more )
 (Can be multiple lines.)
 
 
 ## Other local sim_db copies
 
+/Users/hakonaustlidtasken/Documents/9. semester/specialization project/sim_db

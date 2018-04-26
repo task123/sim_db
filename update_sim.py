@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Make a update in the database.
 
-Usage: python update_run.py -id 'ID' -columns 'COLUMN_NAME' -values 'NEW_VALUE'
-    or python update_run.py -columns 'COLUMN_NAME_1' 'COLUMN_NAME_2'
-                            -values 'NEW_VALUE_1' 'NEW_VALUE_2'
-                            -where "'COLUMN_NAME_1' > 10"
+Usage: python update_run.py --id 'ID' --columns 'COLUMN_NAME' --values 'NEW_VALUE'
+    or python update_run.py --columns 'COLUMN_NAME_1' 'COLUMN_NAME_2'
+                            --values 'NEW_VALUE_1' 'NEW_VALUE_2'
+                            --where "'COLUMN_NAME_1' > 10"
 """
-# Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import helpers
@@ -15,26 +15,22 @@ import argparse
 import os.path
 
 def get_arguments(argv):
-    parser = argparse.ArgumentParser(description='Print content in sim_runs.db.')
-    parser.add_argument('-id', type=int, default=None, help="ID of run to update.")
-    parser.add_argument('-where', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
-    parser.add_argument('-columns', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
-    parser.add_argument('-values', type=str, nargs='+', required=True, help="<Required> New value updated at run with id and column as specifed.")
-    parser.add_argument('-db_path', type=str, defult=None, help="Full path to the database used.")
+    parser = argparse.ArgumentParser(description='Update content in sim.db.')
+    parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
+    parser.add_argument('--where', '-w', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
+    parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
+    parser.add_argument('--values', '-v', type=str, nargs='+', required=True, help="<Required> New value updated at run with id and column as specifed.")
+    parser.add_argument('--db_path', type=str, default=None, help="Full path to the database used.")
     args = parser.parse_args(argv)
     if args.id == None and args.where == "id > -1":
-        print("Nothing was updated. -id 'ID' or -where 'CONDITION' must be passed to the program.")
+        print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be passed to the program.")
         exit(0)
     return args
 
 def update_sim(argv=None):
     args = get_arguments(argv)
 
-    if args.db_path == None:
-        database_path = helpes.get_closest_sim_db_path() + '/sim.db'
-    else:
-        database_path = args.db_path
-    db = sqlite3.connect(database_path)
+    db = helpers.connect_sim_db(args.db_path)
     db_cursor = db.cursor()
 
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)

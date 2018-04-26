@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Add simulation parameters to the database and submit it to job scheduler.
+""" Add simulation parameters to the database and run the simulation.
 
 Name of the parameter file can be passed to the program, otherwise first match
 with parameter file from 'settings.txt' is used.
@@ -12,15 +12,14 @@ Lines without any colon is ignored.
 The database used is the one which path given in 'settings.txt', closest 
 matches the currect directory.
 
-Usage: 'python add_and_submit.py' 
-    or 'python add_and_submit.py -filename name_param_file.txt
+Usage: 'python add_and_run.py' 
+    or 'python add_and_run.py -filename name_param_file.txt
 """
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import add_sim
 import run_sim
-import submit_sim
 import argparse
 
 def get_arguments(argv):
@@ -29,7 +28,7 @@ def get_arguments(argv):
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     return parser.parse_args(argv)
 
-def add_and_submit(argv=None):
+def add_and_run(argv=None):
     args = get_arguments(argv)
     
     if args.filename == None:
@@ -38,9 +37,9 @@ def add_and_submit(argv=None):
         added_id = add_sim.add_sim(['--filename', args.filename])
     
     if args.n == None:
-        submit_sim.submit_sim(['--id', str(added_id)])
+        run_sim.run_sim(['--id', str(added_id)])
     else:
-        submit_sim.submit_sim(['--id', str(added_id), '-n', str(args.n)])
+        run_sim.run_sim(['--id', str(added_id), '-n', str(args.n)])
 
 if __name__ == '__main__':
-    add_and_submit()
+    add_and_run()
