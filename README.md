@@ -9,6 +9,14 @@ When doing simulations, one will usually run a great number of simulations with 
 ## License
 The project is licensed under the MIT license. A copy of the license is provided in LICENCE.md.
 
+## Dependencies
+SQLite - Uses a SQLite, so it need to be installed on the system. Almost all the flavours of Linux OS are being shipped with SQLite and MacOS comes pre-installed with SQLite.
+
+Python - A Python interpreter is needed as all the commands are written in Python. Work with both Python 2 and 3. Pre-installed on almost all Linux distros and on MacOS.
+
+### For Windows:
+Cygwin/MinGW - The commands relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
+
 ## Use
 The are quite of few commands and options, so first the minimum that have to be done is presented and then more advanced options are added.
 
@@ -18,8 +26,6 @@ The are quite of few commands and options, so first the minimum that have to be 
 2. Generate commands by running ``` python generate_commands.py ``` inside the ```sim_db/``` directory.
 
     Let the program add the directroy to your PATH or add it to the settings of other local ```sim\_db``` copies.
-
-    (All the command can be called with ```python 'path_to_sim_db_dir/command.py'``` instead of just ```'command'``` if it is perferable or if on a Windows machine without something like cygwin.)
 
 3. Make a text file called ```sim_params.txt``` with the parameters using the following format:
 
@@ -64,14 +70,13 @@ The are quite of few commands and options, so first the minimum that have to be 
     ```c
     #include "sim_db.h"
     int main(int argc, char* argv[]){
-        int parameter_id = sim_db_read_parameter_id(argc, argv);
-        SimDBStart start_time = sim_db_start(parameter_id);
-        int param1 = sim_db_read_int(parameter_id, 'name_of_parameter');
-        double* param2;
-        int len_param2;
-        sim_db_read_double_array(parameter_id, 'name_of_parameter', param2, len_param2);
+        sim_db = sim_db_ctor(argc, argv);
+        int param1 = sim_db_read_int(sim_db, 'name_of_parameter');
+        const size_t len_param2 = 10;
+        double* param2[len_param2]; 
+        sim_db_read_double_array(sim_db, 'name_of_parameter', param2, len_param2);
         free(param2);
-        sim_db_end(start_time);
+        sim_db_dtor(sim_db);
     }
     ```
     
@@ -152,6 +157,8 @@ What any of the commands do, how they are used and all possible arguments for th
 
 * It is recommended to use ```.``` and ```..``` in the run_command to give the path in ```executable_program``` relative to the directory of ```sim_params.txt```. This is because the ```.``` and ```..``` will be replaced with the full path to the file when running the simulation, which often is necessary when running on a cluster or supercomputer.
 
+* All the command can be called with ```python 'path_to_sim_db_dir/command.py'``` instead of just ```'command'``` if it is perferable or windows without Cygwin or MinGW.
+
 * Multiple default names for the parameter files can be added in prioritized order in ```settings.txt``` to replace or in addition to ```sim_params.txt```.
 
 * The text file with the parameters can be named anything, but if it is not named ```sim_params.txt``` (or any of the parameter filenames in the settings), the name of the file needs to be passed to any commands.
@@ -170,6 +177,8 @@ What any of the commands do, how they are used and all possible arguments for th
 
 * The 'cd_results' command is a bash function that call the 'cd_results.py' to get the path to the 'result_dir'. The reason it is a bash funciton is that when 'cd' is called from a shell or python script only the directory of the subshell, in which the script is running, is changed.
 
+* Remember to compile any C code with the flag '-l sqlite3'.
+
 ### Available functions
 
 The functions and classes that are available to be used in a simulation are given for the different languages below.
@@ -186,33 +195,32 @@ class SimDB(db_in=None)
 
 **C:**
 ```
-int sim_db_read_parameter_id(argc, argv)
+SimDB sim_db_init(int argc, char** argv)
+SimDB sim_db_init_with_id(int parameter_id)
 
-void sim_db_start(int param_id)
+int sim_db_read_int(SimDB self, char name_column[])
+double sim_db_read_double(SimDB self, char name_column[])
+char* sim_db_read_string(SimDB self, char name_column[])
+int sim_db_read_bool(SimDB self, char name_column[])
+void sim_db_read_int_array(SimDB self, char name_column[], int* arr, size_t len)
+void sim_db_read_double_array(SimDB self, char name_column[], double* arr, size_t len),
+void sim_db_read_string_array(SimDB self, char name_column[], char** arr, size_t len)
+void sim_db_read_bool_array(SimDB self, char name_column[], int* arr, size_t len)
 
-int sim_db_read_int(int param_id, char name_column[])
-double sim_db_read_double(int param_id, char name_column[])
-char* sim_db_read_string(int param_id, char name_column[])
-int sim_db_read_bool(int param_id, char name_column[])
-void sim_db_read_int_array(int param_id, char name_column[], int* arr, size_t len)
-void sim_db_read_double_array(int param_id, char name_column[], double* arr, size_t len),
-void sim_db_read_string_array(int param_id, char name_column[], char** arr, size_t len)
-void sim_db_read_bool_array(int param_id, char name_column[], int* arr, size_t len)
-
-int sim_db_write_int(int param_id, char name_column[], int value)
-double sim_db_write_double(int param_id, char name_column[], double value)
-char* sim_db_write_string(int param_id, char name_column[], char value[])
-int sim_db_write_bool(int param_id, char name_column[], int value)
-void sim_db_write_int_array(int param_id, char name_column[], int* arr, size_t len)
-void sim_db_write_double_array(int param_id, char name_column[], double* arr, size_t len_)
-void sim_db_write_string_array(int param_id, char name_column[], char** arr, size_t len)
-void sim_db_write_bool_array(int param_id, char name_column[], int* arr, size_t len_)
+void sim_db_write_int(SimDB self, char name_column[], int value)
+void sim_db_write_double(SimDB self, char name_column[], double value)
+void sim_db_write_string(SimDB self, char name_column[], char value[])
+void sim_db_write_bool(SimDB self, char name_column[], int value)
+void sim_db_write_int_array(SimDB self, char name_column[], int* arr, size_t len)
+void sim_db_write_double_array(SimDB self, char name_column[], double* arr, size_t len_)
+void sim_db_write_string_array(SimDB self, char name_column[], char** arr, size_t len)
+void sim_db_write_bool_array(SimDB self, char name_column[], int* arr, size_t len_)
 
 char* sim_db_make_subdir_result(char name_result_directory[])
 
-void sim_db_update_sha1_executables(int param_id, char** paths_executables, size_t len) 
+void sim_db_update_sha1_executables(SimDB self, char** paths_executables, size_t len) 
 
-void sim_db_end(int param_id)
+void sim_db_del(SimDB self)
 ```
 
 **C++:**

@@ -26,10 +26,12 @@ except:
 
 class SimDB:
     def __init__(self, db_id=None):
-        """Update 'time_submitted' and 'status' to 'running'.
+        """Add metadata to database and note start time.
 
-        The format of the updated 'time_submitted' is 
-        'Year-Month-Date_Hours-Minutes-Seconds'.
+        Update 'time_started', 'git_hash', 'commit_message', 'git_diff_stat'
+        and 'git_diff'.
+
+        'time_started' used the format: 'Year-Month-Date_Hours-Minutes-Seconds'.
 
         db_id (int): ID of the row in the database to update. If it is 
             'None', then it is read from the last argument passed to the program 
@@ -177,6 +179,7 @@ class SimDB:
         self.write('sha1_executables', sha1)
 
     def end(self):
+        """Add metadata for 'used_walltime' and update 'status' to 'finished'."""
         used_time = time.time() - self.start_time  
         used_walltime = "{0}h {1}m {2}s".format(int(used_time/3600), int(used_time/60), used_time % 60) 
         self.write('used_walltime', used_walltime)

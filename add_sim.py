@@ -113,7 +113,25 @@ def standardize_value(value, param_type):
         new_array = new_array[:-2]
         new_array += ']'
         value = new_array
-    if len(type_split) > 1 and type_split[1] == 'array':
+    if (param_type == 'string array'):
+        strings = value[1:-1].split(',')
+        value = "["
+        for i in range(len(strings)):
+            string = strings[i]
+            while (string.strip()[0] == '"' and string.strip()[-1] != '"'):
+                i += 1
+                string += string[i]
+            while (string.strip()[0] == "'" and string.strip()[-1] != "'"):
+                i += 1
+                string += string[i]
+            string = string.strip()            
+            if ((string[0] == '"' and string[-1] == '"') \
+                or (string[0] == "'" and string[-1] == "'")):
+                string = string[1:-1]
+            value += string + ', '
+        if len(strings) > 0:
+            value = value[:-2] + ']'
+    if len(type_split) > 1 and type_split[1] == 'array' and len(value) > 0:
         value = type_split[0] + value     
     if (param_type == 'string' or param_type == 'bool' \
             or (len(param_type) > 5 and param_type[-5:] == 'array')):
@@ -121,6 +139,8 @@ def standardize_value(value, param_type):
             if not ((value[0] == "'" and value[-1] == "'") 
                     or (value[0] == '"' and value[-1] == '"')):
                 value = "'" + value + "'"
+
+
     return value
 
 def insert_value(db_cursor, param_name, last_row_id, value):
@@ -193,7 +213,8 @@ def add_sim(argv=None):
                 check_type_matches(param_type, column_types[row_index], value, i)
 
             value = standardize_value(value, param_type)
-            last_row_id = insert_value(db_cursor, param_name, last_row_id, value)
+            if len(value) > 0:
+                last_row_id = insert_value(db_cursor, param_name, last_row_id, value)
 
     db.commit()
     db_cursor.close()
