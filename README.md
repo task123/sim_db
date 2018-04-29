@@ -14,6 +14,8 @@ SQLite - Uses a SQLite, so it need to be installed on the system. Almost all the
 
 Python - A Python interpreter is needed as all the commands are written in Python. Work with both Python 2 and 3. Pre-installed on almost all Linux distros and on MacOS.
 
+git - Some of the metadata require git. If git is not installed, some error messages may be generated, but these can just be overlooked.
+
 ### For Windows:
 Cygwin/MinGW - The commands relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
 
