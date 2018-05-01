@@ -32,7 +32,7 @@ char* get_path_sim_db(){
     for (int i = strlen(path_sim_db) - 1; i >= 0; i--){
         if (path_sim_db[i] == '/'){
             path_sim_db[i] = '\0';
-            result = malloc((strlen(path_sim_db) + 1)*sizeof(char));
+            result = (char*) malloc((strlen(path_sim_db) + 1)*sizeof(char));
             strcpy(result, path_sim_db);
             break;
         }
@@ -59,7 +59,7 @@ void sim_db_get_time_string(char time_string[]){
     strcat(time_string, &local_time[11]);
 }
 
-void sim_db_update(SimDB* self, char* column, char* value){
+void sim_db_update(SimDB* self, const char* column, const char* value){
     char query[256];
     sprintf(query, "UPDATE runs SET '%s' = '%s' WHERE id = %d", column, value, self->id);   
     int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
@@ -70,7 +70,8 @@ void sim_db_update(SimDB* self, char* column, char* value){
 }
 
 // Return 0 if file can be opened
-int sim_db_run_shell_command(char* command, char* output, size_t len_output){
+int sim_db_run_shell_command(const char* command, char* output, 
+                             size_t len_output){
     FILE* file;
     file = popen(command, "r");
     int i = 0;
@@ -124,13 +125,13 @@ SimDB* sim_db_ctor_with_id(int id){
         exit(1);
     }
 
-    SimDB* sim_db = malloc(sizeof(struct SimDB));
+    SimDB* sim_db = (SimDB*) malloc(sizeof(struct SimDB));
     sim_db->db = db;
     sim_db->id = id;
     sim_db->start_time = time(NULL);
     sim_db->buffer_size_pointers = 5;
-    sim_db->pointers_to_free = malloc(sim_db->buffer_size_pointers
-                                      *sizeof(void*));
+    sim_db->pointers_to_free = (void**) malloc(sim_db->buffer_size_pointers
+                                              *sizeof(void*));
     sim_db->n_pointers = 0;
    
     char time_started[80];
@@ -177,16 +178,16 @@ SimDB* sim_db_ctor_with_id(int id){
 void sim_db_add_pointer_to_free(SimDB* self, void* pointer){
     if (self->n_pointers >= self->buffer_size_pointers){
         self->buffer_size_pointers *= 2;
-        self->pointers_to_free = realloc(self->pointers_to_free, 
+        self->pointers_to_free = (void**) realloc(self->pointers_to_free, 
                                      self->buffer_size_pointers*sizeof(void*));
     }
     self->pointers_to_free[self->n_pointers] = pointer;
     self->n_pointers++;
 }
 
-int sim_db_read_int(SimDB* self, char name_column[]){
+int sim_db_read_int(SimDB* self, const char* column){
     char query[256];
-    sprintf(query, "SELECT %s FROM runs WHERE id = %d", name_column, self->id);
+    sprintf(query, "SELECT %s FROM runs WHERE id = %d", column, self->id);
     sqlite3_stmt *stmt = NULL; 
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL); 
     if (rc != SQLITE_OK){
@@ -198,22 +199,22 @@ int sim_db_read_int(SimDB* self, char name_column[]){
     if(rc == SQLITE_ROW){
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_INTEGER){
-            fprintf(stderr, "ERROR: Column %s is NOT an int.\n", name_column);
+            fprintf(stderr, "ERROR: Column %s is NOT an int.\n", column);
             exit(1);
         }
         result = sqlite3_column_int(stmt, 0);
     } else {
         fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
-                name_column, self->id);
+                column, self->id);
         exit(1);
     }
     sqlite3_finalize(stmt);
     return result;
 }
 
-double sim_db_read_double(SimDB* self, char name_column[]){
+double sim_db_read_double(SimDB* self, const char* column){
     char query[256];
-    sprintf(query, "SELECT %s FROM runs WHERE id = %d", name_column, self->id);
+    sprintf(query, "SELECT %s FROM runs WHERE id = %d", column, self->id);
     sqlite3_stmt *stmt = NULL; 
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL); 
     if (rc != SQLITE_OK){
@@ -225,22 +226,22 @@ double sim_db_read_double(SimDB* self, char name_column[]){
     if(rc == SQLITE_ROW){
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_FLOAT){
-            fprintf(stderr, "ERROR: Column %s is NOT a float.\n", name_column);
+            fprintf(stderr, "ERROR: Column %s is NOT a float.\n", column);
             exit(1);
         }
         result = sqlite3_column_double(stmt, 0);
     } else {
         fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
-                name_column, self->id);
+                column, self->id);
         exit(1);
     }
     sqlite3_finalize(stmt);
     return result;
 }
 
-char* sim_db_read_string(SimDB* self, char name_column[]){
+char* sim_db_read_string(SimDB* self, const char* column){
     char query[256];
-    sprintf(query, "SELECT %s FROM runs WHERE id = %d", name_column, self->id);
+    sprintf(query, "SELECT %s FROM runs WHERE id = %d", column, self->id);
     sqlite3_stmt *stmt = NULL; 
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL); 
     if (rc != SQLITE_OK){
@@ -252,46 +253,46 @@ char* sim_db_read_string(SimDB* self, char name_column[]){
     if(rc == SQLITE_ROW){
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_TEXT){
-            fprintf(stderr, "ERROR: Column %s is NOT a string.\n", name_column);
+            fprintf(stderr, "ERROR: Column %s is NOT a string.\n", column);
             exit(1);
         }
         text = (char *)sqlite3_column_text(stmt, 0);
     } else {
         fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
-                name_column, self->id);
+                column, self->id);
         exit(1);
     }
-    char* string = malloc((strlen(text) + 1)*sizeof(char));
+    char* string = (char*) malloc((strlen(text) + 1)*sizeof(char));
     strcpy(string, text);
     sqlite3_finalize(stmt);
     sim_db_add_pointer_to_free(self, string);
     return string;
 }
 
-bool sim_db_read_bool(SimDB* self, char name_column[]){
-    char* bool_string = sim_db_read_string(self, name_column);
+bool sim_db_read_bool(SimDB* self, const char* column){
+    char* bool_string = sim_db_read_string(self, column);
     if (strcmp(bool_string, "True") == 0){
         return true;
     } else if (strcmp(bool_string, "False") == 0){
         return false;
     } else {
         fprintf(stderr, "ERROR: The value under column %s with id %d is NOT " \
-                "'True' or 'False', but %s.\n", name_column, self->id, 
+                "'True' or 'False', but %s.\n", column, self->id, 
                 bool_string);
         exit(1);
     }
 }
 
-SimDBIntVec sim_db_read_int_vec(SimDB* self, char name_column[]){
-    char* int_arr_string = sim_db_read_string(self, name_column);
+SimDBIntVec sim_db_read_int_vec(SimDB* self, const char* column){
+    char* int_arr_string = sim_db_read_string(self, column);
     if (strstr(int_arr_string, "int[") != int_arr_string){
         fprintf(stderr, "ERROR: The type under column=%s with id=%d is NOT " \
-                "int array.\n", name_column, self->id);
+                "int array.\n", column, self->id);
         exit(1);
     }
     SimDBIntVec int_vec;
     int_vec.size = 5;
-    int_vec.array = malloc(int_vec.size*sizeof(int));
+    int_vec.array = (int*) malloc(int_vec.size*sizeof(int));
     char number[100];
     size_t n_digits = 0;
     size_t n_numbers = 0;
@@ -299,7 +300,7 @@ SimDBIntVec sim_db_read_int_vec(SimDB* self, char name_column[]){
         if (int_arr_string[i] == ',' || int_arr_string[i] == ']'){
             number[n_digits] = '\0';
             if (n_numbers >= int_vec.size){
-                int* new_arr = malloc(2*int_vec.size*sizeof(int));
+                int* new_arr = (int*) malloc(2*int_vec.size*sizeof(int));
                 memcpy(new_arr, int_vec.array, int_vec.size*sizeof(int));
                 int_vec.size *= 2;
                 free(int_vec.array);
@@ -318,16 +319,16 @@ SimDBIntVec sim_db_read_int_vec(SimDB* self, char name_column[]){
     return int_vec;
 }
 
-SimDBDoubleVec sim_db_read_double_vec(SimDB* self, char name_column[]){
-    char* double_arr_string = sim_db_read_string(self, name_column);
+SimDBDoubleVec sim_db_read_double_vec(SimDB* self, const char* column){
+    char* double_arr_string = sim_db_read_string(self, column);
     if (strstr(double_arr_string, "float[") != double_arr_string){
         fprintf(stderr, "ERROR: The type under column=%s with id=%d is NOT " \
-                "double array.\n", name_column, self->id);
+                "double array.\n", column, self->id);
         exit(1);
     }
     SimDBDoubleVec double_vec;
     double_vec.size = 5;
-    double_vec.array = malloc(double_vec.size*sizeof(double));
+    double_vec.array = (double*) malloc(double_vec.size*sizeof(double));
     char number[100];
     size_t n_digits = 0;
     size_t n_numbers = 0;
@@ -335,7 +336,8 @@ SimDBDoubleVec sim_db_read_double_vec(SimDB* self, char name_column[]){
         if (double_arr_string[i] == ',' || double_arr_string[i] == ']'){
             number[n_digits] = '\0';
             if (n_numbers >= double_vec.size){
-                double* new_arr = malloc(2*double_vec.size*sizeof(int));
+                double* new_arr = (double*) malloc(2*double_vec.size
+                                                   *sizeof(int));
                 memcpy(new_arr, double_vec.array, double_vec.size*sizeof(int));
                 double_vec.size *= 2;
                 free(double_vec.array);
@@ -354,16 +356,16 @@ SimDBDoubleVec sim_db_read_double_vec(SimDB* self, char name_column[]){
     return double_vec;
 }
 
-SimDBStringVec sim_db_read_string_vec(SimDB* self, char name_column[]){
-    char* str_arr_string = sim_db_read_string(self, name_column);
+SimDBStringVec sim_db_read_string_vec(SimDB* self, const char* column){
+    char* str_arr_string = sim_db_read_string(self, column);
     if (strstr(str_arr_string, "string[") != str_arr_string){
         fprintf(stderr, "ERROR: The type under column=%s with id=%d is NOT " \
-                "string array.\n", name_column, self->id);
+                "string array.\n", column, self->id);
         exit(1);
     }
     SimDBStringVec string_vec;
     string_vec.size = 5;
-    string_vec.array = malloc(string_vec.size*sizeof(char*));
+    string_vec.array = (char**) malloc(string_vec.size*sizeof(char*));
     char string[100];
     int n_char = 0;
     int n_strings = 0;
@@ -371,15 +373,16 @@ SimDBStringVec sim_db_read_string_vec(SimDB* self, char name_column[]){
         if (str_arr_string[i] == ',' || str_arr_string[i] == ']'){
             string[n_char] = '\0';
             if (n_strings >= string_vec.size){
-                char** new_arr = malloc(2*string_vec.size*sizeof(char*));
+                char** new_arr = (char**) malloc(2*string_vec.size
+                                                 *sizeof(char*));
                 memcpy(new_arr, string_vec.array, 
                        string_vec.size*sizeof(char*));
                 string_vec.size *= 2;
                 free(string_vec.array);
                 string_vec.array = new_arr;
             }
-            string_vec.array[n_strings] = malloc((strlen(string) + 1)
-                                                 *sizeof(char));
+            string_vec.array[n_strings] = (char*) malloc((strlen(string) + 1)
+                                                          *sizeof(char));
             strcpy(string_vec.array[n_strings], string);
             n_strings++;
             n_char = 0;
@@ -397,16 +400,16 @@ SimDBStringVec sim_db_read_string_vec(SimDB* self, char name_column[]){
     return string_vec;
 }
 
-SimDBBoolVec sim_db_read_bool_vec(SimDB* self, char name_column[]){
-    char* bool_arr_str = sim_db_read_string(self, name_column);
+SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column){
+    char* bool_arr_str = sim_db_read_string(self, column);
     if (strstr(bool_arr_str, "bool[") != bool_arr_str){
         fprintf(stderr, "ERROR: The type under column=%s with id=%d is NOT " \
-                "double array.\n", name_column, self->id);
+                "double array.\n", column, self->id);
         exit(1);
     }
     SimDBBoolVec bool_vec;
     bool_vec.size = 5;
-    bool_vec.array = malloc(bool_vec.size*sizeof(bool));
+    bool_vec.array = (bool*) malloc(bool_vec.size*sizeof(bool));
     char bool_str[100];
     size_t n_char = 0;
     size_t n_bools = 0;
@@ -414,7 +417,7 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, char name_column[]){
         if (bool_arr_str[i] == ',' || bool_arr_str[i] == ']'){
             bool_str[n_char] = '\0';
             if (n_bools >= bool_vec.size){
-                bool* new_arr = malloc(2*bool_vec.size*sizeof(bool));
+                bool* new_arr = (bool*) malloc(2*bool_vec.size*sizeof(bool));
                 memcpy(new_arr, bool_vec.array, bool_vec.size*sizeof(bool));
                 bool_vec.size *= 2;
                 free(bool_vec.array);
@@ -427,7 +430,7 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, char name_column[]){
             } else {
                 fprintf(stderr, "ERROR: A value in the array  under column " \
                         "%s with id %d is NOT 'True' or 'False', but %s.\n", 
-                        name_column, self->id, bool_str);
+                        column, self->id, bool_str);
                 exit(1);
             }
             n_bools++;
@@ -455,17 +458,18 @@ SimDBStringVec sim_db_get_column_names(SimDB* self){
     rc = sqlite3_step(stmt);
     SimDBStringVec column_names;
     column_names.size = 5;
-    column_names.array = malloc(column_names.size*sizeof(char*));
+    column_names.array = (char**) malloc(column_names.size*sizeof(char*));
     if(rc == SQLITE_ROW){
         int i = 0;
         char* column = (char*) sqlite3_column_name(stmt, i);
         while (column != NULL){
             if (i >= column_names.size){
                 column_names.size *= 2;
-                column_names.array = realloc(column_names.array, 
-                                             column_names.size*sizeof(char*));
+                column_names.array = (char**) realloc(column_names.array, 
+                                              column_names.size*sizeof(char*));
             }
-            column_names.array[i] = malloc((strlen(column) + 1)*sizeof(char));
+            column_names.array[i] = (char*) malloc((strlen(column) + 1)
+                                                    *sizeof(char));
             strcpy(column_names.array[i], column);
             column = (char*) sqlite3_column_name(stmt, ++i);
         }
@@ -483,7 +487,8 @@ SimDBStringVec sim_db_get_column_names(SimDB* self){
     return column_names;
 }  
 
-void sim_db_add_column_if_not_exists(SimDB* self, char column[], char type[]){
+void sim_db_add_column_if_not_exists(SimDB* self, const char* column, 
+                                     const char* type){
     SimDBStringVec column_names = sim_db_get_column_names(self);
     bool column_exists = false;
     for (int i = 0; i < column_names.size; i++){
@@ -494,7 +499,7 @@ void sim_db_add_column_if_not_exists(SimDB* self, char column[], char type[]){
     }
     if (!column_exists){
         char query[256];
-        sprintf(query, "ALTER TABLE runs ADD COLUMN %s %s;", column, type); 
+        sprintf(query, "ALTER TABLE runs ADD COLUMN '%s' %s", column, type); 
         int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
         if (rc != SQLITE_OK){
             fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", 
@@ -504,41 +509,42 @@ void sim_db_add_column_if_not_exists(SimDB* self, char column[], char type[]){
     }
 }
 
-void sim_db_write_int(SimDB* self, char name_column[], int value){
-    sim_db_add_column_if_not_exists(self, name_column, "INTEGER");
+void sim_db_write_int(SimDB* self, const char* column, int value){
+    sim_db_add_column_if_not_exists(self, column, "INTEGER");
     char string_value[100];
     sprintf(string_value, "%d", value);
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
 }
 
-void sim_db_write_double(SimDB* self, char name_column[], double value){
-    sim_db_add_column_if_not_exists(self, name_column, "REAL");
+void sim_db_write_double(SimDB* self, const char* column, double value){
+    sim_db_add_column_if_not_exists(self, column, "REAL");
     char string_value[100];
     sprintf(string_value, "%0.17g", value);
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
 }
 
-void sim_db_write_string(SimDB* self, char name_column[], char value[]){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
-    sim_db_update(self, name_column, value);
+void sim_db_write_string(SimDB* self, const char* column, 
+                         const char* value){
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
+    sim_db_update(self, column, value);
 }
 
-void sim_db_write_bool(SimDB* self, char name_column[], bool value){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
+void sim_db_write_bool(SimDB* self, const char* column, bool value){
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
     char string_value[100];
     if (value){
         strcpy(string_value, "True"); 
     } else {
         strcpy(string_value, "False"); 
     }
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
 }
 
-void sim_db_write_int_array(SimDB* self, char name_column[], int* arr, 
+void sim_db_write_int_array(SimDB* self, const char* column, int* arr, 
                             size_t len){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
     size_t len_string = 20;
-    char* string_value = malloc((len_string + 1)*sizeof(char));
+    char* string_value = (char*) malloc((len_string + 1)*sizeof(char));
     strcpy(string_value, "int[");
     size_t n_chars = 4;
     char number[100];
@@ -547,7 +553,8 @@ void sim_db_write_int_array(SimDB* self, char name_column[], int* arr,
         n_chars += strlen(number);
         if (n_chars >= len_string){
             len_string *= 2;
-            string_value = realloc(string_value, (len_string+1)*sizeof(char));
+            string_value = (char*) realloc(string_value, 
+                                           (len_string+1)*sizeof(char));
         }
         strcat(string_value, number);
     }
@@ -557,15 +564,15 @@ void sim_db_write_int_array(SimDB* self, char name_column[], int* arr,
     } else {
         strcat(string_value, "]");
     }
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
     free(string_value);
 }
 
-void sim_db_write_double_array(SimDB* self, char name_column[], double* arr, 
+void sim_db_write_double_array(SimDB* self, const char* column, double* arr, 
                                size_t len){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
     size_t len_string = 20;
-    char* string_value = malloc((len_string + 1)*sizeof(char));
+    char* string_value = (char*) malloc((len_string + 1)*sizeof(char));
     strcpy(string_value, "float[");
     size_t n_chars = 6;
     char number[100];
@@ -574,7 +581,8 @@ void sim_db_write_double_array(SimDB* self, char name_column[], double* arr,
         n_chars += strlen(number);
         if (n_chars >= len_string){
             len_string *= 2;
-            string_value = realloc(string_value, (len_string+1)*sizeof(char));
+            string_value = (char*) realloc(string_value, 
+                                           (len_string+1)*sizeof(char));
         }
         strcat(string_value, number);
     }
@@ -584,22 +592,23 @@ void sim_db_write_double_array(SimDB* self, char name_column[], double* arr,
     } else {
         strcat(string_value, "]");
     }
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
     free(string_value);
 }
 
-void sim_db_write_string_array(SimDB* self, char name_column[], char** arr, 
+void sim_db_write_string_array(SimDB* self, const char* column, char** arr, 
                                size_t len){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
     size_t len_string = 80;
-    char* string_value = malloc((len_string + 1)*sizeof(char*));
+    char* string_value = (char*) malloc((len_string + 1)*sizeof(char*));
     strcpy(string_value, "string[");
     size_t n_chars = 7;
     for (int i = 0; i < len; i++){
         n_chars += strlen(arr[i]) + 2;
         if (n_chars >= len_string){
             len_string *= 2;
-            string_value = realloc(string_value, (len_string+1)*sizeof(char));
+            string_value = (char*) realloc(string_value, 
+                                           (len_string+1)*sizeof(char));
         }
         strcat(string_value, arr[i]);
         strcat(string_value, ", ");
@@ -610,15 +619,15 @@ void sim_db_write_string_array(SimDB* self, char name_column[], char** arr,
     } else {
         strcat(string_value, "]");
     }
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
     free(string_value);
 }
 
-void sim_db_write_bool_array(SimDB* self, char name_column[], bool* arr, 
+void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr, 
                              size_t len){
-    sim_db_add_column_if_not_exists(self, name_column, "TEXT");
+    sim_db_add_column_if_not_exists(self, column, "TEXT");
     size_t len_string = 80;
-    char* string_value = malloc((len_string + 1)*sizeof(char*));
+    char* string_value = (char*) malloc((len_string + 1)*sizeof(char*));
     strcpy(string_value, "bool[");
     size_t n_chars = 5;
     for (int i = 0; i < len; i++){
@@ -629,7 +638,8 @@ void sim_db_write_bool_array(SimDB* self, char name_column[], bool* arr,
         }
         if (n_chars >= len_string){
             len_string *= 2;
-            string_value = realloc(string_value, (len_string+1)*sizeof(char));
+            string_value = (char*) realloc(string_value, 
+                                           (len_string+1)*sizeof(char));
         }
         if (arr[i]){
             strcat(string_value, "True, ");
@@ -643,15 +653,16 @@ void sim_db_write_bool_array(SimDB* self, char name_column[], bool* arr,
     } else {
         strcat(string_value, "]");
     }
-    sim_db_update(self, name_column, string_value);
+    sim_db_update(self, column, string_value);
     free(string_value);
 }
 
-char* sim_db_make_subdir_result(SimDB* self, char name_result_directory[]){
+char* sim_db_make_subdir_result(SimDB* self, 
+                                const char* name_result_directory){
     char time_string[100];
     sim_db_get_time_string(time_string);
     char* name = sim_db_read_string(self, "name");
-    char* name_subdir = malloc(4097*sizeof(char));
+    char* name_subdir = (char*) malloc(4097*sizeof(char));
     sprintf(name_subdir, "%s/%s_%s_%d", name_result_directory, 
             time_string, name, self->id);
     if (mkdir(name_subdir, 0700) == -1){
