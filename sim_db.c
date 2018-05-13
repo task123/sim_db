@@ -22,22 +22,53 @@ struct SimDB {
     size_t buffer_size_pointers;
 };
 
-char* get_path_sim_db() {
-    char path_sim_db[4097];
-    getcwd(path_sim_db, sizeof(path_sim_db));
-    strcat(path_sim_db, "/");
-    strcat(path_sim_db, __FILE__);
-    int position_last_slash = -1;
-    char* result;
-    for (int i = strlen(path_sim_db) - 1; i >= 0; i--) {
-        if (path_sim_db[i] == '/') {
-            path_sim_db[i] = '\0';
-            result = (char*) malloc((strlen(path_sim_db) + 1) * sizeof(char));
-            strcpy(result, path_sim_db);
-            break;
+void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
+    if (self->n_pointers >= self->buffer_size_pointers) {
+        self->buffer_size_pointers *= 2;
+        self->pointers_to_free =
+                (void**) realloc(self->pointers_to_free,
+                                 self->buffer_size_pointers * sizeof(void*));
+    }
+    self->pointers_to_free[self->n_pointers] = pointer;
+    self->n_pointers++;
+}
+
+// Return EXIT_SUCCESS if pointer is found in SimDB.pointers_to_free and freed
+int sim_db_free(SimDB* self, void* pointer) {
+    int pointer_pos = -1;
+    for (int i = 0; i < self->n_pointers; i++) {
+        if (pointer_pos > 0) {
+            self->pointers_to_free[i - 1] = self->pointers_to_free[i];
+        } else if (&self->pointers_to_free[i] == &pointer) {
+            pointer_pos = i;
+            free(pointer);
         }
     }
-    return result;
+    self->n_pointers--;
+    return EXIT_SUCCESS;
+}
+
+void get_path_sim_db(char path_sim_db[4097]) {
+    getcwd(path_sim_db, 4096);
+    strcat(path_sim_db, "/");
+    strcat(path_sim_db, __FILE__);
+    char file_rel_sim_db[20] = "/sim_db.c";
+    char* sim_db_dir = strstr(path_sim_db, file_rel_sim_db);
+    sim_db_dir[0] = '\0';
+}
+
+void get_path_sim_db_with_spaces_backslashed(char path_sim_db[4097]) {
+    char path[4097];
+    get_path_sim_db(path);
+    int spaces = 0;
+    for (int i = 1; i < strlen(path) + spaces + 1; i++) {
+        path_sim_db[i + spaces] = path[i];
+        if (path[i] == ' ' && path[i - 1] != '\\') {
+            path_sim_db[i + spaces] = '\\';
+            path_sim_db[i + spaces + 1] = ' ';
+            spaces++;
+        }
+    }
 }
 
 void sim_db_get_time_string(char time_string[]) {
@@ -70,7 +101,7 @@ void sim_db_update(SimDB* self, const char* column, const char* value) {
     }
 }
 
-// Return 0 if file can be opened
+// Return EXIT_SUCCESS if file can be opened
 int sim_db_run_shell_command(const char* command, char* output,
                              size_t len_output) {
     FILE* file;
@@ -86,7 +117,25 @@ int sim_db_run_shell_command(const char* command, char* output,
         return 1;
     }
     pclose(file);
-    return 0;
+    return EXIT_SUCCESS;
+}
+
+bool is_a_git_project() {
+    char path[4097];
+    get_path_sim_db(path);
+    char git_file[20] = "/.git/index";
+    for (int i = strlen(path) - 1; i >= 0; i--) {
+        if (path[i] == '\\') {
+            path[i] = '\0';
+            strcat(path, git_file);
+            FILE* fp = fopen(path, "r");
+            if (fp != NULL) fclose(fp);
+            if (fp != NULL) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 SimDB* sim_db_ctor(int argc, char** argv) {
@@ -118,10 +167,11 @@ SimDB* sim_db_ctor(int argc, char** argv) {
 SimDB* sim_db_ctor_with_id(int id) {
     sqlite3* db;
     char path_sim_db[4097];
-    strcpy(path_sim_db, strcat(get_path_sim_db(), "/sim.db"));
+    get_path_sim_db(path_sim_db);
+    strcat(path_sim_db, "/sim.db");
     int rc = sqlite3_open(path_sim_db, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", get_path_sim_db(),
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db,
                 sqlite3_errmsg(db));
         exit(1);
     }
@@ -142,51 +192,47 @@ SimDB* sim_db_ctor_with_id(int id) {
     const size_t len_output = 3000;
     char output[len_output + 200];
     char command[4200];
-    sprintf(command, "cd %s/.. && git rev-parse HEAD", get_path_sim_db());
-    if (sim_db_run_shell_command(command, output, len_output) == 0) {
-        sim_db_update(sim_db, "git_hash", output);
-    }
 
-    sprintf(command, "cd %s/.. && git log -n --format=%%B HEAD",
-            get_path_sim_db());
-    if (sim_db_run_shell_command(command, output, len_output) == 0) {
-        sim_db_update(sim_db, "commit_message", output);
-    }
-
-    sprintf(command, "cd %s/.. && git diff HEAD --stat", get_path_sim_db());
-    if (sim_db_run_shell_command(command, output, len_output) == 0) {
-        sim_db_update(sim_db, "git_diff_stat", output);
-    }
-
-    sprintf(command, "cd %s/.. && git diff HEAD", get_path_sim_db());
-    if (sim_db_run_shell_command(command, output, len_output) == 0) {
-        if (strlen(output) >= len_output) {
-            char warning[len_output + 200];
-            sprintf(warning,
-                    "WARNING: Diff limited to first %ld "
-                    "characters.\n",
-                    (long) len_output);
-            strcat(warning, "\n");
-            strcat(warning, output);
-            strcpy(output, warning);
-            strcat(output, "\n\n");
-            strcat(output, warning);
+    if (is_a_git_project()) {
+        char path_sim_db_backslashed[4097];
+        get_path_sim_db_with_spaces_backslashed(path_sim_db_backslashed);
+        sprintf(command, "cd %s/.. && git rev-parse HEAD",
+                path_sim_db_backslashed);
+        if (sim_db_run_shell_command(command, output, len_output) == 0) {
+            sim_db_update(sim_db, "git_hash", output);
         }
-        sim_db_update(sim_db, "git_diff", output);
+
+        sprintf(command, "cd %s/.. && git log -n --format=%%B HEAD",
+                path_sim_db_backslashed);
+        if (sim_db_run_shell_command(command, output, len_output) == 0) {
+            sim_db_update(sim_db, "commit_message", output);
+        }
+
+        sprintf(command, "cd %s/.. && git diff HEAD --stat",
+                path_sim_db_backslashed);
+        if (sim_db_run_shell_command(command, output, len_output) == 0) {
+            sim_db_update(sim_db, "git_diff_stat", output);
+        }
+
+        sprintf(command, "cd %s/.. && git diff HEAD", path_sim_db_backslashed);
+        if (sim_db_run_shell_command(command, output, len_output) == 0) {
+            if (strlen(output) >= len_output) {
+                char warning[len_output + 200];
+                sprintf(warning,
+                        "WARNING: Diff limited to first %ld "
+                        "characters.\n",
+                        (long) len_output);
+                strcat(warning, "\n");
+                strcat(warning, output);
+                strcpy(output, warning);
+                strcat(output, "\n\n");
+                strcat(output, warning);
+            }
+            sim_db_update(sim_db, "git_diff", output);
+        }
     }
 
     return sim_db;
-}
-
-void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
-    if (self->n_pointers >= self->buffer_size_pointers) {
-        self->buffer_size_pointers *= 2;
-        self->pointers_to_free =
-                (void**) realloc(self->pointers_to_free,
-                                 self->buffer_size_pointers * sizeof(void*));
-    }
-    self->pointers_to_free[self->n_pointers] = pointer;
-    self->n_pointers++;
 }
 
 int sim_db_read_int(SimDB* self, const char* column) {
@@ -208,7 +254,9 @@ int sim_db_read_int(SimDB* self, const char* column) {
         }
         result = sqlite3_column_int(stmt, 0);
     } else {
-        fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
+        fprintf(stderr,
+                "Could NOT read column=%s with id=%d for "
+                "database.\n",
                 column, self->id);
         exit(1);
     }
@@ -235,7 +283,9 @@ double sim_db_read_double(SimDB* self, const char* column) {
         }
         result = sqlite3_column_double(stmt, 0);
     } else {
-        fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
+        fprintf(stderr,
+                "Could NOT read column=%s with id=%d for "
+                "database.\n",
                 column, self->id);
         exit(1);
     }
@@ -262,7 +312,9 @@ char* sim_db_read_string(SimDB* self, const char* column) {
         }
         text = (char*) sqlite3_column_text(stmt, 0);
     } else {
-        fprintf(stderr, "Could NOT read column=%s with id=%d for database.\n",
+        fprintf(stderr,
+                "Could NOT read column=%s with id=%d for "
+                "database.\n",
                 column, self->id);
         exit(1);
     }
@@ -281,7 +333,8 @@ bool sim_db_read_bool(SimDB* self, const char* column) {
         return false;
     } else {
         fprintf(stderr,
-                "ERROR: The value under column %s with id %d is NOT "
+                "ERROR: The value under column %s with id %d is "
+                "NOT "
                 "'True' or 'False', but %s.\n",
                 column, self->id, bool_string);
         exit(1);
@@ -445,7 +498,9 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
             } else {
                 fprintf(stderr,
                         "ERROR: A value in the array  under column "
-                        "%s with id %d is NOT 'True' or 'False', but %s.\n",
+                        "%s with id %d is NOT 'True' or 'False', "
+                        "but "
+                        "%s.\n",
                         column, self->id, bool_str);
                 exit(1);
             }
@@ -686,6 +741,8 @@ char* sim_db_make_subdir_result(SimDB* self,
         exit(1);
     }
     sim_db_add_pointer_to_free(self, name_subdir);
+
+    sim_db_write_string(self, "result_dir", name_subdir);
 
     return name_subdir;
 }

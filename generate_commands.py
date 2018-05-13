@@ -40,7 +40,7 @@ def add_path(where_to_add_path):
         bash_file.write("\n# Add a 'sim_db' command (as 'cd' called from a " \
                        +"script don't work)\n")
         bash_file.write("function cd_results(){\n")
-        bash_file.write("    cd $(python {0}/cd_results.py $@)\n".format(sim_db_dir)) 
+        bash_file.write('    cd "$(python {0}/cd_results.py $@)"\n'.format(sim_db_dir)) 
         bash_file.write("}\n")
         bash_file.close()
         os.system("source {}".format(where_to_add_path))

@@ -17,8 +17,17 @@ def get_arguments(argv):
 def cd_results(argv=None):
     args = get_arguments(argv)
     
-    simdb = sim_db.SimDB(db_id=args.id)
-    return simdb.read('result_dir')
+    db = helpers.connect_sim_db()
+    db_cursor = db.cursor()
+
+    db_cursor.execute("SELECT result_dir FROM runs WHERE id={}".format(args.id))
+    result_dir = db_cursor.fetchone()[0]
+
+    db.commit()
+    db_cursor.close()
+    db.close()
+
+    return result_dir
 
 if __name__ == '__main__':
     print(cd_results())

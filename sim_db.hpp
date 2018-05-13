@@ -6,6 +6,7 @@
 
 #include "sim_db.h"
 
+#include <cstring>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -77,7 +78,7 @@ class TemplateSpecializationHelper<bool> {
         return sim_db_read_bool(sim_db, column.c_str());
     }
     void write(struct SimDB* sim_db, std::string column, bool value) {
-        sim_db_write_int(sim_db, column.c_str(), value);
+        sim_db_write_bool(sim_db, column.c_str(), value);
     }
     friend class Connection;
 };

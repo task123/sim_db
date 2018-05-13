@@ -19,7 +19,7 @@ no_extract_columns = {'id', 'status', 'comment', 'time_submitted', 'time_started
 def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Extract parameter file from sim.db.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of paramter file generated.")
+    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
     parser.add_argument('--default_file', '-d', action='store_true', help="Write parameters to the first of the 'Parameter filenames' in settings.txt. Ask for confirmation if file exists already.")
     parser.add_argument('--also_empty', action='store_true', help="Also extract empty paramters. Default is to not extract empty parameters and default columns that are not input parameters.")
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")

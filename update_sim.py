@@ -51,7 +51,3 @@ def update_sim(argv=None):
 
 if __name__ == '__main__':
     update_sim()
-
-
-
-

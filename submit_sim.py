@@ -136,7 +136,9 @@ def make_job_script(db_cursor, i, args, id_submit):
         job_script_file.write(line)
 
     run_command = helpers.get_run_command(db_cursor, id_submit, job_script_variables[2])
-    job_script_file.write("\n{}\n".format(run_command))
+    job_script_file.write('\n')
+    for command in run_command.split(';'):
+        job_script_file.write("{}\n".format(command))
 
     job_script_file.close()
 

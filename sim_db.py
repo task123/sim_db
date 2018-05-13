@@ -115,10 +115,12 @@ class SimDB:
         db_id (int): ID of the row the parameter is read from. If it is 
             'None', then it is read from arguments passed to the program after 
             the option '--id'.
-        type_of_value (string or type): Needed if column does note exists. The 
-            valid types the strings 'int', 'float', 'bool', 'string' and 
-            'int/float/bool/string array' or the types int, float, bool and str.
-            Throws ValueError if column exists, but type does not match.            
+        type_of_value (string or type): Needed if column does note exists or if
+            value is empty list. The valid types the strings 'int', 'float', 
+            'bool', 'string' and 'int/float/bool/string array' or the types int, 
+            float, bool and str.
+        Throws ValueError if column exists, but type does not match, or empty
+            list is passed without type_of_value given.            
         """
         if db_id == None:
             db_id = self.id
@@ -127,7 +129,6 @@ class SimDB:
         db_cursor = db.cursor()
         column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
         type_dict = dict(zip(column_names, column_types))
-
         if column in column_names:
             self.__check_type(db_cursor, type_of_value, column)
         else:
@@ -145,7 +146,9 @@ class SimDB:
                 type_of_value = 'string'
             add_column.add_column(["--column", column, "--type", type_of_value])
 
-        update_sim.update_sim(["--id", str(db_id), "--columns", column, "--value", str(value)])
+        value_string = self.__convert_to_value_string(value, type_of_value)
+        update_sim.update_sim(["--id", str(db_id), "--columns", column, \
+                    "--value", value_string])
 
 
     def make_subdir_result(self, name_result_directory):
@@ -158,9 +161,13 @@ class SimDB:
         
         return (string): Full path to new subdirectory.
         """
-        subdir = get_date_and_time_as_string()
+        subdir = name_result_directory
+        if len(subdir) > 0 and subdir[-1] != '/':
+            subdir += '/'
+        subdir += self.get_date_and_time_as_string()
         subdir += '_' + self.read('name') + '_' + str(self.id) 
         os.mkdir(subdir)
+        self.write(column="result_dir", value=subdir)
 
         return subdir
 
@@ -186,10 +193,10 @@ class SimDB:
         self.write('status', 'finished')
 
     def __id_from_command_line_arguments(self, db_id):
-        parser = argparse.ArgumentParser() 
-        parser.add_argument('--id', type=int, default=None, help="ID of parameters in the database used to run the simulation.")
-        args = parser.parse_args()
         if db_id == None:
+            parser = argparse.ArgumentParser() 
+            parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
+            args = parser.parse_args()
             db_id = args.id
         if (db_id == None):
             ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
@@ -211,9 +218,10 @@ class SimDB:
         elif (type_of_value == 'TEXT' and value != None):
             value, correct_type = self.__convert_text_to_correct_type(value, check_type_is)
         elif (type_of_value == 'TEXT' and value == None and (check_type_is == 'string' \
-                or check_type_is == str or check_type_is == list \
-                or check_type_is == 'int array' or check_type_is == 'float array' \
-                or check_type_is == 'bool array' or check_type_is == 'string array')):
+                or check_type_is == str or check_type_is == 'bool' or check_type_is == bool \
+                or check_type_is == list or check_type_is == 'int array' \
+                or check_type_is == 'float array' or check_type_is == 'bool array' \
+                or check_type_is == 'string array')):
             correct_type = True
         else:
             correct_type = False
@@ -252,12 +260,16 @@ class SimDB:
             elif value_split[0].strip() == 'string':
                 if (check_type_is == 'string array' or check_type_is == list):
                     correct_type = True
-                for element in value_split[1].split(']')[0].split(','):
+                for i, element in enumerate(value_split[1].split(']')[0].split(',')):
+                    if i > 0 and len(element) > 0 and element[0] == ' ':
+                        element = element[1:]
                     value.append(str(element))
             elif value_split[0].strip() == 'bool':
                 if (check_type_is == 'bool array' or check_type_is == list):
                     correct_type = True
-                for element in value_split[1].split(']')[0].split(','):
+                for i, element in enumerate(value_split[1].split(']')[0].split(',')):
+                    if i > 0 and len(element) > 0 and element[0] == ' ':
+                        element = element[1:]
                     if element == 'True':
                         element = True
                     elif element == 'False':
@@ -268,6 +280,48 @@ class SimDB:
             else:
                 correct_type = False
         return value, correct_type
+
+    def __convert_to_value_string(self, value, type_of_value):
+        if type(value) == int or type(value) == float or type(value) == str:
+            return str(value)
+        elif type(value) == bool:
+            if value:
+                return "True"
+            else:
+                return "False"
+        elif type(value) == list:
+            if len(value) > 0:
+                if type(value[0]) == int:
+                    value_string = "int["
+                elif type(value[0]) == float:
+                    value_string = "float["
+                elif type(value[0]) == str:
+                    value_string = "string["
+                elif type(value[0]) == bool:
+                    value_string = "bool["
+                for element in value:
+                    if type(value[0]) == bool:
+                        if element:
+                            element = "True"
+                        else:
+                            element = "False"
+                    value_string += str(element) + ", "
+                value_string = value_string[:-2] + "]"
+                return value_string
+            else:
+                if type_of_value == 'int array':
+                    value_string = "int[]"
+                elif type_of_value == 'float array':
+                    value_string = "float[]"
+                elif type_of_value == 'string array':
+                    value_string = "string[]"
+                elif type_of_value == 'bool array':
+                    value_string = "bool[]"
+                else:
+                    raise ValueError("The type_of_value must be set to 'int array', " \
+                            "'float array', 'string array' or 'bool array' when " \
+                            "a empty list is passed to SimDB.write().")
+                return value_string
 
     def get_date_and_time_as_string(self):
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""

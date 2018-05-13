@@ -1,0 +1,14 @@
+name (string): test_sim
+description (string): A simulation parameter file used for testing.
+run_command (string): python sim_db/tests/program.py
+
+param1 (int): 3
+param2 (float): -0.5e10
+param3 (string): "hei"
+param4 (bool): True
+param5 (int array): [1, 2, 3]
+param6 (float array): [1.5, 2.5, 3.5]
+param7 (string array): ["a", "b", "c"]
+param8 (bool array): [True, False, True]
+param9 (int):
+param10 (int array):

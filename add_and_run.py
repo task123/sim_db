@@ -40,6 +40,8 @@ def add_and_run(argv=None):
         run_sim.run_sim(['--id', str(added_id)])
     else:
         run_sim.run_sim(['--id', str(added_id), '-n', str(args.n)])
+    
+    return added_id
 
 if __name__ == '__main__':
     add_and_run()
