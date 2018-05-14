@@ -11,6 +11,7 @@ import update_sim
 import argparse
 import sqlite3
 import subprocess
+import sys
 
 def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Run simulation with ID in database.')
@@ -40,12 +41,13 @@ def run_sim(argv=None):
     update_sim.update_sim(["--id", str(args.id), "--columns", "status", "--values", "running"])
     
     for command in run_command.split(';'):
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         if out != None:
             print(out.decode('UTF-8'))
         if err != None:
-            print(err.decode('UTF-8'))
+            sys.stderr.write(err.decode('UTF-8'))
+            sys.stderr.flush()
     update_sim.update_sim(["--id", str(args.id), "--columns", "status", "--values", "finished"])
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 name (string): test_sim
 description (string): A simulation parameter file used for testing.
-run_command (string): make -s -C sim_db/test build_c_program; sim_db/test/c_program
+run_command (string): make -C sim_db/test build_c_program; sim_db/test/c_program
 
 param1 (int): 3
 param2 (float): -0.5e10

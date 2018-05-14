@@ -37,15 +37,14 @@ class SimDB:
             'None', then it is read from the last argument passed to the program 
             after option '--id'.
         """
-        self.id = self.__id_from_command_line_arguments(db_id)
+        self.id, self.sim_db_dir = self.__read_from_command_line_arguments(db_id)
         self.start_time = time.time()
 
         if (not is_mpi4py_imported) or (MPI.COMM_WORLD.Get_rank() == 1):
             self.write(column="status", value="running")
             self.write('time_started', self.get_date_and_time_as_string())
 
-            sim_db_dir = helpers.get_closest_sim_db_dir_path()
-            sim_db_dir = sim_db_dir.replace(' ', '\ ')
+            sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
             proc = subprocess.Popen(["cd {}/..; git rev-parse HEAD".format(sim_db_dir)], \
                     stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
             (out, err) = proc.communicate()
@@ -151,7 +150,7 @@ class SimDB:
                     "--value", value_string])
 
 
-    def make_subdir_result(self, name_result_directory):
+    def make_unique_subdir(self, path_directory, is_path_relative=True):
         """Make a unique subdirectory in 'name_result_directory'.
 
         The subdirectory will be named date_time_name_id and is intended to 
@@ -161,11 +160,15 @@ class SimDB:
         
         return (string): Full path to new subdirectory.
         """
-        subdir = name_result_directory
+        if is_path_relative:
+            subdir = self.sim_db_dir + '/' + path_directory
+        else:
+            subdir = path_directory
         if len(subdir) > 0 and subdir[-1] != '/':
             subdir += '/'
         subdir += self.get_date_and_time_as_string()
         subdir += '_' + self.read('name') + '_' + str(self.id) 
+        subdir = os.path.realpath(subdir)
         os.mkdir(subdir)
         self.write(column="result_dir", value=subdir)
 
@@ -192,17 +195,22 @@ class SimDB:
         self.write('used_walltime', used_walltime)
         self.write('status', 'finished')
 
-    def __id_from_command_line_arguments(self, db_id):
+    def __read_from_command_line_arguments(self, db_id):
+        path_sim_db = None
         if db_id == None:
             parser = argparse.ArgumentParser() 
             parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
+            parser.add_argument('--path_sim_db', '-p', type=str, default=None, help="Path to sim_db directory.")
             args = parser.parse_args()
             db_id = args.id
+            path_sim_db = args.path_sim_db
+        if (path_sim_db == None):
+            path_sim_db = helper.get_closest_sim_db_dir_path()
         if (db_id == None):
             ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
                     + "If not passed as function parameters, then '--id ID' " \
                     + "must be passed to program as command line arguments.")
-        return db_id
+        return (db_id, path_sim_db)
 
     def __check_type(self, db_cursor, check_type_is, column, value=None):
         column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)

@@ -12,7 +12,7 @@
 typedef struct SimDB SimDB;
 
 /// @brief Initialize SimDB with command line argument ```--id ID```, where
-/// ```ID``` is the id of the simulation parameters in the ```sim_db``` 
+/// ```ID``` is the id of the simulation parameters in the ```sim_db```
 /// database.
 ///
 /// The following metadata is also added to database: 'time_started',
@@ -27,7 +27,7 @@ SimDB* sim_db_ctor(int argc, char** argv);
 /// ```sim_db``` database.
 /// Metadata is also added to database.
 /// sim_db_dtor() must be called to clean up.
-SimDB* sim_db_ctor_with_id(int id);
+SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id);
 
 /// Read parameter from the database.
 /// @param self Return value of fn sim_db_ctor or fn sim_db_ctor_with_id.
@@ -149,7 +149,11 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 /// This new subdirectory is intended for storing results from the simulation.
 /// @param name_result_directory Path to a directory.
 /// @return Path to new subdirectory.
-char* sim_db_make_subdir_result(SimDB* self, const char* name_result_dir);
+char* sim_db_make_unique_subdir_rel_path(SimDB* self,
+                                         const char* rel_path_to_result_dir);
+
+char* sim_db_make_unique_subdir_abs_path(SimDB* self,
+                                         const char* abs_path_to_result_dir);
 
 /// Save the sha1 hash of the file \p paths_executables to the database.
 /// @param self Return value of sim_db_ctor() or sim_db_ctor_with_id().

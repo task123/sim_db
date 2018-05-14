@@ -17,19 +17,19 @@ import subprocess
 def test_add_sim_print_sim_and_delete_sim(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_python_program.txt".format(__get_test_dir())])
     print_sim.print_sim("--id {} -v --no_headers --columns name param1 param2 " \
-            "param3 param4 param5 param6 param7 param8 param9 param10" \
-            .format(db_id).split())
+           "param3 param4 param5 param6 param7 param8 param9 param10" \
+           .format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {}".format(db_id).split())
     print_sim.print_sim("-n 1 --no_headers --columns id".split())
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
-        print("\nTest add_sim, print_sim and delete_sim...")
+       print("\nTest add_sim, print_sim and delete_sim...")
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
     assert len(output_after_delete) == 0 \
-            or output_after_delete != "{}".format(db_id)
+           or output_after_delete != "{}".format(db_id)
 
 def __get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))
@@ -202,55 +202,58 @@ def test_c_functions(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_c_program.txt".format(__get_test_dir())])
     run_sim.run_sim("--id {}".format(db_id).split())
     time.sleep(0.2) # Wait for c_program to finish
-    output_program, err = capsys.readouterr()
+    output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
             "time_started used_walltime --no_headers".format(db_id).split())
-    output_print_sim, err = capsys.readouterr()
+    output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {}".format(db_id).split())
     with capsys.disabled():
         print("\nTest C functions...")
+        print(err_program)
+        print(err_print_sim)
     res_dir = output_print_sim.split('\n')[16].strip()
     os.remove(res_dir + "/results.txt")
     os.rmdir(res_dir)
-    __assert_output_c_program(output_program)
+    __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim)
 
 def test_cpp_functions(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_cpp_program.txt".format(__get_test_dir())])
     run_sim.run_sim("--id {}".format(db_id).split())
     time.sleep(0.2) # Wait for cpp_program to finish
-    output_program, err = capsys.readouterr()
+    output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
             "time_started used_walltime --no_headers".format(db_id).split())
-    output_print_sim, err = capsys.readouterr()
+    output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {}".format(db_id).split())
     with capsys.disabled():
         print("\nTest C++ methods...")
+        print(err_program)
     res_dir = output_print_sim.split('\n')[16].strip()
     os.remove(res_dir + "/results.txt")
     os.rmdir(res_dir)
-    __assert_output_c_program(output_program)
+    __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim)
 
-def __assert_output_c_program(output_popen):
+def __assert_output_c_and_cpp_program(output_popen):
     printed_lines = output_popen.split('\n')
-    assert printed_lines[1] == "3"
-    assert printed_lines[2] == printed_lines[1]
-    assert abs(float(printed_lines[3]) - -5000000000.0) < 0.001
-    assert printed_lines[4] == printed_lines[3]
-    assert printed_lines[5] == "hei"
-    assert printed_lines[6] == printed_lines[5]
-    assert printed_lines[7] == "1"
-    assert printed_lines[8] == printed_lines[7]
-    assert printed_lines[9:12] == ['1', '2', '3']
-    assert printed_lines[9:12] == printed_lines[12:15]
-    assert abs(float(printed_lines[15]) - 1.5) < 0.001
-    assert abs(float(printed_lines[16]) - 2.5) < 0.001
-    assert abs(float(printed_lines[17]) - 3.5) < 0.001
-    assert printed_lines[15:18] == printed_lines[18:21]
-    assert printed_lines[21:24] == ['a', 'b', 'c']
-    assert printed_lines[21:24] == printed_lines[24:27]
-    assert printed_lines[27:30] == ['1', '0', '1']
-    assert printed_lines[27:30] == printed_lines[30:33]
+    assert printed_lines[2] == "3"
+    assert printed_lines[3] == printed_lines[2]
+    assert abs(float(printed_lines[4]) - -5000000000.0) < 0.001
+    assert printed_lines[5] == printed_lines[4]
+    assert printed_lines[6] == "hei"
+    assert printed_lines[7] == printed_lines[6]
+    assert printed_lines[8] == "1"
+    assert printed_lines[9] == printed_lines[8]
+    assert printed_lines[10:13] == ['1', '2', '3']
+    assert printed_lines[10:13] == printed_lines[13:16]
+    assert abs(float(printed_lines[16]) - 1.5) < 0.001
+    assert abs(float(printed_lines[17]) - 2.5) < 0.001
+    assert abs(float(printed_lines[18]) - 3.5) < 0.001
+    assert printed_lines[16:19] == printed_lines[19:22]
+    assert printed_lines[22:25] == ['a', 'b', 'c']
+    assert printed_lines[22:25] == printed_lines[25:28]
+    assert printed_lines[28:31] == ['1', '0', '1']
+    assert printed_lines[28:31] == printed_lines[31:34]

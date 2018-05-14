@@ -74,17 +74,9 @@ int main(int argc, char** argv) {
         printf("%d\n", bool_vec.array[i]);
     }
 
-    char path_test_dir[4097];
-    getcwd(path_test_dir, 4096);
-    strcat(path_test_dir, "/");
-    strcat(path_test_dir, __FILE__);
-    char* file_rel_sim_db = "/program.c";
-    char* test_dir = strstr(path_test_dir, file_rel_sim_db);
-    test_dir[0] = '\0';
-    strcat(path_test_dir, "/results/");
-    char* filename_result = strcat(
-            sim_db_make_subdir_result(sim_db, path_test_dir), "/results.txt");
-    FILE* result_file = fopen(filename_result, "w");
+    char* name_subdir =
+            sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
+    FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
     for (int i = 0; i < double_vec.size; i++) {
         fprintf(result_file, "%f\n", double_vec.array[i]);
     }

@@ -3,6 +3,8 @@ CPP = g++
 CFLAGS = -lsqlite3
 CPPFLAGS = -lsqlite3 -std=c++11
 
+PATH_SIM_DB := $(if $(PATH_SIM_DB), $(PATH_SIM_DB), "..")
+
 build_c_program: program.c ../sim_db.c ../sim_db.h
 	${CC} ${CFLAGS} -o c_program program.c ../sim_db.c
 
@@ -10,10 +12,10 @@ build_cpp_program: program.cpp ../sim_db.cpp ../sim_db.hpp ../sim_db.c ../sim_db
 	${CPP} ${CPPFLAGS} -o cpp_program program.cpp ../sim_db.cpp -xc++ ../sim_db.c
 
 run_c_program: build_c_program
-	./c_program --id ${ID}
+	./c_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
 
 run_cpp_program: build_cpp_program
-	./cpp_program --id ${ID}
+	./cpp_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
 
 clean:
 	rm -f c_program

@@ -11,11 +11,7 @@ import argparse
 import os.path
 import numpy as np
 
-parser = argparse.ArgumentParser(description='Test program that prints test parameters from database, write a variable to database, make subdirectory for results and store results there.')
-parser.add_argument('--id', '-i', required=True, type=int, help="<Required> ID of test paramters in sim.db database.")
-args = parser.parse_args()
-
-sim_database = sim_db.SimDB(args.id)
+sim_database = sim_db.SimDB()
 
 param1 = sim_database.read("param1")
 print(param1) 
@@ -64,8 +60,7 @@ param10 = sim_database.read("param10")
 print(param10) 
 
 large_test_res = np.array(param6)
-path_dir = os.path.dirname(os.path.abspath(__file__))
-res_dir = sim_database.make_subdir_result("{}/results".format(path_dir))
+res_dir = sim_database.make_unique_subdir("test/results")
 np.savetxt("{}/results.txt".format(res_dir), large_test_res)
 
 sim_database.end()

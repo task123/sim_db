@@ -17,7 +17,7 @@ class Connection {
 public:
     Connection(int argc, char** argv);
 
-    Connection(int id);
+    Connection(std::string path_sim_db, int id);
 
     template <typename T>
     T read(std::string column);
@@ -25,7 +25,8 @@ public:
     template <typename T>
     void write(std::string column, T value);
 
-    std::string make_subdir_result(std::string path_result_directory);
+    std::string make_unique_subdir(std::string path_directory,
+                                   bool is_path_relative = true);
 
     void update_sha1_executables(std::vector<std::string> paths_executables);
 

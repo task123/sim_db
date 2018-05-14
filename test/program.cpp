@@ -76,9 +76,9 @@ int main(int argc, char** argv) {
     path_res_dir.erase(path_res_dir.find_last_of('/'), path_res_dir.size());
     path_res_dir += "/results";
 
-    // Make unique subdirectory in results.
+    // Make unique subdirectory in results/.
     std::string filename_result =
-            sim_db.make_subdir_result(path_res_dir) + "/results.txt";
+            sim_db.make_unique_subdir("test/results/") + "/results.txt";
 
     // Save param6 to file in this unique subdirectory.
     std::ofstream result_file;
