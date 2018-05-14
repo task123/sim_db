@@ -18,6 +18,10 @@ submit_sim
 run_sim
 update_sim
 
+# Executable test programs
+test/c_program
+test/cpp_program
+
 # Temporary files
 *.pyc
 *.swp

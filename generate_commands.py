@@ -11,7 +11,7 @@ settings.txt if wished.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
+from source_commands import helpers
 import fnmatch
 from sys import platform
 import os
@@ -21,9 +21,10 @@ def get_previous_path(where_to_add_path):
     previous_path = None
     for line in bash_file.readlines():
         if line.split(' ')[0] == 'export':
-            if line.split('/')[-1].strip() == 'sim_db':
+            if len(line.split('/sim_db/commands')) == 2:
                 previous_path = line.split(':')[-1].strip()
                 previous_path = previous_path.replace('\ ', ' ')
+                previous_path = previous_path.rsplit('/', 1)[0]
     return previous_path
 
 def add_path(where_to_add_path):
@@ -36,14 +37,16 @@ def add_path(where_to_add_path):
         bash_file.write("\n# Add sim_db commands to PATH\n")
         sim_db_dir = helpers.get_closest_sim_db_dir_path()
         sim_db_dir = sim_db_dir.replace(' ', '\ ')
-        bash_file.write("export PATH=$PATH:{}\n".format(sim_db_dir))
+        bash_file.write("export PATH=$PATH:{}\n".format(sim_db_dir + "/commands"))
         bash_file.write("\n# Add a 'sim_db' command (as 'cd' called from a " \
                        +"script don't work)\n")
         bash_file.write("function cd_results(){\n")
-        bash_file.write('    cd "$(python {0}/cd_results.py $@)"\n'.format(sim_db_dir)) 
+        bash_file.write('    cd "$(python {0}/source_commands/cd_results.py $@)"\n' \
+                .format(sim_db_dir)) 
         bash_file.write("}\n")
         bash_file.close()
-        os.system("source {}".format(where_to_add_path))
+        print("\nRemember to source the newly added path:")
+        print("$ source {}".format(where_to_add_path))
     else:
         print("No changes were made to {}".format(where_to_add_path))
 
@@ -92,17 +95,16 @@ def replace_old_path(previous_path, where_to_add_path):
  
 def main():
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
-    programs = fnmatch.filter(os.listdir(sim_db_dir), "*.py")
-    programs.remove('generate_commands.py')
+    source_commands_dir = sim_db_dir + "/source_commands"
+    programs = fnmatch.filter(os.listdir(source_commands_dir), "*.py")
     programs.remove('helpers.py')
-    programs.remove('sim_db.py')
     programs.remove('__init__.py')
     programs.remove('cd_results.py')
     sim_db_dir = sim_db_dir.replace(" ", "\ ")
     for program in programs:
-        script_name = program.split('.')[0]
+        script_name = "commands/" + program.split('.')[0]
         script_file = open(script_name, 'w')
-        script_file.write('python {0}/{1} "$@"'.format(sim_db_dir, program))
+        script_file.write('python {0}/source_commands/{1} "$@"'.format(sim_db_dir, program))
         script_file.close()
         os.system("chmod u+x {}".format(script_name))
 

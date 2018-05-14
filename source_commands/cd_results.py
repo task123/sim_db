@@ -5,7 +5,6 @@
 # Licenced under the MIT License.
 
 import helpers
-import sim_db
 import argparse
 import os
 
