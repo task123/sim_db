@@ -1,3 +1,5 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+test_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append('{}/../source_commands'.format(test_dir))
+sys.path.append('{}/..'.format(test_dir))

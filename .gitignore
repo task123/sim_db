@@ -22,6 +22,10 @@ update_sim
 test/c_program
 test/cpp_program
 
+# Test results not deleted
+test/results/*
+!test/results/.keep
+
 # Temporary files
 *.pyc
 *.swp

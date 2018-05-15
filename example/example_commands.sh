@@ -1,42 +1,50 @@
 #! /usr/bin/env bash
 #
-# Example of how to use the 'add_and_run' command and then how to use the the 
-# 'add_sim' and 'run_sim' individually while using 'print_sim' to print from 
-# the database at each stage. Both set of simulation are deleted in the end of 
-# the example.
-# 
-# The last of these two examples shows how to run a set of commands to add the 
-# parameters in 'example_sim_params.txt' to the database, print some of the 
-# parameters, run this "simulation", print the status, update the status, print 
-# the status again and delete the simulation parameters from the database .
+# Example of how to use 'add_sim' and 'run_sim' to run the examples for 
+# python, C and C++.
+#
+# 'print_sim' is run silenty to get the id of added parameters and 'delete_sim'
+# is used to delete the added parameters.
 
-echo -e "Add example parameters to database and run the simulation."
-add_and_run --filename ${BASH_SOURCE%/*}/example_sim_params.txt
+############################# Run python example ############################## 
 
-# Get hold of the ID of the exampel parameters.
-id_from_add_and_run=`print_sim -n 1 --columns id --no_headers`
+# Add example parameters to database for python example.
+add_sim --filename sim_params_example_python_program.txt
 
-echo -e "\nAdd example parameters to database.\n"
-add_sim --filename ${BASH_SOURCE%/*}/example_sim_params.txt
+# Get hold of the ID of the exampel parameters for python example.
+id_for_python_example=`print_sim -n 1 --columns id --no_headers`
 
-echo -e "Print the 3 last entries in the database to view the added example parameters.\n"
-print_sim -n 3 --max_width 7 --columns id "status" name param1 param2 param3 param4 param5 param6 param7 param8
+# Run program.py.
+run_sim --id ${id_for_python_example}
 
-# Get hold of the ID of the exampel parameters.
-id_from_add_sim=`print_sim -n 1 --columns id --no_headers`
+############################### Run C example ################################# 
 
-echo -e "\nRun example program that prints out the paramters."
-run_sim --id ${id_from_add_sim}
+# Add example parameters to database for C example.
+add_sim --filename sim_params_example_c_program.txt
 
-echo -e "\nPrint the last entry in the database to view the updated status.\n"
-print_sim -n 1 --max_width 7 --columns id "status" name param1 param2 param3 param4 param5 param6 param7 param8
+# Get hold of the ID of the exampel parameters for C example.
+id_for_c_example=`print_sim -n 1 --columns id --no_headers`
 
+# Run program.c (after compiling it with make command).
+run_sim --id ${id_for_c_example}
 
-echo -e "\nDelete the example parameters that where added to the database.\n"
-delete_sim --id ${id_from_add_and_run}
-delete_sim --id ${id_from_add_sim}
+############################## Run C++ example ################################ 
 
-echo -e "Print the last entry in the database to check that the example parameters where deleted.\n"
-print_sim -n 1 --max_width 7 --columns id "status" name param1 param2 param3 param4 param5 param6 param7 param8
+# Add example parameters to database for C example.
+add_sim --filename sim_params_example_cpp_program.txt
 
+# Get hold of the ID of the exampel parameters for C example.
+id_for_cpp_example=`print_sim -n 1 --columns id --no_headers`
 
+# Run program.c (after compiling it with make command).
+run_sim --id ${id_for_cpp_example}
+
+################## Delete example simulations from database ################### 
+
+delete_sim --id ${id_for_python_example}
+delete_sim --id ${id_for_c_example}
+delete_sim --id ${id_for_cpp_example}
+
+################################## Clean up ################################### 
+
+make clean

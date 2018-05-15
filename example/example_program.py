@@ -1,24 +1,32 @@
 # -*- coding: utf-8 -*-
-""" Add simulation parameters to a sqlite3 database from a text file.
-Usage: 'python example_program --id ID'
+""" Example program showing how to use the python version of 'sim_db'.
+
+Usage: 'add_and_run --filename sim_params_example_python_program.txt'
+    or with parameter with id, ID, in database:
+       'python example_program --id ID --path_sim_db ".."'
 """
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import __init__
 import sim_db
-import argparse
+import numpy as np
 
+# Open database and write some initial metadata to database.
+sim_database = sim_db.SimDB()
 
-parser = argparse.ArgumentParser(description='Example program that prints example parameters from database.')
-parser.add_argument('--id', '-i', required=True, type=int, help="<Required> ID of example paramters in sim.db database.")
-args = parser.parse_args()
+# Read parameters from database.
+example_param1 = sim_database.read("example_param1") # String
+example_param2 = sim_database.read("example_param2") # List of integers
 
-sim_db = sim_db.SimDB()
+# Write to database.
+small_result = 42.0
+sim_database.write("example_small_result", small_result, type_of_value=float)
 
-print("\nSimulation is printing out all input parameters:")
-for i in range(1, 9):
-    parameter = sim_db.read(column='param{}'.format(i))
-    print("param{0}: {1}".format(i, parameter))
+# Make unique subdirectory for storing results and write its name to database.
+results = np.array([1, 3, 7])
+name_results_dir = sim_database.make_unique_subdir("example/results")
+np.savetxt(name_results_dir + "/results.txt", results)
 
-sim_db.end()
+# Write final metadata to database. 
+sim_database.end()
