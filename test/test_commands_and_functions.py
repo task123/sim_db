@@ -12,6 +12,7 @@ import update_sim
 import add_comment
 import cd_results
 import submit_sim
+import add_and_submit
 import os
 import time
 import subprocess
@@ -276,6 +277,28 @@ def test_cd_results(capsys):
     assert not os.path.isdir(result_dir)
 
 def test_submit_sim(capsys):
+    settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
+            __read_job_scheduler_settings()
+
+    with capsys.disabled():
+        print("\nTest submit_sim...")
+        for no_set in settings_no_set:
+            print("WARNING: In settings.txt '{}' is NOT set, but must be to test "
+                    "submit_sim.".format(no_set))
+
+    if len(settings_no_set) == 0:
+        db_id = add_sim.add_sim(["--filename", "{}/sim_params_python_program.txt" \
+                .format(__get_test_dir())])
+        job_script_name, job_id = submit_sim.submit_sim(["--id", str(db_id), \
+                "--do_not_submit_job_script", "--max_walltime", "03:34:00", "--n_nodes", "2"])
+        delete_sim.delete_sim("--id {}".format(db_id).split())
+        job_script_file = open(job_script_name, 'r')
+        lines = job_script_file.readlines()
+        job_script_file.close()
+        os.remove(job_script_name)
+        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node) 
+
+def __read_job_scheduler_settings():
     settings = helpers.Settings()
     job_scheduler = settings.read('which_job_scheduler')
     n_cpus_per_node = settings.read('n_cpus_per_node')
@@ -289,33 +312,40 @@ def test_submit_sim(capsys):
     if len(memory_per_node) == 0:
         settings_no_set.append("Memory per node")
 
-    with capsys.disabled():
-        print("\nTest submit_sim...")
-        for no_set in settings_no_set:
-            print("WARNING: In settings.txt '{}' is NOT set, but must be to test submit_sim." \
-                    .format(no_set))
+    return (settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node)
 
-    if len(settings_no_set) == 0:
-        db_id = add_sim.add_sim(["--filename", "{}/sim_params_python_program.txt" \
-                .format(os.path.dirname(os.path.abspath(__file__)))])
-        job_script_name, job_id = submit_sim.submit_sim(["--id", str(db_id), \
-                "--do_not_submit_job_script", "--max_walltime", "03:34:00", "--n_nodes", "2"])
-        delete_sim.delete_sim("--id {}".format(db_id).split())
-        job_script_file = open(job_script_name, 'r')
-        lines = job_script_file.readlines()
-        job_script_file.close()
-        os.remove(job_script_name)
-
-    if len(settings_no_set) == 0 and job_scheduler[0] == 'SLURM':
+def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node):
+    if job_scheduler[0] == 'SLURM':
         assert lines[0] == '#!/bin/bash\n'
         assert lines[1] == '#SBATCH --job-name=test_sim\n'
         assert lines[2] == '#SBATCH --time=03:34:00\n'
         assert lines[3] == '#SBATCH --ntasks={}\n'.format(int(n_cpus_per_node[0])*2)
         assert lines[4] == '#SBATCH --mem-per-cpu={}G\n' \
                 .format(float(memory_per_node[0])/int(n_cpus_per_node[0]))
-    elif len(settings_no_set) == 0 and job_scheduler[0] == 'PBS':
+    elif job_scheduler[0] == 'PBS':
         assert lines[0] == '#!/bin/bash\n'
         assert lines[1] == '#PBS -N test_sim\n'
         assert lines[2] == '#PBS -l walltime=03:34:00\n'
         assert lines[3] == '#PBS -l nodes=2:ppn={}\n'.format(int(n_cpus_per_node[0]))
         assert lines[4] == '#PBS --mem={}GB\n'.format(memory_per_node[0])
+
+def test_add_and_submit(capsys):
+    settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
+            __read_job_scheduler_settings()
+
+    with capsys.disabled():
+        print("\nTest add_and_submit...")
+        for no_set in settings_no_set:
+            print("WARNING: In settings.txt '{}' is NOT set, but must be to test "
+                    "add_and_submit.".format(no_set))
+
+    if len(settings_no_set) == 0:
+        db_id, job_script_name, job_id = add_and_submit.add_and_submit(["--filename", \
+            "{}/sim_params_python_program.txt".format(__get_test_dir()), "--n_nodes",
+            "2", "--max_walltime", "03:34:00", "--do_not_submit_job_script"])
+        delete_sim.delete_sim("--id {}".format(db_id).split())
+        job_script_file = open(job_script_name, 'r')
+        lines = job_script_file.readlines()
+        job_script_file.close()
+        os.remove(job_script_name)
+        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node)

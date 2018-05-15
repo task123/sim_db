@@ -83,13 +83,24 @@ def make_job_script(db_cursor, i, args, id_submit):
         if args.n_tasks != None:
             n_tasks = args.n_tasks[i]
         else:
+            if (n_cpus_per_node == None):
+                print("'Number of logical cpus per node' is NOT set in settings.txt " \
+                        "and it must be when '--n_nodes N' is passed to 'submit_sim'.")
+                exit(1)
             n_tasks = args.n_nodes[i]*n_cpus_per_node
         db_cursor.execute("UPDATE runs SET n_tasks = {0} WHERE id = {1}" \
                 .format(n_tasks, id_submit))
+    if n_tasks == None:
+        print("Job script can NOT be submitted without either 'n_tasks' being " \
+                "set in simulation parameters file or '--n_tasks N' or '--n_nodes M' " \
+                "being passed as flags to 'submit_sim'.")
+        exit(1)
+
     if n_cpus_per_node != None:
         if n_tasks % n_cpus_per_node != 0:
             print("WARNING: Number of tasks (processes) is NOT a multiple of " \
                  +"the number of logical cpus per node.")
+
     if which_job_scheduler == 'SLURM':
         job_script_file.write("#SBATCH --ntasks={}\n".format(n_tasks))
     elif which_job_scheduler == 'PBS':
