@@ -3,6 +3,9 @@
 /// Read in parameters from database, write parameters to database, make unique
 /// subdirectory for results and save 'results.txt' in this directory.
 
+// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Licensed under the MIT License.
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

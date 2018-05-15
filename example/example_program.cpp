@@ -5,6 +5,9 @@
 //        'make build_cpp_example'
 //      + './cpp_example --id ID --path_sim_db ".."
 
+// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Licensed under the MIT License.
+
 #include <fstream>
 #include <string>
 #include <vector>

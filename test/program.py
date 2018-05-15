@@ -4,6 +4,8 @@
 Read in parameters from database, write parameters to database, make unique 
 subdirectory for results and save 'results.txt' in this directory.
 """
+# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Licenced under the MIT License.
 
 import __init__
 import sim_db

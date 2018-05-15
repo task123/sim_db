@@ -5,6 +5,9 @@
 //        'make build_c_example'
 //      + './c_example --id ID --path_sim_db ".."
 
+// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Licensed under the MIT License.
+
 #include <stdio.h>
 #include <string.h>
 #include "../sim_db.h"

@@ -5,6 +5,9 @@
 #
 # 'print_sim' is run silenty to get the id of added parameters and 'delete_sim'
 # is used to delete the added parameters.
+#
+# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Licenced under the MIT License.
 
 ############################# Run python example ############################## 
 

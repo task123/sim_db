@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+""" Test 'sim_db'.
+
+Test all the python scripts called by the commands, the python, C and C++ 
+version of the functions and methods used in external code for to interact with
+the database.
+"""
+# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Licenced under the MIT License.
+
 import add_sim
 import print_sim
 import delete_sim
