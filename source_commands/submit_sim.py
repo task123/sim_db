@@ -27,6 +27,7 @@ def get_arguments(argv):
     parser.add_argument('--notify_fail', action='store_true', help="Set notification for if simulation fails.")
     parser.add_argument('--notify_end', action='store_true', help="Set notification for when simulation ends or if it fails.")
     parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
+    parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
     return parser.parse_args(argv)
 
 def make_job_script(db_cursor, i, args, id_submit):
@@ -73,7 +74,7 @@ def make_job_script(db_cursor, i, args, id_submit):
 
     n_cpus_per_node = settings.read('n_cpus_per_node')
     if len(n_cpus_per_node) > 0:
-        n_cpus_per_node = n_cpus_per_node[0]
+        n_cpus_per_node = int(n_cpus_per_node[0])
     else:
         n_cpus_per_node = None
 
@@ -97,11 +98,11 @@ def make_job_script(db_cursor, i, args, id_submit):
 
     memory_per_node = settings.read('memory_per_node')
     if len(memory_per_node) > 0:
-        memory_per_cpu = memory_per_node[0]/float(n_cpus_per_node)
+        memory_per_cpu = float(memory_per_node[0])/float(n_cpus_per_node)
         if which_job_scheduler == 'SLURM':
             job_script_file.write("#SBATCH --mem-per-cpu={}G\n".format(memory_per_cpu))
         elif which_job_scheduler == 'PBS':
-            job_script_file.write("PBS --mem={}GB\n".format(memory_per_node[0]))
+            job_script_file.write("#PBS --mem={}GB\n".format(memory_per_node[0]))
 
     account = settings.read('account')
     if len(account) > 0:
@@ -167,22 +168,27 @@ def submit_sim(argv=None):
                 return
 
     which_job_scheduler = helpers.Settings().read('which_job_scheduler')[0]
+    job_script_name = None
+    job_id = None
     for i, id_submit in enumerate(ids):
         job_script_name = make_job_script(db_cursor, i, args, id_submit)
-        if which_job_scheduler == 'SLURM':
-            p = subprocess.Popen(["sbatch", job_script_name])
-            (job_id, err) = p.communicate()
-        elif which_job_scheduler == 'PBS':
-            p = subprocess.Popen(["qsub", job_script_name])
-            (job_id, err) = p.communicate()
-        db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={}" \
-                          .format(id_submit))
-        db_cursor.execute("UPDATE runs SET job_id={0} WHERE id={1}" \
-                          .format(out, id_submit))
+        if not args.do_not_submit_job_script:
+            if which_job_scheduler == 'SLURM':
+                p = subprocess.Popen(["sbatch", job_script_name])
+                (job_id, err) = p.communicate()
+            elif which_job_scheduler == 'PBS':
+                p = subprocess.Popen(["qsub", job_script_name])
+                (job_id, err) = p.communicate()
+            db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={}" \
+                              .format(id_submit))
+            db_cursor.execute("UPDATE runs SET job_id={0} WHERE id={1}" \
+                              .format(out, id_submit))
 
     db.commit()
     db_cursor.close()
     db.close()
+
+    return (job_script_name, job_id)
 
 if __name__ == '__main__':
     submit_sim()
