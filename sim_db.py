@@ -6,9 +6,7 @@ The parameters is converted to correct type.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
-import update_sim 
-import add_column
+from source_commands import helpers, update_sim, add_column
 import sqlite3
 import argparse
 import subprocess
@@ -104,7 +102,7 @@ class SimDB:
         
         return value
 
-    def write(self, column, value, db_id=None, type_of_value=''):
+    def write(self, column, value, type_of_value='', db_id=None):
         """Write to entry with id 'db_id' and column 'column' from the database.
 
         If 'column' does not exists, a new is added.

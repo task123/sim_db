@@ -739,7 +739,6 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 
 char* sim_db_make_unique_subdir_abs_path(SimDB* self,
                                          const char* abs_path_to_result_dir) {
-    printf("abs_path: %s\n", abs_path_to_result_dir);
     char time_string[100];
     sim_db_get_time_string(time_string);
     char* name = sim_db_read_string(self, "name");
