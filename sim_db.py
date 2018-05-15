@@ -167,6 +167,11 @@ class SimDB:
         subdir += self.get_date_and_time_as_string()
         subdir += '_' + self.read('name') + '_' + str(self.id) 
         subdir = os.path.realpath(subdir)
+        if os.path.exists(subdir):
+            subdir += "__no2"
+        while (os.path.exists(subdir)):
+            i = subdir.rfind("_no")
+            subdir = subdir[:i+4] + str(int(subdir[i+4:]) + 1)
         os.mkdir(subdir)
         self.write(column="result_dir", value=subdir)
 

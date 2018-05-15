@@ -750,7 +750,18 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
         sprintf(name_subdir, "%s/%s_%s_%d", abs_path_to_result_dir, time_string,
                 name, self->id);
     }
-    if (mkdir(name_subdir, 0700) == -1) {
+    struct stat st;
+    if (stat(name_subdir, &st) == 0) {
+        strcat(name_subdir, "__no2");
+        while (stat(name_subdir, &st) == 0) {
+            printf("%s\n", name_subdir);
+            char* ending_num = strstr(name_subdir, "__no") + 4;
+            int new_num = atoi(ending_num) + 1;
+            ending_num[0] = '\0';
+            sprintf(name_subdir, "%s%d", name_subdir, new_num);
+        }
+    }
+    if (mkdir(name_subdir, 0700)) {
         fprintf(stderr, "ERROR: Could NOT create subdirectory %s\n",
                 name_subdir);
         exit(1);
