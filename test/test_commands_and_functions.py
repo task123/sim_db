@@ -26,6 +26,7 @@ import add_and_submit
 import os
 import time
 import subprocess
+import combine_dbs
 
 def test_add_sim_print_sim_and_delete_sim(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_python_program.txt".format(__get_test_dir())])
@@ -65,7 +66,7 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
 def test_run_sim_and_sim_db_methods(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_python_program.txt".format(__get_test_dir())])
     run_sim.run_sim("--id {}".format(db_id).split())
-    time.sleep(0.2) # Wait for program.py to finish
+    time.sleep(0.15) # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     print_sim.print_sim("--id {} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -119,7 +120,7 @@ def __assert_output_print_sim_after_run_sim(output_print_sim):
 def test_c_functions(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_c_program.txt".format(__get_test_dir())])
     run_sim.run_sim("--id {}".format(db_id).split())
-    time.sleep(0.2) # Wait for c_program to finish
+    time.sleep(0.15) # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -139,7 +140,7 @@ def test_c_functions(capsys):
 def test_cpp_functions(capsys):
     db_id = add_sim.add_sim(["--filename", "{}/sim_params_cpp_program.txt".format(__get_test_dir())])
     run_sim.run_sim("--id {}".format(db_id).split())
-    time.sleep(0.2) # Wait for cpp_program to finish
+    time.sleep(0.15) # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -178,7 +179,7 @@ def __assert_output_c_and_cpp_program(output_popen):
 
 def test_add_and_run(capsys):
     db_id = add_and_run.add_and_run(["--filename", "{}/sim_params_python_program.txt".format(__get_test_dir())])
-    time.sleep(0.2) # Wait for program.py to finish
+    time.sleep(0.15) # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     print_sim.print_sim("--id {} -v --no_headers --columns name param1 param2 " \
             "param3 param4 param5 param6 param7 param8 param9 param10" \
@@ -359,3 +360,57 @@ def test_add_and_submit(capsys):
         job_script_file.close()
         os.remove(job_script_name)
         __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node)
+
+def test_combine_dbs(capsys):
+    path_db_1 = __get_test_dir() + "/sim1_test_comb.db"
+    path_db_2 = __get_test_dir() + "/sim2_test_comb.db"
+    path_comb_db = __get_test_dir() + "/new_comb_sim.db"
+    if os.path.exists(path_comb_db):
+        os.remove(path_comb_db)
+    combine_dbs.combine_dbs([path_db_1, path_db_2, path_comb_db])
+    comb_sim_db = helpers.connect_sim_db(path_comb_db)
+    comb_sim_db_cursor = comb_sim_db.cursor()
+    db_1 = helpers.connect_sim_db(path_db_1)
+    db_1_cursor = db_1.cursor()
+    db_2 = helpers.connect_sim_db(path_db_2)
+    db_2_cursor = db_2.cursor()
+
+    column_names_1, column_types_1 = helpers.get_db_column_names_and_types(db_1_cursor)
+    column_names_2, column_types_2 = helpers.get_db_column_names_and_types(db_2_cursor)
+    column_names_comb, column_types_comb = helpers.get_db_column_names_and_types( \
+            comb_sim_db_cursor)
+
+    old_run_commands = []
+    db_1_cursor.execute("SELECT run_command FROM runs WHERE id=1;")
+    old_run_commands.append(db_1_cursor.fetchall()[0][0])
+    db_1_cursor.execute("SELECT run_command FROM runs WHERE id=2;")
+    old_run_commands.append(db_1_cursor.fetchall()[0][0])
+    db_2_cursor.execute("SELECT run_command FROM runs WHERE id=1;")
+    old_run_commands.append(db_2_cursor.fetchall()[0][0])
+    db_2_cursor.execute("SELECT run_command FROM runs WHERE id=2;")
+    old_run_commands.append(db_2_cursor.fetchall()[0][0])
+
+    new_run_commands = []
+    comb_sim_db_cursor.execute("SELECT run_command FROM runs WHERE id=1;")
+    new_run_commands.append(comb_sim_db_cursor.fetchall()[0][0])
+    comb_sim_db_cursor.execute("SELECT run_command FROM runs WHERE id=2;")
+    new_run_commands.append(comb_sim_db_cursor.fetchall()[0][0])
+    comb_sim_db_cursor.execute("SELECT run_command FROM runs WHERE id=3;")
+    new_run_commands.append(comb_sim_db_cursor.fetchall()[0][0])
+    comb_sim_db_cursor.execute("SELECT run_command FROM runs WHERE id=4;")
+    new_run_commands.append(comb_sim_db_cursor.fetchall()[0][0])
+
+    with capsys.disabled():
+        print("Test combine_dbs...")
+
+    comb_sim_db.commit()
+    comb_sim_db_cursor.close()
+    comb_sim_db.close()
+    os.remove(path_comb_db)
+
+    for column_name in column_names_1:
+        assert column_name in column_names_comb
+    for column_name in column_names_2:
+        assert column_name in column_names_comb
+    for (old_command, new_command) in zip(old_run_commands, new_run_commands):
+        assert old_command == new_command
