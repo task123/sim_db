@@ -15,13 +15,6 @@ import os
 import time
 import hashlib
 
-is_mpi4py_imported = True
-try:
-    from mpi4py import MPI
-except:
-    is_mpi4py_imported = False
-    
-
 class SimDB:
     def __init__(self, db_id=None):
         """Add metadata to database and note start time.
@@ -38,35 +31,34 @@ class SimDB:
         self.id, self.sim_db_dir = self.__read_from_command_line_arguments(db_id)
         self.start_time = time.time()
 
-        if (not is_mpi4py_imported) or (MPI.COMM_WORLD.Get_rank() == 1):
-            self.write(column="status", value="running")
-            self.write('time_started', self.get_date_and_time_as_string())
+        self.write(column="status", value="running")
+        self.write('time_started', self.get_date_and_time_as_string())
 
-            sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
-            proc = subprocess.Popen(["cd {}/..; git rev-parse HEAD".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-            (out, err) = proc.communicate()
-            self.write(column="git_hash", value=out.decode('UTF-8'))
+        sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
+        proc = subprocess.Popen(["cd {}/..; git rev-parse HEAD".format(sim_db_dir)], \
+                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+        (out, err) = proc.communicate()
+        self.write(column="git_hash", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {}/..; git log -n 1 --format=%B HEAD".format( \
-                    sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
-                    shell=True)
-            (out, err) = proc.communicate()
-            self.write(column="commit_message", value=out.decode('UTF-8'))
+        proc = subprocess.Popen(["cd {}/..; git log -n 1 --format=%B HEAD".format( \
+                sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
+                shell=True)
+        (out, err) = proc.communicate()
+        self.write(column="commit_message", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {}/..; git diff HEAD --stat".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-            (out, err) = proc.communicate()
-            self.write(column="git_diff_stat", value=out.decode('UTF-8'))
+        proc = subprocess.Popen(["cd {}/..; git diff HEAD --stat".format(sim_db_dir)], \
+                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+        (out, err) = proc.communicate()
+        self.write(column="git_diff_stat", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {}/..; git diff HEAD".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-            (out, err) = proc.communicate()
-            out = out.decode('UTF-8')
-            if len(out) > 3000:
-                warning = "WARNING: Diff limited to first 3000 characters.\n"
-                out = warning + '\n' + out[0:3000] + '\n\n' + warning
-            self.write(column="git_diff", value=out)
+        proc = subprocess.Popen(["cd {}/..; git diff HEAD".format(sim_db_dir)], \
+                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+        (out, err) = proc.communicate()
+        out = out.decode('UTF-8')
+        if len(out) > 3000:
+            warning = "WARNING: Diff limited to first 3000 characters.\n"
+            out = warning + '\n' + out[0:3000] + '\n\n' + warning
+        self.write(column="git_diff", value=out)
 
     def read(self, column, db_id=None, check_type_is=''):
         """Read parameter with id 'db_id' and column 'column' from the database.
