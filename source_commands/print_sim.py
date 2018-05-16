@@ -11,7 +11,6 @@ import sqlite3
 import argparse
 import os
 import sys
-import numpy as np
 
 def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.')
@@ -72,7 +71,7 @@ def select_command(db_cursor, args, column_names):
                               .format(columns, restrictions, args.sort_by))
             selected_output.append(db_cursor.fetchall()[0])
 
-    selected_output = np.array(selected_output)
+    selected_output = [list(row) for row in selected_output]
     if not args.all_columns and args.columns == None and args.col_by_num == None:
         selected_output, column_names = remove_empty_columns(selected_output, 
                                                              column_names)
@@ -96,11 +95,15 @@ def remove_empty_columns(selected_output, column_names):
         return selected_output, column_names
     columns_to_remove = []
     for col in range(len(selected_output[0])):
-        if not np.any(selected_output[:, col]):
+        if all(elem is None for elem in [row[col] for row in selected_output]):
             columns_to_remove.append(col)
-    for i, original_col in enumerate(columns_to_remove):
-        selected_output = np.delete(selected_output, original_col - i, 1)
-        column_names = np.delete(column_names, original_col - i)
+    n_deleted = 0
+    for col in columns_to_remove:
+        for row in selected_output:
+            del row[col-n_deleted]
+        del column_names[col-n_deleted]
+        n_deleted += 1
+    
     return selected_output, column_names
 
 def remove_columns_not_to_print(selected_output, column_names, columns_no_print):
@@ -111,9 +114,12 @@ def remove_columns_not_to_print(selected_output, column_names, columns_no_print)
         for col_name_no_print in columns_no_print:
             if col_name == col_name_no_print:
                 columns_to_remove.append(i)
-    for i, original_col in enumerate(columns_to_remove):
-        selected_output = np.delete(selected_output, original_col - i, 1)
-        column_names = np.delete(column_names, original_col - i)
+    n_deleted = 0
+    for col in columns_to_remove:
+        for row in selected_output:
+            del row[col-n_deleted]
+        del column_names[col-n_deleted]
+        n_deleted += 1
     return selected_output, column_names
 
 def remove_rows_not_to_print(selected_output, id_no_print):
@@ -122,8 +128,10 @@ def remove_rows_not_to_print(selected_output, id_no_print):
         for i in id_no_print:
             if selected_output[j][0] == i:
                 rows_to_remove.append(j)
+    n_deleted = 0
     for j in rows_to_remove:
-        selected_output = np.delete(selected_output, j, 0)
+        del selected_output[j-n_deleted]
+        n_deleted += 0
     return selected_output
 
 def get_max_widths(selected_output, column_names, no_headers, extra_space):

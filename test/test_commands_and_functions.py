@@ -38,7 +38,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     print_sim.print_sim("-n 1 --no_headers --columns id".split())
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
-       print("\nTest add_sim, print_sim and delete_sim...")
+        print("\nTest add_sim, print_sim and delete_sim...")
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
