@@ -63,7 +63,7 @@ print(param10)
 
 large_test_res = np.array(param6)
 res_dir = sim_database.make_unique_subdir("test/results")
-np.savetxt("{}/results.txt".format(res_dir), large_test_res)
+np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
 sim_database.end()
 

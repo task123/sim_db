@@ -16,7 +16,7 @@ def delete_empty_columns():
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
     new_table_dict = {}
     for column_name, column_type in zip(column_names, column_types):
-        db_cursor.execute("SELECT {} FROM runs;".format(column_name))
+        db_cursor.execute("SELECT {0} FROM runs;".format(column_name))
         values =  db_cursor.fetchall()
         is_empty = True
         for value in values:
@@ -38,7 +38,7 @@ def delete_empty_columns():
     new_columns_and_types = new_columns_and_types[0:10] + " PRIMARY KEY" \
                            +new_columns_and_types[10:] # Correct id type
 
-    db_cursor.execute("CREATE TABLE IF NOT EXISTS new_runs ({});".format(new_columns_and_types))
+    db_cursor.execute("CREATE TABLE IF NOT EXISTS new_runs ({0});".format(new_columns_and_types))
 
     db_cursor.execute("INSERT INTO new_runs SELECT {0} FROM runs;".format(new_columns))
 

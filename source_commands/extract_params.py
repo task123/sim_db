@@ -53,11 +53,11 @@ def extract_params(argv=None):
         else:
             filename = param_files[0]
         if os.path.exists(filename):
-            answer = helpers.user_input("Would you like to overwrite '{}'? (y/n)" \
+            answer = helpers.user_input("Would you like to overwrite '{0}'? (y/n)" \
                     .format(filename))
             if answer != 'y' and answer != 'Y' and answer != 'yes' and answer != 'Yes':
                 exit()
-        print("Extracts parameters to '{}'.".format(filename))
+        print("Extracts parameters to '{0}'.".format(filename))
         is_printing_parameters = False
     elif args.filename != None:
         filename = args.filename
@@ -68,7 +68,7 @@ def extract_params(argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    db_cursor.execute("SELECT * FROM runs WHERE id={}".format(args.id))
+    db_cursor.execute("SELECT * FROM runs WHERE id={0}".format(args.id))
     extracted_row = db_cursor.fetchall()
     
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
@@ -83,7 +83,7 @@ def extract_params(argv=None):
         if ((args.also_empty or value != None) and not skip) or args.all:
             line = col_name
             param_type = get_param_type_as_string(col_type, value)
-            line += " ({}): ".format(param_type)
+            line += " ({0}): ".format(param_type)
             if param_type[-3:] == 'ray':
                 value = '[' + value.split('[')[1]
             line += str(value).replace(':', ';') + '\n'

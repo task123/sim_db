@@ -43,7 +43,7 @@ def combine_dbs(argv=None):
     new_db_columns_string = new_db_columns_string[:-2]
     new_db_columns_string =  new_db_columns_string.replace("id INTEGER", \
             "id INTEGER PRIMARY KEY", 1)
-    new_db_cursor.execute("CREATE TABLE runs ({});".format(new_db_columns_string))
+    new_db_cursor.execute("CREATE TABLE runs ({0});".format(new_db_columns_string))
     
     db_1_cursor.execute("SELECT * FROM runs")
     for row in db_1_cursor.fetchall():

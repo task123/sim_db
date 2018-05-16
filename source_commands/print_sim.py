@@ -50,13 +50,13 @@ def select_command(db_cursor, args, column_names):
         if args.columns != None:
             column_names = []
             for col in args.columns:
-                columns += "{}, ".format(col)
+                columns += "{0}, ".format(col)
                 column_names.append(col)
             columns = columns[:-2]
         if args.col_by_num != None:
             new_column_names = []
             for i in args.col_by_num:
-                columns += "{}, ".format(column_names[i])
+                columns += "{0}, ".format(column_names[i])
                 new_column_names.append(column_names[i])
             columns = columns[:-2]
             column_names = new_column_names
@@ -67,7 +67,7 @@ def select_command(db_cursor, args, column_names):
     else:
         selected_output = []
         for i in args.id:
-            restrictions = args.where + " AND id = {}".format(i)
+            restrictions = args.where + " AND id = {0}".format(i)
             db_cursor.execute("SELECT {0} FROM runs WHERE {1} ORDER BY {2};" \
                               .format(columns, restrictions, args.sort_by))
             selected_output.append(db_cursor.fetchall()[0])
@@ -223,7 +223,7 @@ def print_sim(argv=None):
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
         if print_config == None:
-            print("No personalized print configuration with key string {} is found in settings.".format(args.p))
+            print("No personalized print configuration with key string {0} is found in settings.".format(args.p))
         p_arg_keys = [key.strip('-') for key in print_config.split() if key[0] == '-']
         p_args = get_arguments(print_config.split())
         

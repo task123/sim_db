@@ -38,10 +38,10 @@ def update_sim(argv=None):
 
     condition = args.where
     if args.id:
-        condition = condition + " AND id = {}".format(args.id)
+        condition = condition + " AND id = {0}".format(args.id)
     for column, value in zip(args.columns, args.values):
         if type_dict[column] == 'TEXT':
-            value = "'{}'".format(value)
+            value = "'{0}'".format(value)
         db_cursor.execute("UPDATE runs SET {0} = {1} WHERE {2}" \
                           .format(column, value, condition))
 

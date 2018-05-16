@@ -19,7 +19,7 @@ def cd_results(argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    db_cursor.execute("SELECT result_dir FROM runs WHERE id={}".format(args.id))
+    db_cursor.execute("SELECT result_dir FROM runs WHERE id={0}".format(args.id))
     result_dir = db_cursor.fetchone()[0]
 
     db.commit()

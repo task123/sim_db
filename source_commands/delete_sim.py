@@ -31,10 +31,10 @@ def delete_sim(argv=None):
 
     args = get_arguments(argv)
     for delete_id in args.id:
-        db_cursor.execute("DELETE FROM runs WHERE id = {}".format(delete_id))
+        db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(delete_id))
 
     if args.where:
-        db_cursor.execute("DELETE FROM runs WHERE {}".format(args.where))
+        db_cursor.execute("DELETE FROM runs WHERE {0}".format(args.where))
 
     db.commit()
     db_cursor.close()

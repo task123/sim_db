@@ -33,9 +33,9 @@ def get_arguments(argv):
 def make_job_script(db_cursor, i, args, id_submit):
     try:
         db_cursor.execute("SELECT name, max_walltime, n_tasks " \
-                + "FROM runs WHERE id={}".format(id_submit)) 
+                + "FROM runs WHERE id={0}".format(id_submit)) 
     except:
-        raise ValueError("ID {} in the database is ".format(id_submit) \
+        raise ValueError("ID {0} in the database is ".format(id_submit) \
                 + "missing neccessary parameters to submit job script.")
     job_script_variables = db_cursor.fetchall()[0]
     settings = helpers.Settings()
@@ -57,9 +57,9 @@ def make_job_script(db_cursor, i, args, id_submit):
 
     if name != None:
         if which_job_scheduler == 'SLURM':
-            job_script_file.write("#SBATCH --job-name={}\n".format(name))
+            job_script_file.write("#SBATCH --job-name={0}\n".format(name))
         elif which_job_scheduler == 'PBS': 
-            job_script_file.write("#PBS -N {}\n".format(name))
+            job_script_file.write("#PBS -N {0}\n".format(name))
 
     max_walltime = job_script_variables[1]
     if args.max_walltime != None:
@@ -67,9 +67,9 @@ def make_job_script(db_cursor, i, args, id_submit):
         db_cursor.execute("UPDATE runs SET max_walltime = '{0}' WHERE id = {1}" \
                 .format(max_walltime, id_submit))
     if which_job_scheduler == 'SLURM':
-        job_script_file.write("#SBATCH --time={}\n".format(max_walltime))
+        job_script_file.write("#SBATCH --time={0}\n".format(max_walltime))
     elif which_job_scheduler == 'PBS': 
-        job_script_file.write("#PBS -l walltime={}\n".format(max_walltime))
+        job_script_file.write("#PBS -l walltime={0}\n".format(max_walltime))
    
 
     n_cpus_per_node = settings.read('n_cpus_per_node')
@@ -102,7 +102,7 @@ def make_job_script(db_cursor, i, args, id_submit):
                  +"the number of logical cpus per node.")
 
     if which_job_scheduler == 'SLURM':
-        job_script_file.write("#SBATCH --ntasks={}\n".format(n_tasks))
+        job_script_file.write("#SBATCH --ntasks={0}\n".format(n_tasks))
     elif which_job_scheduler == 'PBS':
         n_nodes = int(math.ceil(n_tasks/float(n_cpus_per_node)))
         job_script_file.write("#PBS -l nodes={0}:ppn={1}\n".format(n_nodes, n_cpus_per_node))
@@ -111,21 +111,21 @@ def make_job_script(db_cursor, i, args, id_submit):
     if len(memory_per_node) > 0:
         memory_per_cpu = float(memory_per_node[0])/float(n_cpus_per_node)
         if which_job_scheduler == 'SLURM':
-            job_script_file.write("#SBATCH --mem-per-cpu={}G\n".format(memory_per_cpu))
+            job_script_file.write("#SBATCH --mem-per-cpu={0}G\n".format(memory_per_cpu))
         elif which_job_scheduler == 'PBS':
-            job_script_file.write("#PBS --mem={}GB\n".format(memory_per_node[0]))
+            job_script_file.write("#PBS --mem={0}GB\n".format(memory_per_node[0]))
 
     account = settings.read('account')
     if len(account) > 0:
         account = account[0]
         if which_job_scheduler == 'SLURM':
-            job_script_file.write("#SBATCH --account={}\n".format(account))
+            job_script_file.write("#SBATCH --account={0}\n".format(account))
         elif which_job_scheduler == 'PBS':
-            job_script_file.write("#PBS -A {}\n".format(account))
+            job_script_file.write("#PBS -A {0}\n".format(account))
 
     if args.notify_all or args.notify_fail or args.notify_fail:
         if which_job_scheduler == 'SLURM':
-            job_script_file.write("#SBATCH --mail-user={}\n".format(settings.read('email')))
+            job_script_file.write("#SBATCH --mail-user={0}\n".format(settings.read('email')))
             if args.notify_all:
                 job_script_file.write("#SBATCH --mail-type=ALL\n")
             if args.notify_fail:
@@ -133,7 +133,7 @@ def make_job_script(db_cursor, i, args, id_submit):
             if args.notify_end:
                 job_script_file.write("#SBATCH --mail-type=END\n")
         elif which_job_scheduler == 'PBS':
-            job_script_file.write("#PBS -M {}\n".format(settings.read('email')))
+            job_script_file.write("#PBS -M {0}\n".format(settings.read('email')))
             if args.notify_all:
                 job_script_file.write("#PBS -m abe\n")
             if args.notify_fail:
@@ -150,7 +150,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     run_command = helpers.get_run_command(db_cursor, id_submit, job_script_variables[2])
     job_script_file.write('\n')
     for command in run_command.split(';'):
-        job_script_file.write("{}\n".format(command))
+        job_script_file.write("{0}\n".format(command))
 
     job_script_file.close()
 
@@ -171,7 +171,7 @@ def submit_sim(argv=None):
         while not args.no_confirmation and answer != 'y' and answer != 'Y' \
                 and answer != 'yes' and answer != 'Yes':
             answer = raw_input("Would you like to submit simulations with " \
-                             + "the following ID's: {}? (y/n) ".format(ids))
+                             + "the following ID's: {0}? (y/n) ".format(ids))
             if answer == 'n' or answer == 'N' or answer == 'no' or answer == 'No':
                 db.commit()
                 db_cursor.close()
@@ -190,7 +190,7 @@ def submit_sim(argv=None):
             elif which_job_scheduler == 'PBS':
                 p = subprocess.Popen(["qsub", job_script_name])
                 (job_id, err) = p.communicate()
-            db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={}" \
+            db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={0}" \
                               .format(id_submit))
             db_cursor.execute("UPDATE runs SET job_id={0} WHERE id={1}" \
                               .format(out, id_submit))

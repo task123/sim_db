@@ -28,13 +28,13 @@ def add_column(argv=None):
     if args.column not in column_names:
         if args.type == 'int' or args.type == int:
             db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {} INTEGER".format(args.column))
+                               {0} INTEGER".format(args.column))
         elif args.type == 'float' or args.type == float:
             db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {} REAL".format(args.column))
+                               {0} REAL".format(args.column))
         else:
             db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {} TEXT".format(args.column))
+                               {0} TEXT".format(args.column))
 
     db.commit()
     db_cursor.close()

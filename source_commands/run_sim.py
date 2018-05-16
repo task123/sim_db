@@ -30,7 +30,7 @@ def run_sim(argv=None):
         ids = db_cursor.fetchall()
         ids = [i[0] for i in ids]
         args.id = max(ids)
-        print("Start simulation with ID {}.".format(args.id))
+        print("Start simulation with ID {0}.".format(args.id))
 
     run_command = helpers.get_run_command(db_cursor, args.id, args.n)
     db.commit()

@@ -37,37 +37,37 @@ def split_parameter_line(line, i):
         param_name = param_name.strip()
         param_type = param_type.split(')')[0].strip()
     except ValueError:
-        raise ValueError("Parameter no. {} in the parameter file ".format(i) \
+        raise ValueError("Parameter no. {0} in the parameter file ".format(i) \
                        + "has INCORRECT format of type and parentheses.")
     return param_name, param_type, value
 
 def add_new_column(db_cursor, i, param_type, param_name, value):
     if param_type == 'int':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                          {} INTEGER".format(param_name))
+                          {0} INTEGER".format(param_name))
     elif param_type == 'float':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {} REAL".format(param_name))
+                           {0} REAL".format(param_name))
     elif param_type == 'string':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {} TEXT".format(param_name))
+                           {0} TEXT".format(param_name))
     elif param_type == 'bool':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {} TEXT".format(param_name))
+                           {0} TEXT".format(param_name))
     elif len(param_type) > 5 and param_type[-5:] == 'array':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {} TEXT".format(param_name))
+                           {0} TEXT".format(param_name))
         array_type = param_type[:-5].strip()
         if array_type != 'int' and array_type != 'float' \
                 and array_type != 'string' and array_type != 'bool':
-            raise ValueError("Parameter no. {} in parameter file ".format(i) \
+            raise ValueError("Parameter no. {0} in parameter file ".format(i) \
                            + "has INVALID type of array.")
         if len(value) > 0 and (value[0] != '[' or value[-1] !=']'):
-            raise ValueError("Parameter no. {} in the ".format(i) \
+            raise ValueError("Parameter no. {0} in the ".format(i) \
                            + "parameter file has INCORRECT format for " \
                            + "arrays. Square bracets missing.")
     else:
-        raise ValueError("Parameter no. {} in the parameter".format(i) \
+        raise ValueError("Parameter no. {0} in the parameter".format(i) \
                        + "file has an INVALID type.")
             
 def check_type_matches(param_type, column_type, value, i):
@@ -87,11 +87,11 @@ def check_type_matches(param_type, column_type, value, i):
                     or array_type == 'string' or array_type == 'bool':
                 correct_type = True
             if len(value) > 0 and (value[0] != '[' or value[-1] !=']'):
-                raise ValueError("Parameter no. {} in the ".format(i) \
+                raise ValueError("Parameter no. {0} in the ".format(i) \
                                + "parameter file has INCORRECT format for " \
                                + "arrays. Square bracets missing.")
     if not correct_type:
-        raise ValueError("Parameter no. {} in the parameter".format(i) \
+        raise ValueError("Parameter no. {0} in the parameter".format(i) \
                        + "file has an INVALID type.")
 
 def standardize_value(value, param_type):
@@ -182,7 +182,7 @@ def add_sim(argv=None):
     try:
         sim_params_file = open(sim_params_filename, 'r')
     except:
-        print("Could NOT open {}.".format(sim_params_filename))
+        print("Could NOT open {0}.".format(sim_params_filename))
         exit(1)
 
     db_cursor = db.cursor()
@@ -190,7 +190,7 @@ def add_sim(argv=None):
     for key in helpers.default_db_columns:
         default_db_columns += key + " " + str(helpers.default_db_columns[key]) + ", "
     default_db_columns = default_db_columns[:-2]
-    db_cursor.execute("CREATE TABLE IF NOT EXISTS runs ({});".format(default_db_columns))
+    db_cursor.execute("CREATE TABLE IF NOT EXISTS runs ({0});".format(default_db_columns))
 
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
 

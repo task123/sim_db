@@ -35,23 +35,23 @@ class SimDB:
         self.write('time_started', self.get_date_and_time_as_string())
 
         sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
-        proc = subprocess.Popen(["cd {}/..; git rev-parse HEAD".format(sim_db_dir)], \
+        proc = subprocess.Popen(["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)], \
                 stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
         (out, err) = proc.communicate()
         self.write(column="git_hash", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {}/..; git log -n 1 --format=%B HEAD".format( \
+        proc = subprocess.Popen(["cd {0}/..; git log -n 1 --format=%B HEAD".format( \
                 sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
                 shell=True)
         (out, err) = proc.communicate()
         self.write(column="commit_message", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {}/..; git diff HEAD --stat".format(sim_db_dir)], \
+        proc = subprocess.Popen(["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)], \
                 stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
         (out, err) = proc.communicate()
         self.write(column="git_diff_stat", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {}/..; git diff HEAD".format(sim_db_dir)], \
+        proc = subprocess.Popen(["cd {0}/..; git diff HEAD".format(sim_db_dir)], \
                 stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
         (out, err) = proc.communicate()
         out = out.decode('UTF-8')
@@ -80,7 +80,7 @@ class SimDB:
 
         column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
         if column not in column_names:
-            print("Column, {}, is NOT a column in the database, 'sim.db'.".format(column))
+            print("Column, {0}, is NOT a column in the database, 'sim.db'.".format(column))
             exit()
 
         db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(column, db_id))
@@ -122,7 +122,7 @@ class SimDB:
             self.__check_type(db_cursor, type_of_value, column)
         else:
             if type_of_value == '':
-                print("ERROR: Column {} does not exists in database and ".format(column) \
+                print("ERROR: Column {0} does not exists in database and ".format(column) \
                         + "'type_of_value' must be provided for it to be added.")
                 exit()
             if type_of_value == int:
@@ -230,7 +230,7 @@ class SimDB:
             correct_type = False
 
         if not correct_type and check_type_is != '':
-            raise ValueError("The type is NOT {}.".format(check_type_is))
+            raise ValueError("The type is NOT {0}.".format(check_type_is))
 
         return value
 
