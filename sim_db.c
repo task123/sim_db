@@ -54,9 +54,9 @@ void backslash_unslashed_spaces(char path[PATH_MAX + 1]) {
     char path_backslashed[PATH_MAX + 1];
     const int len_path = strlen(path);
     int n_spaces = 0;
-    for (int i = 1; i < len_path + n_spaces + 1; i++) {
+    for (int i = 0; i < len_path + n_spaces + 1; i++) {
         path_backslashed[i + n_spaces] = path[i];
-        if (path[i] == ' ' && path[i - 1] != '\\') {
+        if (path[i] == ' ' && i > 0 && path[i - 1] != '\\') {
             path_backslashed[i + n_spaces] = '\\';
             path_backslashed[i + n_spaces + 1] = ' ';
             n_spaces++;
@@ -108,7 +108,7 @@ int sim_db_run_shell_command(const char* command, char* output,
         output[i] = '\0';
     } else {
         pclose(file);
-        return 1;
+        return EXIT_FAILURE;
     }
     pclose(file);
     return EXIT_SUCCESS;
@@ -158,7 +158,12 @@ SimDB* sim_db_ctor(int argc, char** argv) {
     }
 
     SimDB* sim_db = sim_db_ctor_with_id(path_sim_db, id);
-    if (argc > 0) {
+
+    int len_path_sim_db = strlen(path_sim_db);
+    if (len_path_sim_db > 0 && path_sim_db[len_path_sim_db - 1] == '/') {
+        path_sim_db[len_path_sim_db - 1] = '\0';
+    }
+    if (is_a_git_project(path_sim_db)) {
         char* program_name[1];
         program_name[0] = argv[0];
         sim_db_update_sha1_executables(sim_db, program_name, 1);

@@ -25,8 +25,8 @@ SimDB* sim_db_ctor(int argc, char** argv);
 
 /// Initialize SimDB with id of the simulation parameters in the
 /// ```sim_db``` database.
-/// Metadata is also added to database.
-/// sim_db_dtor() must be called to clean up.
+/// Metadata is also added to database. (sha1 is only added if in a git
+/// project.) sim_db_dtor() must be called to clean up.
 SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id);
 
 /// Read parameter from the database.
