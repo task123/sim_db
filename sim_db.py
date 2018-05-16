@@ -200,7 +200,7 @@ class SimDB:
             db_id = args.id
             path_sim_db = args.path_sim_db
         if (path_sim_db == None):
-            path_sim_db = helper.get_closest_sim_db_dir_path()
+            path_sim_db = helpers.get_closest_sim_db_dir_path()
         if (db_id == None):
             ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
                     + "If not passed as function parameters, then '--id ID' " \
