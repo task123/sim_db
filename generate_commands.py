@@ -67,8 +67,9 @@ def share_paths_between_sim_dbs(previous_path):
                              path_settings=copy + '/settings.txt')
             else:
                 for copy_2 in sim_db_copies:
-                    if copy_2 != copy:
-                        settings.remove(copy, path_settings=copy_2 + '/settings.txt') 
+                    if copy_2 != copy and os.path.exists(copy_2 + '/settings.txt'):
+                        settings.remove('other_sim_db_copies', copy, \
+                                path_settings=copy_2 + '/settings.txt') 
     else:
         print("\nNo changes were made to the settings of any the other local" \
             + "copies of 'sim_db'.")

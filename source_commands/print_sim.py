@@ -231,7 +231,8 @@ def print_sim(argv=None):
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
         if print_config == None:
-            print("No personalized print configuration with key string {0} is found in settings.".format(args.p))
+            print("No personalized print configuration with key string '{0}' is found in settings.".format(args.p))
+            exit(1)
         p_arg_keys = [key.strip('-') for key in print_config.split() if key[0] == '-']
         p_args = get_arguments(print_config.split())
         
