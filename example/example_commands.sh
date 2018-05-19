@@ -50,4 +50,6 @@ delete_sim --id ${id_for_cpp_example}
 
 ################################## Clean up ################################### 
 
-make clean
+# Remove c_example and cpp_example compiled from example_program.c and 
+# example_program.cpp. Does not remove libraries or object files.
+make clean_example

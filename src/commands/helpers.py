@@ -135,7 +135,7 @@ class Settings:
 def get_closest_sim_db_dir_path():
     currect_dir = os.getcwd()
     source_commands_dir = os.path.dirname(os.path.abspath(__file__))
-    sim_db_dir = os.path.abspath(os.path.join(source_commands_dir, os.pardir))
+    sim_db_dir = os.path.abspath(os.path.join(os.path.join(source_commands_dir, os.pardir), os.pardir))
     settings = Settings()
     sim_db_copies = settings.read('other_sim_db_copies', 
                                   sim_db_dir + '/settings.txt')

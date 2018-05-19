@@ -1,11 +1,10 @@
 // Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
-#include "sim_db.h"
+#include "../include/sim_db.h"
 #include <ctype.h>
 #include <limits.h>
 #include <math.h>
-#include <sqlite3.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +12,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
+#include "../third_party/sqlite3.h"
 
 struct SimDB {
     sqlite3* db;
@@ -38,7 +38,7 @@ void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
 // Return EXIT_SUCCESS if pointer is found in SimDB.pointers_to_free and freed
 int sim_db_free(SimDB* self, void* pointer) {
     int pointer_pos = -1;
-    for (int i = 0; i < self->n_pointers; i++) {
+    for (size_t i = 0; i < self->n_pointers; i++) {
         if (pointer_pos > 0) {
             self->pointers_to_free[i - 1] = self->pointers_to_free[i];
         } else if (&self->pointers_to_free[i] == &pointer) {
@@ -100,7 +100,7 @@ int sim_db_run_shell_command(const char* command, char* output,
                              size_t len_output) {
     FILE* file;
     file = popen(command, "r");
-    int i = 0;
+    size_t i = 0;
     char c;
     if (file) {
         while ((c = getc(file)) != EOF && i <= len_output) output[i++] = c;
@@ -371,7 +371,7 @@ SimDBIntVec sim_db_read_int_vec(SimDB* self, const char* column) {
     char number[100];
     size_t n_digits = 0;
     size_t n_numbers = 0;
-    for (int i = 4; i < strlen(int_arr_string); i++) {
+    for (size_t i = 4; i < strlen(int_arr_string); i++) {
         if (int_arr_string[i] == ',' || int_arr_string[i] == ']') {
             number[n_digits] = '\0';
             if (n_numbers >= int_vec.size) {
@@ -409,7 +409,7 @@ SimDBDoubleVec sim_db_read_double_vec(SimDB* self, const char* column) {
     char number[100];
     size_t n_digits = 0;
     size_t n_numbers = 0;
-    for (int i = 6; i < strlen(double_arr_string); i++) {
+    for (size_t i = 6; i < strlen(double_arr_string); i++) {
         if (double_arr_string[i] == ',' || double_arr_string[i] == ']') {
             number[n_digits] = '\0';
             if (n_numbers >= double_vec.size) {
@@ -447,9 +447,9 @@ SimDBStringVec sim_db_read_string_vec(SimDB* self, const char* column) {
     string_vec.size = 5;
     string_vec.array = (char**) malloc(string_vec.size * sizeof(char*));
     char string[100];
-    int n_char = 0;
-    int n_strings = 0;
-    for (int i = 7; i < strlen(str_arr_string); i++) {
+    size_t n_char = 0;
+    size_t n_strings = 0;
+    for (size_t i = 7; i < strlen(str_arr_string); i++) {
         if (str_arr_string[i] == ',' || str_arr_string[i] == ']') {
             string[n_char] = '\0';
             if (n_strings >= string_vec.size) {
@@ -473,7 +473,7 @@ SimDBStringVec sim_db_read_string_vec(SimDB* self, const char* column) {
         }
     }
     string_vec.size = n_strings;
-    for (int i = 0; i < n_strings; i++) {
+    for (size_t i = 0; i < n_strings; i++) {
         sim_db_add_pointer_to_free(self, string_vec.array[i]);
     }
     sim_db_add_pointer_to_free(self, string_vec.array);
@@ -495,7 +495,7 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
     char bool_str[100];
     size_t n_char = 0;
     size_t n_bools = 0;
-    for (int i = 5; i < strlen(bool_arr_str); i++) {
+    for (size_t i = 5; i < strlen(bool_arr_str); i++) {
         if (bool_arr_str[i] == ',' || bool_arr_str[i] == ']') {
             bool_str[n_char] = '\0';
             if (n_bools >= bool_vec.size) {
@@ -546,7 +546,7 @@ SimDBStringVec sim_db_get_column_names(SimDB* self) {
     column_names.size = 5;
     column_names.array = (char**) malloc(column_names.size * sizeof(char*));
     if (rc == SQLITE_ROW) {
-        int i = 0;
+        size_t i = 0;
         char* column = (char*) sqlite3_column_name(stmt, i);
         while (column != NULL) {
             if (i >= column_names.size) {
@@ -565,7 +565,7 @@ SimDBStringVec sim_db_get_column_names(SimDB* self) {
         exit(1);
     }
     sqlite3_finalize(stmt);
-    for (int i = 0; i < column_names.size; i++) {
+    for (size_t i = 0; i < column_names.size; i++) {
         sim_db_add_pointer_to_free(self, column_names.array[i]);
     }
     sim_db_add_pointer_to_free(self, column_names.array);
@@ -577,7 +577,7 @@ void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
                                      const char* type) {
     SimDBStringVec column_names = sim_db_get_column_names(self);
     bool column_exists = false;
-    for (int i = 0; i < column_names.size; i++) {
+    for (size_t i = 0; i < column_names.size; i++) {
         if (strcmp(column_names.array[i], column) == 0) {
             column_exists = true;
             break;
@@ -633,7 +633,7 @@ void sim_db_write_int_array(SimDB* self, const char* column, int* arr,
     strcpy(string_value, "int[");
     size_t n_chars = 4;
     char number[100];
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         sprintf(number, "%d, ", arr[i]);
         n_chars += strlen(number);
         if (n_chars >= len_string) {
@@ -661,7 +661,7 @@ void sim_db_write_double_array(SimDB* self, const char* column, double* arr,
     strcpy(string_value, "float[");
     size_t n_chars = 6;
     char number[100];
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         sprintf(number, "%0.17g, ", arr[i]);
         n_chars += strlen(number);
         if (n_chars >= len_string) {
@@ -688,7 +688,7 @@ void sim_db_write_string_array(SimDB* self, const char* column, char** arr,
     char* string_value = (char*) malloc((len_string + 1) * sizeof(char*));
     strcpy(string_value, "string[");
     size_t n_chars = 7;
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         n_chars += strlen(arr[i]) + 2;
         if (n_chars >= len_string) {
             len_string *= 2;
@@ -715,7 +715,7 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
     char* string_value = (char*) malloc((len_string + 1) * sizeof(char*));
     strcpy(string_value, "bool[");
     size_t n_chars = 5;
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         if (arr[i]) {
             n_chars += 6;
         } else {
@@ -793,18 +793,18 @@ char* sim_db_make_unique_subdir_rel_path(SimDB* self,
 
 void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
                                     size_t len) {
-    const size_t len_sha1 = 100;
+    const size_t len_sha1 = 40;
     char sha1[len_sha1 + 1];
     memset(sha1, 0, len_sha1 * sizeof(char));
     char tmp[len_sha1 + 1];
     char command[4200];
     char path_exec[PATH_MAX + 1];
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         strcpy(path_exec, paths_executables[i]);
         backslash_unslashed_spaces(path_exec);
         sprintf(command, "git hash-object %s", path_exec);
         sim_db_run_shell_command(command, tmp, len_sha1);
-        for (int j = 0; j < len_sha1; j++) {
+        for (size_t j = 0; j < len_sha1; j++) {
             sha1[j] = sha1[j] ^ tmp[j];
         }
     }
@@ -817,7 +817,7 @@ void sim_db_dtor(SimDB* self) {
     sprintf(used_time_string, "%dh %dm %fs", (int) used_time / 3600,
             (int) used_time / 60, fmod(used_time, 60));
     sim_db_update(self, "used_walltime", used_time_string);
-    for (int i = 0; i < self->n_pointers; i++) {
+    for (size_t i = 0; i < self->n_pointers; i++) {
         free(self->pointers_to_free[i]);
     }
     free(self->pointers_to_free);

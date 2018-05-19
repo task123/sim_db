@@ -6,14 +6,16 @@ The parameters is converted to correct type.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-from source_commands import helpers, update_sim, add_column
 import sqlite3
 import argparse
 import subprocess
-import sys
-import os
 import time
 import hashlib
+import sys
+import os
+src_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.abspath(os.path.join(src_dir, "commands")))
+from commands import helpers, update_sim, add_column
 
 class SimDB:
     def __init__(self, db_id=None):

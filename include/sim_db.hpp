@@ -4,7 +4,9 @@
 #ifndef SIM_DB_HPP
 #define SIM_DB_HPP
 
+extern "C" {
 #include "sim_db.h"
+}
 
 #include <cstring>
 #include <stdexcept>
@@ -118,7 +120,7 @@ class TemplateSpecializationHelper<std::vector<std::string> > {
     std::vector<std::string> read(struct SimDB* sim_db, std::string column) {
         SimDBStringVec s_vec = sim_db_read_string_vec(sim_db, column.c_str());
         std::vector<std::string> vector;
-        for (int i = 0; i < s_vec.size; i++) {
+        for (size_t i = 0; i < s_vec.size; i++) {
             std::string str(s_vec.array[i]);
             vector.push_back(str);
         }
@@ -127,13 +129,13 @@ class TemplateSpecializationHelper<std::vector<std::string> > {
     void write(struct SimDB* sim_db, std::string column,
                std::vector<std::string> value) {
         char** string_vec = new char*[value.size()];
-        for (int i = 0; i < value.size(); i++) {
+        for (size_t i = 0; i < value.size(); i++) {
             string_vec[i] = new char[value[i].size() + 1];
             strcpy(string_vec[i], value[i].c_str());
         }
         sim_db_write_string_array(sim_db, column.c_str(), string_vec,
                                   value.size());
-        for (int i = 0; i < value.size(); i++) {
+        for (size_t i = 0; i < value.size(); i++) {
             delete[] string_vec[i];
         }
         delete[] string_vec;
@@ -151,7 +153,7 @@ class TemplateSpecializationHelper<std::vector<bool> > {
     void write(struct SimDB* sim_db, std::string column,
                std::vector<bool> value) {
         bool* bool_vec = new bool[value.size()];
-        for (int i = 0; i < value.size(); i++) {
+        for (size_t i = 0; i < value.size(); i++) {
             bool_vec[i] = value[i];
         }
         sim_db_write_bool_array(sim_db, column.c_str(), bool_vec, value.size());

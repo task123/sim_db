@@ -14,6 +14,7 @@ import argparse
 import time
 import subprocess
 import sys
+import os
 import math
 
 def get_arguments(argv):
@@ -64,15 +65,15 @@ def make_job_script(db_cursor, i, args, id_submit):
     max_walltime = job_script_variables[1]
     if args.max_walltime != None:
         max_walltime = args.max_walltime[i]
-        if max_walltime == None:
-            print("Job script can NOT be submitted without either 'max_walltime' being " \
-                "set in simulation parameters file or '--max_walltime HH:MM:SS' " \
-                "being passed as flags to 'submit_sim'.")
-            job_script_file.close()
-            os.remove(job_script_name)
-            exit(1)
-        db_cursor.execute("UPDATE runs SET max_walltime = '{0}' WHERE id = {1}" \
-                .format(max_walltime, id_submit))
+    if max_walltime == None:
+        print("Job script can NOT be submitted without either 'max_walltime' being " \
+            "set in simulation parameters file or '--max_walltime HH:MM:SS' " \
+            "being passed as flags to 'submit_sim'.")
+        job_script_file.close()
+        os.remove(job_script_name)
+        exit(1)
+    db_cursor.execute("UPDATE runs SET max_walltime = '{0}' WHERE id = {1}" \
+            .format(max_walltime, id_submit))
     if which_job_scheduler == 'SLURM':
         job_script_file.write("#SBATCH --time={0}\n".format(max_walltime))
     elif which_job_scheduler == 'PBS': 
@@ -122,7 +123,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     if len(memory_per_node) > 0:
         memory_per_cpu = float(memory_per_node[0])/float(n_cpus_per_node)
         if which_job_scheduler == 'SLURM':
-            job_script_file.write("#SBATCH --mem-per-cpu={0}G\n".format(memory_per_cpu))
+            job_script_file.write("#SBATCH --mem-per-cpu={0}M\n".format(int(memory_per_cpu*1000)))
         elif which_job_scheduler == 'PBS':
             job_script_file.write("#PBS --mem={0}GB\n".format(memory_per_node[0]))
 
@@ -198,18 +199,21 @@ def submit_sim(argv=None):
             if which_job_scheduler == 'SLURM':
                 p = subprocess.Popen(["sbatch", job_script_name])
                 (job_id, err) = p.communicate()
+                job_id = job_id.split()[-1]
             elif which_job_scheduler == 'PBS':
                 p = subprocess.Popen(["qsub", job_script_name])
                 (job_id, err) = p.communicate()
+                job_id = job_id.split()[-1]
             db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={0}" \
                               .format(id_submit))
             db_cursor.execute("UPDATE runs SET job_id={0} WHERE id={1}" \
-                              .format(out, id_submit))
+                              .format(job_id, id_submit))
 
     db.commit()
     db_cursor.close()
     db.close()
 
+    print("Job id: {0}".format(job_id))
     return (job_script_name, job_id)
 
 if __name__ == '__main__':

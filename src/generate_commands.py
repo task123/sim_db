@@ -11,7 +11,7 @@ settings.txt if wished.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-from source_commands import helpers
+from commands import helpers
 import fnmatch
 from sys import platform
 import os
@@ -28,7 +28,7 @@ def get_previous_path(where_to_add_path):
     return previous_path
 
 def add_path(where_to_add_path):
-    answer = helpers.user_input("Would you like to add 'sim_db/' to your PATH " \
+    answer = helpers.user_input("\nWould you like to add 'sim_db/' to your PATH " \
             +"and 'cd_results' function in {0}? (y/n)\n(Recommended ".format(where_to_add_path) \
             +"and needed to run commands.)\n")
                     
@@ -41,7 +41,7 @@ def add_path(where_to_add_path):
         bash_file.write("\n# Add a 'sim_db' command (as 'cd' called from a " \
                        +"script don't work)\n")
         bash_file.write("function cd_results(){\n")
-        bash_file.write('    cd "$(python {0}/source_commands/cd_results.py $@)"\n' \
+        bash_file.write('    cd "$(python {0}/src/commands/cd_results.py $@)"\n' \
                 .format(sim_db_dir)) 
         bash_file.write("}\n")
         bash_file.close()
@@ -51,9 +51,9 @@ def add_path(where_to_add_path):
         print("No changes were made to {0}".format(where_to_add_path))
 
 def share_paths_between_sim_dbs(previous_path):
-    answer = helpers.user_input("\nWould you like to add path to the settings " \
-                   + "of the other copies of 'sim_db'? (y/n)\n(Recommended " \
-                   + "and needed to run commands.)")
+    answer = helpers.user_input("\nWould you like to add path to this 'sim_db' " \
+            + "to the settings of the other copies of 'sim_db'? (y/n)\n" \
+            + "(Recommended and needed to run commands.)\n")
     if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
         settings = helpers.Settings()
         sim_db_copies = settings.read('other_sim_db_copies', 
@@ -95,17 +95,17 @@ def replace_old_path(previous_path, where_to_add_path):
         print("No changes were made to {0}".format(where_to_add_path))
  
 def main():
-    sim_db_dir = os.path.dirname(os.path.abspath(__file__))
-    source_commands_dir = sim_db_dir + "/source_commands"
-    programs = fnmatch.filter(os.listdir(source_commands_dir), "*.py")
+    sim_db_src_dir = os.path.dirname(os.path.abspath(__file__))
+    src_commands_dir = sim_db_src_dir + "/commands"
+    programs = fnmatch.filter(os.listdir(src_commands_dir), "*.py")
     programs.remove('helpers.py')
     programs.remove('__init__.py')
     programs.remove('cd_results.py')
-    sim_db_dir = sim_db_dir.replace(" ", "\ ")
+    sim_db_src_dir = sim_db_src_dir.replace(" ", "\ ")
     for program in programs:
         script_name = "commands/" + program.split('.')[0]
         script_file = open(script_name, 'w')
-        script_file.write('python {0}/source_commands/{1} "$@"'.format(sim_db_dir, program))
+        script_file.write('python {0}/commands/{1} "$@"'.format(sim_db_src_dir, program))
         script_file.close()
         os.system("chmod u+x {0}".format(script_name))
 
@@ -125,7 +125,7 @@ def main():
         elif not os.path.exists(previous_path):
             replace_old_path(previous_path, where_to_add_path)
         else:
-            print("There is already a sim_db added to {0}.".format(where_to_add_path))
+            print("\nThere is already a sim_db added to {0}.".format(where_to_add_path))
             share_paths_between_sim_dbs(previous_path)
             
 if __name__ == '__main__':

@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "../sim_db.h"
+#include "sim_db.h"
 
 int main(int argc, char** argv) {
     SimDB* sim_db = sim_db_ctor(argc, argv);
@@ -35,52 +35,52 @@ int main(int argc, char** argv) {
     printf("%d\n", sim_db_read_bool(sim_db, "new_param4"));
 
     SimDBIntVec int_vec = sim_db_read_int_vec(sim_db, "param5");
-    for (int i = 0; i < int_vec.size; i++) {
+    for (size_t i = 0; i < int_vec.size; i++) {
         printf("%d\n", int_vec.array[i]);
     }
     sim_db_write_int_array(sim_db, "new_param5", int_vec.array, int_vec.size);
     int_vec = sim_db_read_int_vec(sim_db, "new_param5");
-    for (int i = 0; i < int_vec.size; i++) {
+    for (size_t i = 0; i < int_vec.size; i++) {
         printf("%d\n", int_vec.array[i]);
     }
 
     SimDBDoubleVec double_vec = sim_db_read_double_vec(sim_db, "param6");
-    for (int i = 0; i < double_vec.size; i++) {
+    for (size_t i = 0; i < double_vec.size; i++) {
         printf("%f\n", double_vec.array[i]);
     }
     sim_db_write_double_array(sim_db, "new_param6", double_vec.array,
                               double_vec.size);
     double_vec = sim_db_read_double_vec(sim_db, "new_param6");
-    for (int i = 0; i < double_vec.size; i++) {
+    for (size_t i = 0; i < double_vec.size; i++) {
         printf("%f\n", double_vec.array[i]);
     }
 
     SimDBStringVec string_vec = sim_db_read_string_vec(sim_db, "param7");
-    for (int i = 0; i < string_vec.size; i++) {
+    for (size_t i = 0; i < string_vec.size; i++) {
         printf("%s\n", string_vec.array[i]);
     }
     sim_db_write_string_array(sim_db, "new_param7", string_vec.array,
                               string_vec.size);
     string_vec = sim_db_read_string_vec(sim_db, "new_param7");
-    for (int i = 0; i < string_vec.size; i++) {
+    for (size_t i = 0; i < string_vec.size; i++) {
         printf("%s\n", string_vec.array[i]);
     }
 
     SimDBBoolVec bool_vec = sim_db_read_bool_vec(sim_db, "param8");
-    for (int i = 0; i < bool_vec.size; i++) {
+    for (size_t i = 0; i < bool_vec.size; i++) {
         printf("%d\n", bool_vec.array[i]);
     }
     sim_db_write_bool_array(sim_db, "new_param8", bool_vec.array,
                             bool_vec.size);
     bool_vec = sim_db_read_bool_vec(sim_db, "new_param8");
-    for (int i = 0; i < bool_vec.size; i++) {
+    for (size_t i = 0; i < bool_vec.size; i++) {
         printf("%d\n", bool_vec.array[i]);
     }
 
     char* name_subdir =
             sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
     FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
-    for (int i = 0; i < double_vec.size; i++) {
+    for (size_t i = 0; i < double_vec.size; i++) {
         fprintf(result_file, "%f\n", double_vec.array[i]);
     }
     fclose(result_file);

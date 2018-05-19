@@ -157,25 +157,27 @@ def test_cpp_functions(capsys):
     __assert_output_print_sim_after_run_sim(output_print_sim)
 
 def __assert_output_c_and_cpp_program(output_popen):
-    printed_lines = output_popen.split('\n')
-    assert printed_lines[2] == "3"
+    printed_lines = output_popen.split('\n')[1:]
+    if printed_lines[0] == "(May take 10-30 seconds.)":
+        printed_lines = output_popen.split('\n')[3:]
+    assert printed_lines[0] == "3"
+    assert printed_lines[1] == printed_lines[0]
+    assert abs(float(printed_lines[2]) - -5000000000.0) < 0.001
     assert printed_lines[3] == printed_lines[2]
-    assert abs(float(printed_lines[4]) - -5000000000.0) < 0.001
+    assert printed_lines[4] == "hei"
     assert printed_lines[5] == printed_lines[4]
-    assert printed_lines[6] == "hei"
+    assert printed_lines[6] == "1"
     assert printed_lines[7] == printed_lines[6]
-    assert printed_lines[8] == "1"
-    assert printed_lines[9] == printed_lines[8]
-    assert printed_lines[10:13] == ['1', '2', '3']
-    assert printed_lines[10:13] == printed_lines[13:16]
-    assert abs(float(printed_lines[16]) - 1.5) < 0.001
-    assert abs(float(printed_lines[17]) - 2.5) < 0.001
-    assert abs(float(printed_lines[18]) - 3.5) < 0.001
-    assert printed_lines[16:19] == printed_lines[19:22]
-    assert printed_lines[22:25] == ['a', 'b', 'c']
-    assert printed_lines[22:25] == printed_lines[25:28]
-    assert printed_lines[28:31] == ['1', '0', '1']
-    assert printed_lines[28:31] == printed_lines[31:34]
+    assert printed_lines[8:11] == ['1', '2', '3']
+    assert printed_lines[8:11] == printed_lines[11:14]
+    assert abs(float(printed_lines[14]) - 1.5) < 0.001
+    assert abs(float(printed_lines[15]) - 2.5) < 0.001
+    assert abs(float(printed_lines[16]) - 3.5) < 0.001
+    assert printed_lines[14:17] == printed_lines[17:20]
+    assert printed_lines[20:23] == ['a', 'b', 'c']
+    assert printed_lines[20:23] == printed_lines[23:26]
+    assert printed_lines[26:29] == ['1', '0', '1']
+    assert printed_lines[26:29] == printed_lines[29:32]
 
 def test_add_and_run(capsys):
     db_id = add_and_run.add_and_run(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
@@ -331,8 +333,8 @@ def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_
         assert lines[1] == '#SBATCH --job-name=test_sim\n'
         assert lines[2] == '#SBATCH --time=03:34:00\n'
         assert lines[3] == '#SBATCH --ntasks={0}\n'.format(int(n_cpus_per_node[0])*2)
-        assert lines[4] == '#SBATCH --mem-per-cpu={0}G\n' \
-                .format(float(memory_per_node[0])/int(n_cpus_per_node[0]))
+        assert lines[4] == '#SBATCH --mem-per-cpu={0}M\n' \
+                .format(int(float(memory_per_node[0])/float(n_cpus_per_node[0])*1000))
     elif job_scheduler[0] == 'PBS':
         assert lines[0] == '#!/bin/bash\n'
         assert lines[1] == '#PBS -N test_sim\n'

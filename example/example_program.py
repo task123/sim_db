@@ -8,9 +8,12 @@ Usage: 'add_and_run --filename sim_params_example_python_program.txt'
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import __init__
-import sim_db
 import numpy as np
+import sys, os
+example_dir = os.path.dirname(os.path.abspath(__file__))
+sim_db_src_dir = os.path.abspath(os.path.join(example_dir, "../src"))
+sys.path.append(sim_db_src_dir)
+import sim_db
 
 # Open database and write some initial metadata to database.
 sim_database = sim_db.SimDB()

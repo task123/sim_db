@@ -11,7 +11,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "../sim_db.hpp"
+#include "sim_db.hpp"
 
 int main(int argc, char** argv) {
     // Open database and write some initial metadata to database.

@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "../sim_db.h"
+#include "sim_db.h"
 
 int main(int argc, char** argv) {
     // Open database and write some initial metadata to database.

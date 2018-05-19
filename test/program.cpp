@@ -10,7 +10,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include "../sim_db.hpp"
+#include "sim_db.hpp"
 
 int main(int argc, char** argv) {
     sim_db::Connection sim_db(argc, argv);
