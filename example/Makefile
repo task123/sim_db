@@ -15,6 +15,15 @@ libsimdbc:
 libsimdbcpp: 
 	$(MAKE) -C ../lib libsimdbcpp.a
 
+c_example_without_lib: example_program.cpp ../src/sim_db.c ../include/sim_db.h
+	$(CC) -o c_example example_program.c ../src/sim_db.c ../third_party/sqlite3.c -I../include/
+
+cpp_example_without_lib: example_program.cpp ../src/sim_db.cpp ../include/sim_db.hpp ../src/sim_db.c ../include/sim_db.h
+	$(CC) -c -o sim_db.o ../src/sim_db.c 
+	$(CC) -c -o sqlite3.o ../third_party/sqlite3.c
+	$(CPP) -std=c++11 -o cpp_example example_program.cpp ../src/sim_db.cpp -I../include sim_db.o sqlite3.o
+	rm -f sim_db.o sqlite3.o
+
 c_example_run: c_example
 	./c_example --id ${ID} --path_sim_db ".."
 
