@@ -66,4 +66,3 @@ res_dir = sim_database.make_unique_subdir("test/results")
 np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
 sim_database.end()
-

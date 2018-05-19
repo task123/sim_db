@@ -43,7 +43,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     if which_job_scheduler != 'SLURM' and which_job_scheduler != 'PBS':
         print("'Which job scheduler' in settings.txt is NOT one of the valid " \
             + "values: 'SLURM' or 'PBS'.")
-        exit()
+        exit(1)
 
     name = job_script_variables[0]
     if name != None:
@@ -64,6 +64,13 @@ def make_job_script(db_cursor, i, args, id_submit):
     max_walltime = job_script_variables[1]
     if args.max_walltime != None:
         max_walltime = args.max_walltime[i]
+        if max_walltime == None:
+            print("Job script can NOT be submitted without either 'max_walltime' being " \
+                "set in simulation parameters file or '--max_walltime HH:MM:SS' " \
+                "being passed as flags to 'submit_sim'.")
+            job_script_file.close()
+            os.remove(job_script_name)
+            exit(1)
         db_cursor.execute("UPDATE runs SET max_walltime = '{0}' WHERE id = {1}" \
                 .format(max_walltime, id_submit))
     if which_job_scheduler == 'SLURM':
@@ -86,6 +93,8 @@ def make_job_script(db_cursor, i, args, id_submit):
             if (n_cpus_per_node == None):
                 print("'Number of logical cpus per node' is NOT set in settings.txt " \
                         "and it must be when '--n_nodes N' is passed to 'submit_sim'.")
+                job_script_file.close()
+                os.remove(job_script_name)
                 exit(1)
             n_tasks = args.n_nodes[i]*n_cpus_per_node
         db_cursor.execute("UPDATE runs SET n_tasks = {0} WHERE id = {1}" \
@@ -94,6 +103,8 @@ def make_job_script(db_cursor, i, args, id_submit):
         print("Job script can NOT be submitted without either 'n_tasks' being " \
                 "set in simulation parameters file or '--n_tasks N' or '--n_nodes M' " \
                 "being passed as flags to 'submit_sim'.")
+        job_script_file.close()
+        os.remove(job_script_name)
         exit(1)
 
     if n_cpus_per_node != None:
