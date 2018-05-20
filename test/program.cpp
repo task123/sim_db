@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 
     // Save param6 to file in this unique subdirectory.
     std::ofstream result_file;
-    result_file.open(filename_result);
+    result_file.open(filename_result.c_str());
     for (size_t i = 0; i < param6.size(); i++) {
         result_file << param6[i] << std::endl;
     }
