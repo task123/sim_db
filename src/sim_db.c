@@ -101,17 +101,18 @@ int sim_db_run_shell_command(const char* command, char* output,
     FILE* file;
     file = popen(command, "r");
     size_t i = 0;
-    char c;
+    int c;
     if (file) {
-        while ((c = getc(file)) != EOF && i <= len_output) output[i++] = c;
-        fclose(file);
+        while ((c = getc(file)) != EOF && i <= len_output) {
+            output[i++] = (char) c;
+        }
         output[i] = '\0';
+        pclose(file);
+        return EXIT_SUCCESS;
     } else {
         pclose(file);
         return EXIT_FAILURE;
     }
-    pclose(file);
-    return EXIT_SUCCESS;
 }
 
 bool is_a_git_project(char path_sim_db[PATH_MAX + 1]) {
