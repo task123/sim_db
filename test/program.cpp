@@ -36,40 +36,40 @@ int main(int argc, char** argv) {
     std::cout << sim_db.read<bool>("new_param4") << std::endl;
 
     std::vector<int> param5 = sim_db.read<std::vector<int> >("param5");
-    for (auto i : param5) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param5.size(); i++) {
+        std::cout << param5[i] << std::endl;
     }
     sim_db.write<std::vector<int> >("new_param5", param5);
-    for (auto i : sim_db.read<std::vector<int> >("new_param5")) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param5.size(); i++) {
+        std::cout << param5[i] << std::endl;
     }
 
     std::vector<double> param6 = sim_db.read<std::vector<double> >("param6");
-    for (auto i : param6) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param6.size(); i++) {
+        std::cout << param6[i] << std::endl;
     }
     sim_db.write<std::vector<double> >("new_param6", param6);
-    for (auto i : sim_db.read<std::vector<double> >("new_param6")) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param6.size(); i++) {
+        std::cout << param6[i] << std::endl;
     }
 
     std::vector<std::string> param7 =
             sim_db.read<std::vector<std::string> >("param7");
-    for (auto i : param7) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param7.size(); i++) {
+        std::cout << param7[i] << std::endl;
     }
     sim_db.write<std::vector<std::string> >("new_param7", param7);
-    for (auto i : sim_db.read<std::vector<std::string> >("new_param7")) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param7.size(); i++) {
+        std::cout << param7[i] << std::endl;
     }
 
     std::vector<bool> param8 = sim_db.read<std::vector<bool> >("param8");
-    for (auto i : param8) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param8.size(); i++) {
+        std::cout << param8[i] << std::endl;
     }
     sim_db.write<std::vector<bool> >("new_param8", param8);
-    for (auto i : sim_db.read<std::vector<bool> >("new_param8")) {
-        std::cout << i << std::endl;
+    for (int i = 0; i < param8.size(); i++) {
+        std::cout << param8[i] << std::endl;
     }
 
     // Get full path to result directory.
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
     // Save param6 to file in this unique subdirectory.
     std::ofstream result_file;
     result_file.open(filename_result);
-    for (auto i : param6) {
-        result_file << i << std::endl;
+    for (int i = 0; i < param6.size(); i++) {
+        result_file << param6[i] << std::endl;
     }
 }

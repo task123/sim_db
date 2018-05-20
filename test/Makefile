@@ -2,11 +2,11 @@ CC = cc
 CXX = c++
 CFLAGS_DEBUG = -std=c99 -g -Wall -Wextra -Wfloat-equal
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
-CXXFLAGS_DEBUG = -std=c++11 -g -Wall -Wextra 
-CXXFLAGS_RELEASE = -std=c++11 -O3 -DNDEBUG
+CXXFLAGS_DEBUG = -g -Wall -Wextra 
+CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_RELEASE)
 CXXFLAGS = $(CXXFLAGS_RELEASE)
-LDFLAGS = -L../lib -I../include
+LDFLAGS = -L../lib -I../include -lm -lpthread
 
 PATH_SIM_DB := $(if $(PATH_SIM_DB), $(PATH_SIM_DB), "..")
 
@@ -51,3 +51,6 @@ clean_except_third_party:
 	rm -fr c_program.dSYM
 	rm -fr cpp_program.dSYM
 	$(MAKE) -C ../lib clean_except_third_party
+
+clean_etp:
+	$(MAKE) clean_except_third_party
