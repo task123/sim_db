@@ -1,7 +1,7 @@
 CC = cc
 CXX = c++
-CFLAGS_DEBUG = -g -Wall -Wextra -Wfloat-equal
-CFLAGS_RELEASE = -O3 -DNDEBUG
+CFLAGS_DEBUG = -std=c99 -g -Wall -Wextra -Wfloat-equal
+CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CXXFLAGS_DEBUG = -std=c++11 -g -Wall -Wextra 
 CXXFLAGS_RELEASE = -std=c++11 -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_RELEASE)
