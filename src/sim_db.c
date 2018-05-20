@@ -14,6 +14,10 @@
 #include <unistd.h>
 #include "../third_party/sqlite3.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 struct SimDB {
     sqlite3* db;
     int id;
