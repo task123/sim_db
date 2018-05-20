@@ -1,4 +1,4 @@
-sqlite3.c and sqlite3.h are released with the following copyright notice:
+sqlite3.c, sqlite3.h, shell.c and sqlite3ext.h are the SQLite amalgamation and are all released with the following copyright notice:
 
 The author disclaims copyright to this source code.  In place of
 a legal notice, here is a blessing:

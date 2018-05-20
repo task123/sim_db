@@ -18,13 +18,27 @@ submit_sim
 run_sim
 update_sim
 
-# Executable test programs
+# Static libraries
+lib/libsimdbc.a
+lib/libsimdbcpp.a
+
+# Executable test and example programs
 test/c_program
 test/cpp_program
+example/c_example
+example/cpp_example
 
-# Test results not deleted
+# Test and example results not deleted
 test/results/*
 !test/results/.keep
+example/results/*
+!example/results/.keep
+
+# Object files
+*.o
+
+# Debug symbols
+*.dSYM/*
 
 # Temporary files
 *.pyc

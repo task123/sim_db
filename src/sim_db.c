@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-#include "../third_party/sqlite3.h"
+#include "../third_party/sqlite3/sqlite3.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096

@@ -6,36 +6,38 @@ CXXFLAGS_DEBUG = -g -Wall -Wextra
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_RELEASE)
 CXXFLAGS = $(CXXFLAGS_RELEASE)
-LDFLAGS = -L../lib -I../include -lm -lpthread
+LDFLAGS = -L../lib -I../include -lm -lpthread -ldl
 
 PATH_SIM_DB := $(if $(PATH_SIM_DB), $(PATH_SIM_DB), "..")
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all libsimdbc libsimdbcpp clean clean_except_third_party
+.PHONY: all c_program_updated cpp_program_updated clean clean_except_third_party clean_etp
 
-all: c_program cpp_program
+all:
+	$(MAKE) c_program_updated
+	$(MAKE) cpp_program_updated
+
+c_program_updated:
+	$(MAKE) -C ../lib libsimdbc.a
 	$(MAKE) c_program
+	
+cpp_program_updated:
+	$(MAKE) -C ../lib libsimdbcpp.a
 	$(MAKE) cpp_program
 
-c_program: program.c libsimdbc
-	$(MAKE) libsimdbc
+# Use target c_program_updated instead as it check libsimdbc.a's dependencies.
+c_program: program.c ../lib/libsimdbc.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o c_program program.c -lsimdbc
 
-cpp_program: program.cpp libsimdbcpp
-	$(MAKE) libsimdbcpp
+# Use target cpp_program_updated instead as it check libsimdbcpp.a's dependencies.
+cpp_program: program.cpp ../lib/libsimdbcpp.a
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o cpp_program program.cpp -lsimdbcpp
 
-libsimdbc: 
-	$(MAKE) -C ../lib libsimdbc.a
-
-libsimdbcpp: 
-	$(MAKE) -C ../lib libsimdbcpp.a
-
-c_program_run: c_program
+c_program_run: c_program_updated
 	./c_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
 
-cpp_program_run: cpp_program
+cpp_program_run: cpp_program_updated
 	./cpp_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
 
 clean:

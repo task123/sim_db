@@ -1,0 +1,1 @@
+This is the amalgamation version of SQLite3 which can be downloaded [here](https://www.sqlite.org/download.html). It is used to get the C library for SQLite3, as there have been some problems linking to this library even on a machine running Linux that had SQLite3 installed.
