@@ -1,6 +1,7 @@
 BUILD_DIR = ../build/third_party
 
 CFLAGS = -O2 -DNDEBUG
+CC := $(if $(CC), $(CC), cc)
 
 $(BUILD_DIR)/sqlite3.o: sqlite3.c sqlite3.h
 	@echo "Compiling SQLITE3..."

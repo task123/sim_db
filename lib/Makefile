@@ -1,12 +1,14 @@
-CPP = c++
 BUILD_DIR = ../build
 SOURCE_DIR = ../src
 INCLUDE_DIR = ../include
 
-CFLAGS_RELEASE = -O3 -DNDEBUG -Wall -Wextra
-CPPFLAGS_RELEASE = -O3 -DNDEBUG -Wall -Wextra
+CFLAGS_RELEASE = -O3 -DNDEBUG
+CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS := $(if $(CFLAGS), $(CFLAGS), $(CFLAGS_RELEASE))
-CPPFLAGS := $(if $(CPPFLAGS), $(CPPFLAGS), $(CPPFLAGS_RELEASE))
+CXXFLAGS := $(if $(CXXFLAGS), $(CXXFLAGS), $(CXXFLAGS_RELEASE))
+
+CC := $(if $(CC), $(CC), cc)
+CXX := $(if $(CXX), $(CXX), c++)
 
 .PHONY: all clean clean_except_third_party
 
@@ -24,7 +26,7 @@ $(BUILD_DIR)/sim_db.o: $(SOURCE_DIR)/sim_db.c $(INCLUDE_DIR)/sim_db.h
 	$(CC) $(CFLAGS) -c -o $@ $(SOURCE_DIR)/sim_db.c
 
 $(BUILD_DIR)/sim_db_cpp.o: $(SOURCE_DIR)/sim_db.cpp $(INCLUDE_DIR)/sim_db.hpp
-	$(CPP) $(CPPFLAGS) -c -o $@ $(SOURCE_DIR)/sim_db.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $(SOURCE_DIR)/sim_db.cpp
 
 $(BUILD_DIR)/third_party/sqlite3.o:
 	$(MAKE) -C ../third_party/ $@
