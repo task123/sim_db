@@ -197,12 +197,16 @@ def submit_sim(argv=None):
         job_script_name = make_job_script(db_cursor, i, args, id_submit)
         if not args.do_not_submit_job_script:
             if which_job_scheduler == 'SLURM':
-                p = subprocess.Popen(["sbatch", job_script_name])
+                p = subprocess.Popen(["sbatch", job_script_name], \
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 (job_id, err) = p.communicate()
+                print(err)
                 job_id = job_id.split()[-1]
             elif which_job_scheduler == 'PBS':
-                p = subprocess.Popen(["qsub", job_script_name])
+                p = subprocess.Popen(["qsub", job_script_name], \
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 (job_id, err) = p.communicate()
+                print(err)
                 job_id = job_id.split()[-1]
             db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={0}" \
                               .format(id_submit))
@@ -213,7 +217,7 @@ def submit_sim(argv=None):
     db_cursor.close()
     db.close()
 
-    print("Job id: {0}".format(job_id))
+    print("Job ID: {0}".format(job_id))
     return (job_script_name, job_id)
 
 if __name__ == '__main__':
