@@ -8,13 +8,14 @@ Usage: python delete_empty_columns.py
 
 import helpers
 import sqlite3
+from collections import OrderedDict
 
 def delete_empty_columns():
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
-    new_table_dict = {}
+    new_table_dict = OrderedDict()
     for column_name, column_type in zip(column_names, column_types):
         db_cursor.execute("SELECT {0} FROM runs;".format(column_name))
         values =  db_cursor.fetchall()

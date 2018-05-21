@@ -14,6 +14,7 @@ import add_sim
 import sqlite3
 import argparse
 from collections import OrderedDict
+import sys
 
 def get_arguments(argv):
     parser = argparse.ArgumentParser(description='Combine two databases into a new one.')
@@ -50,6 +51,8 @@ def combine_dbs(argv=None):
         column_tuple = ()
         value_tuple = ()
         for column, value in zip(columns_db_1, row):
+            column = helpers.if_unicode_convert_to_str(column)
+            value = helpers.if_unicode_convert_to_str(value)
             if value != None and column != 'id':
                 column_tuple += (column,)
                 value_tuple += (value,)
@@ -60,6 +63,8 @@ def combine_dbs(argv=None):
         column_tuple = ()
         value_tuple = ()
         for column, value in zip(columns_db_2, row):
+            column = helpers.if_unicode_convert_to_str(column)
+            value = helpers.if_unicode_convert_to_str(value)
             if value != None and column != 'id':
                 column_tuple += (column,)
                 value_tuple += (value,)
