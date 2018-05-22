@@ -14,21 +14,21 @@ import sqlite3
 import argparse
 import os.path
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Update content in sim.db.')
     parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
     parser.add_argument('--where', '-w', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
     parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
     parser.add_argument('--values', '-v', type=str, nargs='+', required=True, help="<Required> New value updated at run with id and column as specifed.")
     parser.add_argument('--db_path', type=str, default=None, help="Full path to the database used.")
-    args = parser.parse_args(argv)
-    if args.id == None and args.where == "id > -1":
-        print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be passed to the program.")
-        exit(0)
-    return args
+    return parser
 
 def update_sim(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
+    if args.id == None and args.where == "id > -1":
+        print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be " \
+              + "passed to the program.")
+        exit(0)
 
     db = helpers.connect_sim_db(args.db_path)
     db_cursor = db.cursor()

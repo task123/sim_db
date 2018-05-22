@@ -22,14 +22,14 @@ import add_sim
 import run_sim
 import argparse
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
-    return parser.parse_args(argv)
+    return parser
 
 def add_and_run(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     
     if args.filename == None:
         added_id = add_sim.add_sim()

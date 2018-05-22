@@ -8,13 +8,13 @@ import helpers
 import argparse
 import os
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description="Return full path to 'result_dir' of simulation with provided id, '-i ID'. Used by a bash function, 'cd_results', to change directory to this 'result_dir'.")
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> 'ID' of the 'result_dir' in the 'sim.db' database.")
-    return parser.parse_args(argv)
+    return parser
 
 def cd_results(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

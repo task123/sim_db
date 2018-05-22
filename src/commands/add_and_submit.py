@@ -23,7 +23,7 @@ import run_sim
 import submit_sim
 import argparse
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('--max_walltime', type=str, default=None, help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
@@ -36,10 +36,9 @@ def get_arguments(argv):
     parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
 
-    return parser.parse_args(argv)
-
+    return parser
 def add_and_submit(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     
     if args.filename == None:
         added_id = add_sim.add_sim()

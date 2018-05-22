@@ -17,7 +17,7 @@ import sys
 import os
 import math
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Submit job')
     parser.add_argument('--id', '-i', type=int, default=None, nargs='+', help="ID of simulations to submit.")
     parser.add_argument('--max_walltime', type=str, default=None, nargs='+', help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
@@ -29,7 +29,7 @@ def get_arguments(argv):
     parser.add_argument('--notify_end', action='store_true', help="Set notification for when simulation ends or if it fails.")
     parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
-    return parser.parse_args(argv)
+    return parser
 
 def make_job_script(db_cursor, i, args, id_submit):
     try:
@@ -169,7 +169,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     return job_script_name
 
 def submit_sim(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     ids = args.id
 
     db = helpers.connect_sim_db()

@@ -24,10 +24,10 @@ import sys
 import os
 import subprocess
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Add simulation to database.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
-    return parser.parse_args(argv)
+    return parser
 
 def split_parameter_line(line, i):
     line_split = line.split(':', 1)
@@ -174,7 +174,7 @@ def make_path_relative_to_sim_db(run_command, sim_params_filename):
 def add_sim(argv=None):
     db = helpers.connect_sim_db()
 
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     sim_params_filename = args.filename
     if sim_params_filename == None:
         sim_params_filename = helpers.search_for_parameter_file_matching_settings()

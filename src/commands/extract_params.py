@@ -16,14 +16,14 @@ no_extract_columns = {'id', 'status', 'comment', 'time_submitted', 'time_started
                       'used_walltime', 'job_id', 'cpu_info', 'git_hash', \
                       'commit_message', 'git_diff_stat', 'git_diff', 'sha1_executables'}
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Extract parameter file from sim.db.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
     parser.add_argument('--default_file', '-d', action='store_true', help="Write parameters to the first of the 'Parameter filenames' in settings.txt. Ask for confirmation if file exists already.")
     parser.add_argument('--also_empty', action='store_true', help="Also extract empty paramters. Default is to not extract empty parameters and default columns that are not input parameters.")
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")
-    return parser.parse_args(argv)
+    return parser
 
 def get_param_type_as_string(col_type, value):
     if col_type == 'INTEGER':
@@ -42,7 +42,7 @@ def get_param_type_as_string(col_type, value):
         raise ValueError()        
 
 def extract_params(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
 
     is_printing_parameters = True
     if args.default_file:

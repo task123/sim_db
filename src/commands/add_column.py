@@ -12,11 +12,11 @@ import helpers
 import sqlite3
 import argparse
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Add column to database.')
     parser.add_argument('--column', '-c', type=str, required=True, help="<Required> Name of the new column.")
     parser.add_argument('--type', '-t', type=str, required=True, help="<Required> Type of the column. 'INTEGER', 'REAL', 'TEXT', 'int', 'float', 'string', 'bool' and 'int/float/string/bool array' are the valid choices.")
-    return parser.parse_args(argv)
+    return parser
   
 def add_column(argv=None):
     db = helpers.connect_sim_db()
@@ -24,7 +24,7 @@ def add_column(argv=None):
 
     column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
 
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     if args.column not in column_names:
         if args.type == 'int' or args.type == int:
             db_cursor.execute("ALTER TABLE runs ADD COLUMN \

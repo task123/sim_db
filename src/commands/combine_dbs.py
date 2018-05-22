@@ -16,15 +16,15 @@ import argparse
 from collections import OrderedDict
 import sys
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Combine two databases into a new one.')
     parser.add_argument('path_db_1', type=str, help="<Required> Path to 'sim_db' database 1.")
     parser.add_argument('path_db_2', type=str, help="<Required> Path to 'sim_db' database 2.")
     parser.add_argument('name_new_db', type=str, help="<Required> Name of the new database.")
-    return parser.parse_args(argv)
+    return parser
 
 def combine_dbs(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
 
     db_1 = helpers.connect_sim_db(args.path_db_1)
     db_1_cursor = db_1.cursor()

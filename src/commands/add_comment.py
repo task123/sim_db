@@ -12,16 +12,16 @@ import update_sim
 import helpers
 import argparse
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Add comment to simulation in database.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation to add the comment.")
     parser.add_argument('--comment', '-c', type=str, default=None, help="Comment to add.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Filename of a file which content are to be added as a comment. Only the last 3000 characters will be added.")
     parser.add_argument('--append', '-a', action='store_true', help="Append comment or file to the current comment.")
-    return parser.parse_args(argv)
+    return parser
 
 def add_comment(argv=None):
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
     if (args.comment == None and args.filename == None):
         print("ERROR: Either '--comment'/'-c' or '--filename'/'-f' need to be provided.")
         exit()

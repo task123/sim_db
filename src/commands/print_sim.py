@@ -12,7 +12,7 @@ import argparse
 import os
 import sys
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.')
     parser.add_argument('--id', '-i', type=int, nargs='+', help="List of ID's.")
     parser.add_argument('--id_no_print', type=int, nargs='+', help="List of ID's not to print.")
@@ -29,7 +29,7 @@ def get_arguments(argv):
     parser.add_argument('--first_line', action='store_true', help="Print only the first line of any entry.")
     parser.add_argument('--vertically', '-v', action='store_true', help="Print columns vertically.")
     parser.add_argument('-p', type=str, default=None, help="Personal print configuration. Apply the print configuration in 'settings.txt' corresponding to the provided key string.")
-    return parser.parse_args(argv)
+    return parser
 
 def get_personalized_print_config(key_string):
     settings = helpers.Settings()
@@ -226,7 +226,7 @@ def print_sim(argv=None):
     if argv == None and len(sys.argv) == 1:
         args = get_arguments(['-p', 'default'])
     else:
-        args = get_arguments(argv)
+        args = command_line_arguments_parser().parse_args(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)

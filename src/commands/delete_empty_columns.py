@@ -8,9 +8,17 @@ Usage: python delete_empty_columns.py
 
 import helpers
 import sqlite3
+import argparse
 from collections import OrderedDict
 
+
+def command_line_arguments_parser():
+    parser = argparse.ArgumentParser(description='Delete all empty columns in the sim.db, except the default ones.')
+    return parser
+
 def delete_empty_columns():
+    command_line_arguments_parser().parse_args()
+
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 

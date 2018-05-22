@@ -8,8 +8,14 @@ These are the commands available after running: 'python generate_commands.py'.
 
 import os
 import fnmatch
+import argparse
+
+def command_line_arguments_parser():
+    parser = argparse.ArgumentParser(description="Print a list of all the sim_db commands.")
+    return parser
 
 def list_sim_db_commands():
+    command_line_arguments_parser().parse_args()
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
     programs = fnmatch.filter(os.listdir(sim_db_dir), "*.py")
     programs.remove('helpers.py')

@@ -13,15 +13,15 @@ import sqlite3
 import subprocess
 import sys
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Run simulation with ID in database.')
     parser.add_argument('--id', '-i', type=int, default=None, help="'ID' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
-    return parser.parse_args(argv)
+    return parser
 
 def run_sim(argv=None):
     """Run simulation with parameters with ID passed or the highest ID."""
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

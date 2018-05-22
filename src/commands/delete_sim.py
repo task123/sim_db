@@ -15,21 +15,22 @@ import sqlite3
 import argparse
 import os.path
 
-def get_arguments(argv):
+def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description='Print content in sim.db.')
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of runs to delete.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which entries should be deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
-    args = parser.parse_args(argv) 
-    if len(args.id) == 0 and args.where == None:
-        print("Nothing was deleted. --id 'ID' or --where 'CONDITION' must be passed to the program.")
-        exit(0)
-    return args
+    return parser
 
 def delete_sim(argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = get_arguments(argv)
+    args = command_line_arguments_parser().parse_args(argv)
+    if len(args.id) == 0 and args.where == None:
+        print("Nothing was deleted. --id 'ID' or --where 'CONDITION' must be " \
+              + "passed to the program.")
+        exit(0)
+
     for delete_id in args.id:
         db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(delete_id))
 
