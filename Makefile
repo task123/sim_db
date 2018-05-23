@@ -13,11 +13,14 @@ export CC CXX CFLAGS CXXFLAGS
 
 all:
 	$(MAKE) generate_commands
-	$(MAKE) libsimdbc
-	$(MAKE) libsimdbcpp
+	$(MAKE) libs
 
 generate_commands:
 	python src/generate_commands.py
+
+libs:
+	$(MAKE) libsimdbc
+	$(MAKE) libsimdbcpp
 
 libsimdbc:
 	$(MAKE) -C lib libsimdbc.a
