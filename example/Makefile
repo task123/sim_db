@@ -1,6 +1,10 @@
 CC = cc
 CXX = c++
 
+all:
+	$(MAKE) c_example_updated
+	$(MAKE) cpp_example_updated
+
 c_example_updated: 
 	$(MAKE) -C ../lib libsimdbc.a # Compile sim_db's C library.
 	$(MAKE) c_example

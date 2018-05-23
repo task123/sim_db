@@ -18,13 +18,12 @@ int main(int argc, char** argv) {
     sim_db::Connection sim_db(argc, argv);
 
     // Read parameters from database.
-    std::string example_param1 = sim_db.read<std::string>("example_param1");
-    std::vector<int> example_param2 =
-            sim_db.read<std::vector<int> >("example_param2");
+    auto example_param1 = sim_db.read<std::string>("example_param1");
+    auto example_param2 = sim_db.read<std::vector<int> >("example_param2");
 
     // Write to database.
     double small_result = 42.0;
-    sim_db.write<double>("example_small_result", small_result);
+    sim_db.write("example_small_result", small_result);
 
     // Make unique subdirectory for storing results and write its name to
     // database.
