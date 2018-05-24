@@ -15,12 +15,20 @@ extern "C" {
 
 namespace sim_db {
 
+/// To interact with the 'sim_db' database.
 class Connection {
 public:
+    /// To the 'sim_db' database.
+    /// @param argc Length of \p argv.
+    /// @param argv Array of command line arguments containg ```--id ID```.
+    /// @param store_metadata Store metadata to database if true. Set to 'false'
+    ///         for postprocessing (visualization) of data from simulation.
     Connection(int argc, char** argv, bool store_metadata = true);
 
+    /// To the 'sim_db' database.
     Connection(std::string path_sim_db, int id, bool store_metadata = true);
 
+    /// Read parameter from database.
     template <typename T>
     T read(std::string column);
 
