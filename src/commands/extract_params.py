@@ -12,18 +12,25 @@ import sqlite3
 import argparse
 import os.path
 
-no_extract_columns = {'id', 'status', 'comment', 'time_submitted', 'time_started', \
-                      'used_walltime', 'job_id', 'cpu_info', 'git_hash', \
-                      'commit_message', 'git_diff_stat', 'git_diff', 'sha1_executables'}
+no_extract_columns = {
+        'id', 'status', 'comment', 'time_submitted', 'time_started',
+        'used_walltime', 'job_id', 'cpu_info', 'git_hash', 'commit_message',
+        'git_diff_stat', 'git_diff', 'sha1_executables'
+}
+
 
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Extract parameter file from sim.db.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
     parser.add_argument('--default_file', '-d', action='store_true', help="Write parameters to the first of the 'Parameter filenames' in settings.txt. Ask for confirmation if file exists already.")
     parser.add_argument('--also_empty', action='store_true', help="Also extract empty paramters. Default is to not extract empty parameters and default columns that are not input parameters.")
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")
+    # yapf: enable
+
     return parser
+
 
 def get_param_type_as_string(col_type, value):
     if col_type == 'INTEGER':
@@ -32,14 +39,15 @@ def get_param_type_as_string(col_type, value):
         return 'float'
     elif col_type == 'TEXT':
         if value == 'True' or value == 'False':
-            return 'bool' 
+            return 'bool'
         value_split = value.split('[')
         if len(value_split) > 1:
             return value_split[0] + ' array'
         else:
             return 'string'
     else:
-        raise ValueError()        
+        raise ValueError()
+
 
 def extract_params(argv=None):
     args = command_line_arguments_parser().parse_args(argv)
@@ -48,13 +56,16 @@ def extract_params(argv=None):
     if args.default_file:
         param_files = helpers.Settings().read('parameter_files')
         if len(param_files) == 0:
-            print("ERROR: No '--filename' provided and no 'Parameters files' in settings.txt.")
+            print("ERROR: No '--filename' provided and no " \
+                    + "'Parameters files' in settings.txt."
+                  )
             exit()
         else:
             filename = param_files[0]
         if os.path.exists(filename):
-            answer = helpers.user_input("Would you like to overwrite '{0}'? (y/n)" \
-                    .format(filename))
+            answer = helpers.user_input(
+                    "Would you like to overwrite '{0}'? (y/n)".format(
+                            filename))
             if answer != 'y' and answer != 'Y' and answer != 'yes' and answer != 'Yes':
                 exit()
         print("Extracts parameters to '{0}'.".format(filename))
@@ -70,10 +81,11 @@ def extract_params(argv=None):
 
     db_cursor.execute("SELECT * FROM runs WHERE id={0}".format(args.id))
     extracted_row = db_cursor.fetchall()
-    
-    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
 
-    for col_name, col_type, value in zip(column_names, column_types, 
+    column_names, column_types = helpers.get_db_column_names_and_types(
+            db_cursor)
+
+    for col_name, col_type, value in zip(column_names, column_types,
                                          extracted_row[0]):
         if col_name in no_extract_columns:
             skip = True
@@ -92,11 +104,12 @@ def extract_params(argv=None):
             else:
                 params_file.write(line)
     if not is_printing_parameters:
-        params_file.close()        
+        params_file.close()
 
     db.commit()
     db_cursor.close()
     db.close()
+
 
 if __name__ == '__main__':
     extract_params()

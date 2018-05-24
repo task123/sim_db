@@ -15,11 +15,16 @@ import sqlite3
 import argparse
 import os.path
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Print content in sim.db.')
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of runs to delete.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which entries should be deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
+    # yapf: enable
+
     return parser
+
 
 def delete_sim(argv=None):
     db = helpers.connect_sim_db()
@@ -41,9 +46,6 @@ def delete_sim(argv=None):
     db_cursor.close()
     db.close()
 
+
 if __name__ == '__main__':
     delete_sim()
-
-
-
-

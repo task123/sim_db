@@ -22,26 +22,32 @@ import add_sim
 import run_sim
 import argparse
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
+    # yapf: enable
+
     return parser
+
 
 def add_and_run(argv=None):
     args = command_line_arguments_parser().parse_args(argv)
-    
+
     if args.filename == None:
         added_id = add_sim.add_sim()
     else:
         added_id = add_sim.add_sim(['--filename', args.filename])
-    
+
     if args.n == None:
         run_sim.run_sim(['--id', str(added_id)])
     else:
         run_sim.run_sim(['--id', str(added_id), '-n', str(args.n)])
-    
+
     return added_id
+
 
 if __name__ == '__main__':
     add_and_run()

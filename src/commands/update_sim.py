@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Make a update in the database.
 
-Usage: python update_run.py --id 'ID' --columns 'COLUMN_NAME' --values 'NEW_VALUE'
+Usage: 
+    python update_run.py --id 'ID' --columns 'COLUMN_NAME' --values 'NEW_VALUE'
     or python update_run.py --columns 'COLUMN_NAME_1' 'COLUMN_NAME_2'
                             --values 'NEW_VALUE_1' 'NEW_VALUE_2'
                             --where "'COLUMN_NAME_1' > 10"
@@ -14,14 +15,19 @@ import sqlite3
 import argparse
 import os.path
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Update content in sim.db.')
     parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
     parser.add_argument('--where', '-w', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
     parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
     parser.add_argument('--values', '-v', type=str, nargs='+', required=True, help="<Required> New value updated at run with id and column as specifed.")
     parser.add_argument('--db_path', type=str, default=None, help="Full path to the database used.")
+    # yapf: enable
+
     return parser
+
 
 def update_sim(argv=None):
     args = command_line_arguments_parser().parse_args(argv)
@@ -33,7 +39,8 @@ def update_sim(argv=None):
     db = helpers.connect_sim_db(args.db_path)
     db_cursor = db.cursor()
 
-    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(
+            db_cursor)
     type_dict = dict(zip(column_names, column_types))
 
     condition = args.where
@@ -48,6 +55,7 @@ def update_sim(argv=None):
     db.commit()
     db_cursor.close()
     db.close()
+
 
 if __name__ == '__main__':
     update_sim()

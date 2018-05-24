@@ -12,25 +12,31 @@ import update_sim
 import helpers
 import argparse
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Add comment to simulation in database.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation to add the comment.")
     parser.add_argument('--comment', '-c', type=str, default=None, help="Comment to add.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Filename of a file which content are to be added as a comment. Only the last 3000 characters will be added.")
     parser.add_argument('--append', '-a', action='store_true', help="Append comment or file to the current comment.")
+    # yapf: enable
+
     return parser
+
 
 def add_comment(argv=None):
     args = command_line_arguments_parser().parse_args(argv)
     if (args.comment == None and args.filename == None):
-        print("ERROR: Either '--comment'/'-c' or '--filename'/'-f' need to be provided.")
+        print("ERROR: Either '--comment'/'-c' or '--filename'/'-f' need to be provided."
+              )
         exit()
     comment = ""
     if args.append:
         db = helpers.connect_sim_db()
         db_cursor = db.cursor()
         db_cursor.execute("SELECT comment FROM runs")
-        fetched  = db_cursor.fetchone()
+        fetched = db_cursor.fetchone()
         if len(fetched) > 0:
             comment = fetched[0]
         db.commit()
@@ -45,9 +51,14 @@ def add_comment(argv=None):
                 warning = "WARNING: Comment limited to the last 3000 characters of the file."
                 print(warning)
                 comment_content = warning + '\n'
-                comment_content += comment_content[(len(comment_content) - 3000):]
+                comment_content += comment_content[(
+                        len(comment_content) - 3000):]
             comment += comment_content
-    update_sim.update_sim(['--id', str(args.id), '--columns', 'comment', '--values', comment])
+    update_sim.update_sim([
+            '--id',
+            str(args.id), '--columns', 'comment', '--values', comment
+    ])
+
 
 if __name__ == '__main__':
     add_comment()

@@ -10,9 +10,14 @@ import os
 import fnmatch
 import argparse
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description="Print a list of all the sim_db commands.")
+    # yapf: enable
+
     return parser
+
 
 def list_sim_db_commands():
     command_line_arguments_parser().parse_args()
@@ -26,6 +31,7 @@ def list_sim_db_commands():
     for program in programs:
         script_name = program.split('.')[0]
         print(script_name)
+
 
 if __name__ == '__main__':
     list_sim_db_commands()

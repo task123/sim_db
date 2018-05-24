@@ -46,24 +46,38 @@ class SimDB:
 
         if self.store_metadata and self.__is_a_git_project():
             sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
-            proc = subprocess.Popen(["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            proc = subprocess.Popen(
+                    ["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)],
+                    stdout=subprocess.PIPE,
+                    stderr=open(os.devnull, 'w'),
+                    shell=True)
             (out, err) = proc.communicate()
             self.write(column="git_hash", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {0}/..; git log -n 1 --format=%B HEAD".format( \
-                    sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
+            proc = subprocess.Popen(
+                    [
+                            "cd {0}/..; git log -n 1 --format=%B HEAD".format(
+                                    sim_db_dir)
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
             self.write(column="commit_message", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            proc = subprocess.Popen(
+                    ["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)],
+                    stdout=subprocess.PIPE,
+                    stderr=open(os.devnull, 'w'),
+                    shell=True)
             (out, err) = proc.communicate()
             self.write(column="git_diff_stat", value=out.decode('UTF-8'))
 
-            proc = subprocess.Popen(["cd {0}/..; git diff HEAD".format(sim_db_dir)], \
-                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            proc = subprocess.Popen(
+                    ["cd {0}/..; git diff HEAD".format(sim_db_dir)],
+                    stdout=subprocess.PIPE,
+                    stderr=open(os.devnull, 'w'),
+                    shell=True)
             (out, err) = proc.communicate()
             out = out.decode('UTF-8')
             if len(out) > 3000:
@@ -137,8 +151,9 @@ class SimDB:
             self.__check_type(db_cursor, type_of_value, column)
         else:
             if type_of_value == '':
-                print("ERROR: Column {0} does not exists in database and ".format(column) \
-                        + "'type_of_value' must be provided for it to be added.")
+                print("ERROR: Column {0} does not exists in ".format(column) \
+                        + "database and 'type_of_value' must be provided for " \
+                        + "it to be added.")
                 exit()
             if type_of_value == int:
                 type_of_value = 'int'
@@ -152,7 +167,7 @@ class SimDB:
                     ["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
-        update_sim.update_sim(["--id", str(db_id), "--columns", column, \
+        update_sim.update_sim(["--id", str(db_id), "--columns", column,
                     "--value", value_string])
 
     def make_unique_subdir(self, path_directory, is_path_relative=True):
@@ -348,9 +363,10 @@ class SimDB:
                 elif type_of_value == 'bool array':
                     value_string = "bool[]"
                 else:
-                    raise ValueError("The type_of_value must be set to 'int array', " \
-                            "'float array', 'string array' or 'bool array' when " \
-                            "a empty list is passed to SimDB.write().")
+                    raise ValueError("The type_of_value must be set to 'int " \
+                            "array', 'float array', 'string array' or 'bool " \
+                            "array' when a empty list is passed to " \
+                            "SimDB.write().")
                 return value_string
 
     def __is_a_git_project(self):

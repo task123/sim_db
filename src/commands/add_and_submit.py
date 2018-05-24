@@ -23,7 +23,9 @@ import run_sim
 import submit_sim
 import argparse
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('--max_walltime', type=str, default=None, help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
@@ -35,17 +37,20 @@ def command_line_arguments_parser():
     parser.add_argument('--notify_end', action='store_true', help="Set notification for when simulation ends or if it fails.")
     parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
+    # yapf: enable
 
     return parser
+
+
 def add_and_submit(argv=None):
     args = command_line_arguments_parser().parse_args(argv)
-    
+
     if args.filename == None:
         added_id = add_sim.add_sim()
     else:
         added_id = add_sim.add_sim(['--filename', args.filename])
 
-    submit_parameters = ["--id", str(added_id)]    
+    submit_parameters = ["--id", str(added_id)]
     if args.max_walltime != None:
         submit_parameters.append("--max_walltime")
         submit_parameters.append(args.max_walltime)
@@ -68,10 +73,11 @@ def add_and_submit(argv=None):
         submit_parameters.append("--no_confirmation")
     if args.do_not_submit_job_script:
         submit_parameters.append("--do_not_submit_job_script")
-    
+
     name_job_script, job_id = submit_sim.submit_sim(submit_parameters)
 
     return (added_id, name_job_script, job_id)
+
 
 if __name__ == '__main__':
     add_and_submit()

@@ -13,11 +13,16 @@ import sqlite3
 import subprocess
 import sys
 
+
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Run simulation with ID in database.')
     parser.add_argument('--id', '-i', type=int, default=None, help="'ID' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
+    # yapf: enable
+
     return parser
+
 
 def run_sim(argv=None):
     """Run simulation with parameters with ID passed or the highest ID."""
@@ -36,19 +41,33 @@ def run_sim(argv=None):
     db.commit()
     db_cursor.close()
     db.close()
-    update_sim.update_sim(["--id", str(args.id), "--columns", "cpu_info", 
-                          "--values", helpers.get_cpu_and_mem_info()])
-    update_sim.update_sim(["--id", str(args.id), "--columns", "status", "--values", "running"])
-    
+    update_sim.update_sim([
+            "--id",
+            str(args.id), "--columns", "cpu_info", "--values",
+            helpers.get_cpu_and_mem_info()
+    ])
+    update_sim.update_sim([
+            "--id",
+            str(args.id), "--columns", "status", "--values", "running"
+    ])
+
     for command in run_command.split(';'):
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True)
         (out, err) = proc.communicate()
         if out != None:
             print(out.decode('UTF-8'))
         if err != None:
             sys.stderr.write(err.decode('UTF-8'))
             sys.stderr.flush()
-    update_sim.update_sim(["--id", str(args.id), "--columns", "status", "--values", "finished"])
+    update_sim.update_sim([
+            "--id",
+            str(args.id), "--columns", "status", "--values", "finished"
+    ])
+
 
 if __name__ == '__main__':
     run_sim()

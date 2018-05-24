@@ -13,8 +13,12 @@ from collections import OrderedDict
 
 
 def command_line_arguments_parser():
+    # yapf: disable
     parser = argparse.ArgumentParser(description='Delete all empty columns in the sim.db, except the default ones.')
+    # yapf: enable
+
     return parser
+
 
 def delete_empty_columns():
     command_line_arguments_parser().parse_args()
@@ -22,14 +26,15 @@ def delete_empty_columns():
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(
+            db_cursor)
     new_table_dict = OrderedDict()
     for column_name, column_type in zip(column_names, column_types):
         db_cursor.execute("SELECT {0} FROM runs;".format(column_name))
-        values =  db_cursor.fetchall()
+        values = db_cursor.fetchall()
         is_empty = True
         for value in values:
-            if value != (None,):
+            if value != (None, ):
                 is_empty = False
                 break
         if not is_empty or (column_name in helpers.default_db_columns):
@@ -42,14 +47,16 @@ def delete_empty_columns():
         new_columns += column_name + ", "
     new_columns_and_types = new_columns_and_types[:-2]
     new_columns = new_columns[:-2]
-    
+
     assert new_columns_and_types[0:2] == 'id', "Name of first column in database is not 'id'."
     new_columns_and_types = new_columns_and_types[0:10] + " PRIMARY KEY" \
-                           +new_columns_and_types[10:] # Correct id type
+            +new_columns_and_types[10:] # Correct id type
 
-    db_cursor.execute("CREATE TABLE IF NOT EXISTS new_runs ({0});".format(new_columns_and_types))
+    db_cursor.execute("CREATE TABLE IF NOT EXISTS new_runs ({0});".format(
+            new_columns_and_types))
 
-    db_cursor.execute("INSERT INTO new_runs SELECT {0} FROM runs;".format(new_columns))
+    db_cursor.execute(
+            "INSERT INTO new_runs SELECT {0} FROM runs;".format(new_columns))
 
     db_cursor.execute("DROP TABLE runs;")
     db_cursor.execute("ALTER TABLE new_runs RENAME TO runs;")
@@ -57,6 +64,7 @@ def delete_empty_columns():
     db.commit()
     db_cursor.close()
     db.close()
+
 
 if __name__ == '__main__':
     delete_empty_columns()
