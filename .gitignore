@@ -46,3 +46,5 @@ example/results/*
 
 # Other
 .DS_Store
+.cache/*
+test/.cache/*
