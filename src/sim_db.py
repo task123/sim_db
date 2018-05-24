@@ -17,8 +17,9 @@ src_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(src_dir, "commands")))
 import helpers, update_sim, add_sim
 
+
 class SimDB:
-    def __init__(self, db_id=None):
+    def __init__(self, db_id=None, store_metadata=True):
         """Add metadata to database and note start time.
 
         Update 'time_started', 'git_hash', 'commit_message', 'git_diff_stat'
@@ -26,52 +27,60 @@ class SimDB:
 
         'time_started' used the format: 'Year-Month-Date_Hours-Minutes-Seconds'.
 
-        db_id (int): ID of the row in the database to update. If it is 
-            'None', then it is read from the last argument passed to the program 
+        db_id (int): ID of the row in the database to update. If it is
+            'None', then it is read from the last argument passed to the program
             after option '--id'.
+
+        store_metadata (bool): If False, no metadata is added to the database.
+            Typically used when postprocessing (visualizing) data from a
+            simulation.
         """
-        self.id, self.sim_db_dir = self.__read_from_command_line_arguments(db_id)
+        self.store_metadata = store_metadata
+        self.id, self.sim_db_dir = self.__read_from_command_line_arguments(
+                db_id)
         self.start_time = time.time()
 
-        self.write(column="status", value="running")
-        self.write('time_started', self.get_date_and_time_as_string())
+        if self.store_metadata:
+            self.write(column="status", value="running")
+            self.write('time_started', self.get_date_and_time_as_string())
 
-        sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
-        proc = subprocess.Popen(["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)], \
-                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-        (out, err) = proc.communicate()
-        self.write(column="git_hash", value=out.decode('UTF-8'))
+        if self.store_metadata and self.__is_a_git_project():
+            sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
+            proc = subprocess.Popen(["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)], \
+                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            (out, err) = proc.communicate()
+            self.write(column="git_hash", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {0}/..; git log -n 1 --format=%B HEAD".format( \
-                sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
-                shell=True)
-        (out, err) = proc.communicate()
-        self.write(column="commit_message", value=out.decode('UTF-8'))
+            proc = subprocess.Popen(["cd {0}/..; git log -n 1 --format=%B HEAD".format( \
+                    sim_db_dir)], stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), \
+                    shell=True)
+            (out, err) = proc.communicate()
+            self.write(column="commit_message", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)], \
-                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-        (out, err) = proc.communicate()
-        self.write(column="git_diff_stat", value=out.decode('UTF-8'))
+            proc = subprocess.Popen(["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)], \
+                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            (out, err) = proc.communicate()
+            self.write(column="git_diff_stat", value=out.decode('UTF-8'))
 
-        proc = subprocess.Popen(["cd {0}/..; git diff HEAD".format(sim_db_dir)], \
-                stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
-        (out, err) = proc.communicate()
-        out = out.decode('UTF-8')
-        if len(out) > 3000:
-            warning = "WARNING: Diff limited to first 3000 characters.\n"
-            out = warning + '\n' + out[0:3000] + '\n\n' + warning
-        self.write(column="git_diff", value=out)
+            proc = subprocess.Popen(["cd {0}/..; git diff HEAD".format(sim_db_dir)], \
+                    stdout=subprocess.PIPE, stderr=open(os.devnull, 'w'), shell=True)
+            (out, err) = proc.communicate()
+            out = out.decode('UTF-8')
+            if len(out) > 3000:
+                warning = "WARNING: Diff limited to first 3000 characters.\n"
+                out = warning + '\n' + out[0:3000] + '\n\n' + warning
+            self.write(column="git_diff", value=out)
 
     def read(self, column, db_id=None, check_type_is=''):
         """Read parameter with id 'db_id' and column 'column' from the database.
 
         column (string): Name of the column the parameter is read from.
-        db_id (int): ID of the row the parameter is read from. If it is 
-            'None', then it is read from arguments passed to the program after 
+        db_id (int): ID of the row the parameter is read from. If it is
+            'None', then it is read from arguments passed to the program after
             the option '--id'.
-        check_type_is (string or type): Throws ValueError if type does not 
-            match 'check_type_is'. The valid types the strings 'int', 'float', 
-            'bool', 'string' and 'int/float/bool/string array' or the types int, 
+        check_type_is (string or type): Throws ValueError if type does not
+            match 'check_type_is'. The valid types the strings 'int', 'float',
+            'bool', 'string' and 'int/float/bool/string array' or the types int,
             float, bool, str and list.
         """
         if db_id == None:
@@ -80,12 +89,15 @@ class SimDB:
         db = helpers.connect_sim_db()
         db_cursor = db.cursor()
 
-        column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+        column_names, column_types = helpers.get_db_column_names_and_types(
+                db_cursor)
         if column not in column_names:
-            print("Column, {0}, is NOT a column in the database, 'sim.db'.".format(column))
+            print("Column, {0}, is NOT a column in the database, 'sim.db'.".
+                  format(column))
             exit()
 
-        db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(column, db_id))
+        db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
+                column, db_id))
         value = db_cursor.fetchone()[0]
 
         value = self.__check_type(db_cursor, check_type_is, column, value)
@@ -93,7 +105,7 @@ class SimDB:
         db.commit()
         db_cursor.close()
         db.close()
-        
+
         return value
 
     def write(self, column, value, type_of_value='', db_id=None):
@@ -103,22 +115,23 @@ class SimDB:
 
         column (string): Name of the column the parameter is read from.
         value : New value of the specified entry in the database.
-        db_id (int): ID of the row the parameter is read from. If it is 
-            'None', then it is read from arguments passed to the program after 
+        db_id (int): ID of the row the parameter is read from. If it is
+            'None', then it is read from arguments passed to the program after
             the option '--id'.
         type_of_value (string or type): Needed if column does note exists or if
-            value is empty list. The valid types the strings 'int', 'float', 
-            'bool', 'string' and 'int/float/bool/string array' or the types int, 
+            value is empty list. The valid types the strings 'int', 'float',
+            'bool', 'string' and 'int/float/bool/string array' or the types int,
             float, bool and str.
         Throws ValueError if column exists, but type does not match, or empty
-            list is passed without type_of_value given.            
+            list is passed without type_of_value given.
         """
         if db_id == None:
             db_id = self.id
 
         db = helpers.connect_sim_db()
         db_cursor = db.cursor()
-        column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+        column_names, column_types = helpers.get_db_column_names_and_types(
+                db_cursor)
         type_dict = dict(zip(column_names, column_types))
         if column in column_names:
             self.__check_type(db_cursor, type_of_value, column)
@@ -135,21 +148,21 @@ class SimDB:
                 type_of_value = 'bool'
             if type_of_value == str:
                 type_of_value = 'string'
-            add_column.add_column(["--column", column, "--type", type_of_value])
+            add_column.add_column(
+                    ["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
         update_sim.update_sim(["--id", str(db_id), "--columns", column, \
                     "--value", value_string])
 
-
     def make_unique_subdir(self, path_directory, is_path_relative=True):
         """Make a unique subdirectory in 'name_result_directory'.
 
-        The subdirectory will be named date_time_name_id and is intended to 
+        The subdirectory will be named date_time_name_id and is intended to
         store results in.
 
         name_result_directory (string): Full path to directory.
-        
+
         return (string): Full path to new subdirectory.
         """
         if is_path_relative:
@@ -159,22 +172,24 @@ class SimDB:
         if len(subdir) > 0 and subdir[-1] != '/':
             subdir += '/'
         subdir += self.get_date_and_time_as_string()
-        subdir += '_' + self.read('name') + '_' + str(self.id) 
+        subdir += '_' + self.read('name') + '_' + str(self.id)
         subdir = os.path.realpath(subdir)
         if os.path.exists(subdir):
             subdir += "__no2"
         while (os.path.exists(subdir)):
             i = subdir.rfind("_no")
-            subdir = subdir[:i+4] + str(int(subdir[i+4:]) + 1)
+            subdir = subdir[:i + 4] + str(int(subdir[i + 4:]) + 1)
         os.mkdir(subdir)
-        self.write(column="result_dir", value=subdir)
+
+        if self.store_metadata:
+            self.write(column="result_dir", value=subdir)
 
         return subdir
 
     def update_sha1_executables(self, paths_executables):
         """Update the 'sha1_executable' column in the database.
 
-        Sets the entry to the sha1 of all the executables. The order will 
+        Sets the entry to the sha1 of all the executables. The order will
         affect the value.
 
         paths_executables (list of strings): List of full paths to executables.
@@ -187,17 +202,21 @@ class SimDB:
 
     def end(self):
         """Add metadata for 'used_walltime' and update 'status' to 'finished'."""
-        used_time = time.time() - self.start_time  
-        used_walltime = "{0}h {1}m {2}s".format(int(used_time/3600), int(used_time/60), used_time % 60) 
-        self.write('used_walltime', used_walltime)
-        self.write('status', 'finished')
+        if self.store_metadata:
+            used_time = time.time() - self.start_time
+            used_walltime = "{0}h {1}m {2}s".format(
+                    int(used_time / 3600), int(used_time / 60), used_time % 60)
+            self.write('used_walltime', used_walltime)
+            self.write('status', 'finished')
 
     def __read_from_command_line_arguments(self, db_id):
         path_sim_db = None
         if db_id == None:
-            parser = argparse.ArgumentParser() 
+            parser = argparse.ArgumentParser()
+            # yapf: disable
             parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
             parser.add_argument('--path_sim_db', '-p', type=str, default=None, help="Path to sim_db directory.")
+            # yapf: enable
             args = parser.parse_args()
             db_id = args.id
             path_sim_db = args.path_sim_db
@@ -210,23 +229,27 @@ class SimDB:
         return (db_id, path_sim_db)
 
     def __check_type(self, db_cursor, check_type_is, column, value=None):
-        column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+        column_names, column_types = helpers.get_db_column_names_and_types(
+                db_cursor)
         type_dict = dict(zip(column_names, column_types))
         type_of_value = type_dict[column]
 
-        if ((check_type_is == 'int' or check_type_is == int) 
-                and type_of_value == 'INTEGER'):
+        if ((check_type_is == 'int' or check_type_is == int)
+                    and type_of_value == 'INTEGER'):
             correct_type = True
         elif ((check_type_is == 'float' or check_type_is == float)
-                and type_of_value == 'REAL'):
+              and type_of_value == 'REAL'):
             correct_type = True
         elif (type_of_value == 'TEXT' and value != None):
-            value, correct_type = self.__convert_text_to_correct_type(value, check_type_is)
-        elif (type_of_value == 'TEXT' and value == None and (check_type_is == 'string' \
-                or check_type_is == str or check_type_is == 'bool' or check_type_is == bool \
-                or check_type_is == list or check_type_is == 'int array' \
-                or check_type_is == 'float array' or check_type_is == 'bool array' \
-                or check_type_is == 'string array')):
+            value, correct_type = self.__convert_text_to_correct_type(
+                    value, check_type_is)
+        elif (type_of_value == 'TEXT' and value == None
+              and (check_type_is == 'string' or check_type_is == str
+                   or check_type_is == 'bool' or check_type_is == bool
+                   or check_type_is == list or check_type_is == 'int array'
+                   or check_type_is == 'float array'
+                   or check_type_is == 'bool array'
+                   or check_type_is == 'string array')):
             correct_type = True
         else:
             correct_type = False
@@ -265,14 +288,16 @@ class SimDB:
             elif value_split[0].strip() == 'string':
                 if (check_type_is == 'string array' or check_type_is == list):
                     correct_type = True
-                for i, element in enumerate(value_split[1].split(']')[0].split(',')):
+                for i, element in enumerate(
+                        value_split[1].split(']')[0].split(',')):
                     if i > 0 and len(element) > 0 and element[0] == ' ':
                         element = element[1:]
                     value.append(str(element))
             elif value_split[0].strip() == 'bool':
                 if (check_type_is == 'bool array' or check_type_is == list):
                     correct_type = True
-                for i, element in enumerate(value_split[1].split(']')[0].split(',')):
+                for i, element in enumerate(
+                        value_split[1].split(']')[0].split(',')):
                     if i > 0 and len(element) > 0 and element[0] == ' ':
                         element = element[1:]
                     if element == 'True':
@@ -327,6 +352,16 @@ class SimDB:
                             "'float array', 'string array' or 'bool array' when " \
                             "a empty list is passed to SimDB.write().")
                 return value_string
+
+    def __is_a_git_project(self):
+        directory = self.sim_db_dir
+        if directory[-1] == '/':
+            directory = directory[:-1]
+        while '/' in directory:
+            directory = directory.rsplit('/')[0]
+            if os.path.exists(directory + "/.git"):
+                return True
+        return False
 
     def get_date_and_time_as_string(self):
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""
