@@ -13,7 +13,14 @@
 #include "sim_db.hpp"
 
 int main(int argc, char** argv) {
-    sim_db::Connection sim_db(argc, argv);
+    bool store_metadata = true;
+    for (int i = 0; i < argc; i++) {
+        if (static_cast<std::string>(argv[i]) == "no_metadata") {
+            store_metadata = false;
+        }
+    }
+
+    sim_db::Connection sim_db(argc, argv, store_metadata = store_metadata);
 
     int param1 = sim_db.read<int>("param1");
     std::cout << param1 << std::endl;
@@ -72,21 +79,23 @@ int main(int argc, char** argv) {
         std::cout << param8[i] << std::endl;
     }
 
-    // Get full path to result directory.
-    char cwd[4097];
-    getcwd(cwd, 4096);
-    std::string path_res_dir = cwd + std::string("/") + __FILE__;
-    path_res_dir.erase(path_res_dir.find_last_of('/'), path_res_dir.size());
-    path_res_dir += "/results";
+    if (store_metadata) {
+        // Get full path to result directory.
+        char cwd[4097];
+        getcwd(cwd, 4096);
+        std::string path_res_dir = cwd + std::string("/") + __FILE__;
+        path_res_dir.erase(path_res_dir.find_last_of('/'), path_res_dir.size());
+        path_res_dir += "/results";
 
-    // Make unique subdirectory in results/.
-    std::string filename_result =
-            sim_db.make_unique_subdir("test/results/") + "/results.txt";
+        // Make unique subdirectory in results/.
+        std::string filename_result =
+                sim_db.make_unique_subdir("test/results/") + "/results.txt";
 
-    // Save param6 to file in this unique subdirectory.
-    std::ofstream result_file;
-    result_file.open(filename_result.c_str());
-    for (size_t i = 0; i < param6.size(); i++) {
-        result_file << param6[i] << std::endl;
+        // Save param6 to file in this unique subdirectory.
+        std::ofstream result_file;
+        result_file.open(filename_result.c_str());
+        for (size_t i = 0; i < param6.size(); i++) {
+            result_file << param6[i] << std::endl;
+        }
     }
 }

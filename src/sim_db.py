@@ -232,7 +232,7 @@ class SimDB:
             parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
             parser.add_argument('--path_sim_db', '-p', type=str, default=None, help="Path to sim_db directory.")
             # yapf: enable
-            args = parser.parse_args()
+            args, unknowns = parser.parse_known_args()
             db_id = args.id
             path_sim_db = args.path_sim_db
         if (path_sim_db == None):

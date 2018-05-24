@@ -70,26 +70,56 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
     assert printed_params[10] == "None"
 
 
-def test_run_sim_and_sim_db_methods(capsys):
+def test_run_sim_and_python_functions(capsys):
+    __run_sim_and_python_functions(capsys, True)
+
+def test_python_functions_without_storing_metadata(capsys):
+    __run_sim_and_python_functions(capsys, False)
+
+def __run_sim_and_python_functions(capsys, store_metadata):
     db_id = add_sim.add_sim([
             "--filename",
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
+    if not store_metadata:
+        run_command = __add_no_metadata_flag_to_run_command(capsys, db_id)
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15)  # Wait for program.py to finish
-    output_program, err = capsys.readouterr()
+    time.sleep(0.1)  # Wait for program.py to finish
+    output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
             "time_started used_walltime --no_headers".format(db_id).split())
-    output_print_sim, err = capsys.readouterr()
+    output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
-        print("\nTest run_sim and python methods...")
-    res_dir = output_print_sim.split('\n')[16].strip()
-    os.remove(res_dir + "/results.txt")
-    os.rmdir(res_dir)
+        if store_metadata:
+            print("\nTest run_sim and python methods...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+        else:
+            print("\nTest python methods without storing metadata...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+    if store_metadata:
+        res_dir = output_print_sim.split('\n')[16].strip()
+        os.remove(res_dir + "/results.txt")
+        os.rmdir(res_dir)
     __assert_output_python_program(output_program)
-    __assert_output_print_sim_after_run_sim(output_print_sim)
+    __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
+
+def __add_no_metadata_flag_to_run_command(capsys, db_id):
+    print_sim.print_sim(
+            "--id {0} -v --columns run_command --no_headers".format(
+                    db_id).split())
+    run_command, err = capsys.readouterr()
+    run_command = run_command.strip() + " no_metadata"
+    update_sim.update_sim([
+            "--id",
+            str(db_id), "--columns", "run_command", "--values", run_command
+    ])
+    return run_command
 
 
 def __assert_output_python_program(output_program):
@@ -114,7 +144,7 @@ def __assert_output_python_program(output_program):
     assert printed_params[17] == "None"
 
 
-def __assert_output_print_sim_after_run_sim(output_print_sim):
+def __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):
     printed_params = output_print_sim.split('\n')[0::2]
     printed_params = [param.strip() for param in printed_params]
     assert printed_params[0] == "3"
@@ -125,18 +155,31 @@ def __assert_output_print_sim_after_run_sim(output_print_sim):
     assert printed_params[5] == "float[1.5, 2.5, 3.5]"
     assert printed_params[6] == "string[a, b, c]"
     assert printed_params[7] == "bool[True, False, True]"
-    assert printed_params[8] != None
-    assert printed_params[9] != None
-    assert printed_params[10] != None
+    if store_metadata:
+        assert printed_params[8] != 'None'
+        assert printed_params[9] != 'None'
+        assert printed_params[10] != 'None'
+    else:
+        assert printed_params[8] == 'None'
+        assert printed_params[9] == 'None'
+        assert printed_params[10] == 'None'
 
 
 def test_c_functions(capsys):
+    __c_funcionts(capsys, True)
+
+def test_c_functions_without_storing_metadata(capsys):
+    __c_funcionts(capsys, False)
+
+def __c_funcionts(capsys, store_metadata):
     db_id = add_sim.add_sim([
             "--filename",
             "{0}/sim_params_c_program.txt".format(__get_test_dir())
     ])
+    if not store_metadata:
+        __add_no_metadata_flag_to_run_command(capsys, db_id)
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15)  # Wait for c_program to finish
+    time.sleep(0.1)  # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -144,23 +187,39 @@ def test_c_functions(capsys):
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
-        print("\nTest C functions...")
-        print(err_program)
-        print(err_print_sim)
-    res_dir = output_print_sim.split('\n')[16].strip()
-    os.remove(res_dir + "/results.txt")
-    os.rmdir(res_dir)
+        if store_metadata:
+            print("\nTest C functions...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+        else:
+            print("\nTest C functions without storing metadata...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+    if store_metadata:
+        res_dir = output_print_sim.split('\n')[16].strip()
+        os.remove(res_dir + "/results.txt")
+        os.rmdir(res_dir)
     __assert_output_c_and_cpp_program(output_program)
-    __assert_output_print_sim_after_run_sim(output_print_sim)
+    __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
 def test_cpp_functions(capsys):
+    __cpp_functions(capsys, True)
+
+def test_cpp_functions_without_storing_metadata(capsys):
+    __cpp_functions(capsys, False)
+
+def __cpp_functions(capsys, store_metadata):
     db_id = add_sim.add_sim([
             "--filename",
             "{0}/sim_params_cpp_program.txt".format(__get_test_dir())
     ])
+    if not store_metadata:
+        __add_no_metadata_flag_to_run_command(capsys, db_id)
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15)  # Wait for cpp_program to finish
+    time.sleep(0.1)  # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -168,13 +227,22 @@ def test_cpp_functions(capsys):
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
-        print("\nTest C++ methods...")
-        print(err_program)
-    res_dir = output_print_sim.split('\n')[16].strip()
-    os.remove(res_dir + "/results.txt")
-    os.rmdir(res_dir)
+        if store_metadata:
+            print("\nTest C++ methods...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+        else:
+            print("\nTest C++ methods without storing metadata...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+    if store_metadata:
+        res_dir = output_print_sim.split('\n')[16].strip()
+        os.remove(res_dir + "/results.txt")
+        os.rmdir(res_dir)
     __assert_output_c_and_cpp_program(output_program)
-    __assert_output_print_sim_after_run_sim(output_print_sim)
+    __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
 def __assert_output_c_and_cpp_program(output_popen):
@@ -206,7 +274,7 @@ def test_add_and_run(capsys):
             "--filename",
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
-    time.sleep(0.15)  # Wait for program.py to finish
+    time.sleep(0.1)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --no_headers --columns name param1 param2 " \
             "param3 param4 param5 param6 param7 param8 param9 param10" \
@@ -224,7 +292,7 @@ def test_add_and_run(capsys):
     os.rmdir(res_dir)
     __assert_output_print_sim_after_add_sim(output_print_sim_after_add_sim)
     __assert_output_python_program(output_program)
-    __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim)
+    __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim, True)
 
 
 def test_list_sim_db_commands(capsys):
@@ -473,7 +541,7 @@ def test_combine_dbs(capsys):
     new_run_commands.append(comb_sim_db_cursor.fetchall()[0][0])
 
     with capsys.disabled():
-        print("Test combine_dbs...")
+        print("\nTest combine_dbs...")
 
     comb_sim_db.commit()
     comb_sim_db_cursor.close()

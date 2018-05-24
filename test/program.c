@@ -12,7 +12,19 @@
 #include "sim_db.h"
 
 int main(int argc, char** argv) {
-    SimDB* sim_db = sim_db_ctor(argc, argv);
+    bool store_metadata = true;
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "no_metadata") == 0) {
+            store_metadata = false;
+        }
+    }
+
+    SimDB* sim_db;
+    if (store_metadata) {
+        sim_db = sim_db_ctor(argc, argv);
+    } else {
+        sim_db = sim_db_ctor_no_metadata(argc, argv);
+    }
 
     int param1 = sim_db_read_int(sim_db, "param1");
     printf("%d\n", param1);
@@ -77,13 +89,15 @@ int main(int argc, char** argv) {
         printf("%d\n", bool_vec.array[i]);
     }
 
-    char* name_subdir =
-            sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
-    FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
-    for (size_t i = 0; i < double_vec.size; i++) {
-        fprintf(result_file, "%f\n", double_vec.array[i]);
+    if (store_metadata) {
+        char* name_subdir =
+                sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
+        FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
+        for (size_t i = 0; i < double_vec.size; i++) {
+            fprintf(result_file, "%f\n", double_vec.array[i]);
+        }
+        fclose(result_file);
     }
-    fclose(result_file);
 
     sim_db_dtor(sim_db);
 }

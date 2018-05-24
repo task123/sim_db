@@ -11,9 +11,15 @@ import __init__
 import sim_db
 import argparse
 import os.path
+import sys
 import numpy as np
 
-sim_database = sim_db.SimDB()
+if 'no_metadata' in sys.argv:
+    store_metadata = False
+else:
+    store_metadata = True
+
+sim_database = sim_db.SimDB(store_metadata=store_metadata)
 
 param1 = sim_database.read("param1")
 print(param1)
@@ -61,8 +67,9 @@ print(param9)
 param10 = sim_database.read("param10")
 print(param10)
 
-large_test_res = np.array(param6)
-res_dir = sim_database.make_unique_subdir("test/results")
-np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
+if store_metadata:
+    large_test_res = np.array(param6)
+    res_dir = sim_database.make_unique_subdir("test/results")
+    np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
 sim_database.end()
