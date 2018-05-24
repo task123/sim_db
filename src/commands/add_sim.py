@@ -50,19 +50,19 @@ def split_parameter_line(line, i):
 def add_new_column(db_cursor, i, param_type, param_name, value):
     if param_type == 'int':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                          {0} INTEGER".format(param_name))
+                          {0} INTEGER"                                                                                                                  .format(param_name))
     elif param_type == 'float':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} REAL".format(param_name))
+                           {0} REAL"                                                                                                            .format(param_name))
     elif param_type == 'string':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT".format(param_name))
+                           {0} TEXT"                                                                                                            .format(param_name))
     elif param_type == 'bool':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT".format(param_name))
+                           {0} TEXT"                                                                                                            .format(param_name))
     elif len(param_type) > 5 and param_type[-5:] == 'array':
         db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT".format(param_name))
+                           {0} TEXT"                                                                                                            .format(param_name))
         array_type = param_type[:-5].strip()
         if array_type != 'int' and array_type != 'float' \
                 and array_type != 'string' and array_type != 'bool':
@@ -188,9 +188,13 @@ def add_sim(argv=None):
 
     args = command_line_arguments_parser().parse_args(argv)
     sim_params_filename = args.filename
+    if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
+                and sim_params_filename.split('/')[0] == 'sim_db'):
+        sim_params_filename = ( helpers.get_closest_sim_db_dir_path() + '/' +
+                               sim_params_filename.split('/', 1)[1])
     if sim_params_filename == None:
-        sim_params_filename = helpers.search_for_parameter_file_matching_settings(
-        )
+        sim_params_filename = (
+                helpers.search_for_parameter_file_matching_settings())
 
     try:
         sim_params_file = open(sim_params_filename, 'r')
