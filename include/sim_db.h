@@ -11,10 +11,9 @@
 
 typedef struct SimDB SimDB;
 
-/// @brief Initialize SimDB with command line argument ```--id ID```, where
+/// Initialize SimDB with command line argument ```--id ID```, where
 /// ```ID``` is the id of the simulation parameters in the ```sim_db```
 /// database.
-///
 /// The following metadata is also added to database: 'time_started',
 /// 'git_hash', 'git_commit', 'git_diff_stat', 'git_diff' and
 /// 'sha1_executables'.
@@ -23,11 +22,14 @@ typedef struct SimDB SimDB;
 /// @param argv Array of command line arguments containg ```--id ID```.
 SimDB* sim_db_ctor(int argc, char** argv);
 
+SimDB* sim_db_ctor_no_metadata(int argc, char** argv);
+
 /// Initialize SimDB with id of the simulation parameters in the
 /// ```sim_db``` database.
 /// Metadata is also added to database. (sha1 is only added if in a git
 /// project.) sim_db_dtor() must be called to clean up.
-SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id);
+SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
+                           bool store_metadata);
 
 /// Read parameter from the database.
 /// @param self Return value of fn sim_db_ctor or fn sim_db_ctor_with_id.

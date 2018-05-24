@@ -17,9 +17,9 @@ namespace sim_db {
 
 class Connection {
 public:
-    Connection(int argc, char** argv);
+    Connection(int argc, char** argv, bool store_metadata = true);
 
-    Connection(std::string path_sim_db, int id);
+    Connection(std::string path_sim_db, int id, bool store_metadata = true);
 
     template <typename T>
     T read(std::string column);

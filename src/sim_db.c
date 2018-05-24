@@ -22,6 +22,7 @@ struct SimDB {
     sqlite3* db;
     int id;
     char path_sim_db[PATH_MAX + 1];
+    bool store_metadata;
     time_t start_time;
     void** pointers_to_free;
     size_t n_pointers;
@@ -135,7 +136,7 @@ bool is_a_git_project(char path_sim_db[PATH_MAX + 1]) {
     return false;
 }
 
-SimDB* sim_db_ctor(int argc, char** argv) {
+SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
     char path_sim_db[PATH_MAX + 1];
     bool is_path_sim_db_found = false;
     bool is_id_found = false;
@@ -162,22 +163,33 @@ SimDB* sim_db_ctor(int argc, char** argv) {
         exit(1);
     }
 
-    SimDB* sim_db = sim_db_ctor_with_id(path_sim_db, id);
+    SimDB* sim_db = sim_db_ctor_with_id(path_sim_db, id, store_metadata);
 
-    int len_path_sim_db = strlen(path_sim_db);
-    if (len_path_sim_db > 0 && path_sim_db[len_path_sim_db - 1] == '/') {
-        path_sim_db[len_path_sim_db - 1] = '\0';
-    }
-    if (is_a_git_project(path_sim_db)) {
-        char* program_name[1];
-        program_name[0] = argv[0];
-        sim_db_update_sha1_executables(sim_db, program_name, 1);
+    if (store_metadata) {
+        int len_path_sim_db = strlen(path_sim_db);
+        if (len_path_sim_db > 0 && path_sim_db[len_path_sim_db - 1] == '/') {
+            path_sim_db[len_path_sim_db - 1] = '\0';
+        }
+        if (is_a_git_project(path_sim_db)) {
+            char* program_name[1];
+            program_name[0] = argv[0];
+            sim_db_update_sha1_executables(sim_db, program_name, 1);
+        }
     }
 
     return sim_db;
 }
 
-SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id) {
+SimDB* sim_db_ctor(int argc, char** argv) {
+    return sim_db_ctor_metadata(argc, argv, true);
+}
+
+SimDB* sim_db_ctor_no_metadata(int argc, char** argv) {
+    return sim_db_ctor_metadata(argc, argv, false);
+}
+
+SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
+                           bool store_metadata) {
     char path_sim_db_long[PATH_MAX + 1];
     strcpy(path_sim_db_long, path_sim_db);
     sqlite3* db;
@@ -198,21 +210,24 @@ SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id) {
     sim_db->db = db;
     sim_db->id = id;
     strcpy(sim_db->path_sim_db, path_sim_db_long);
+    sim_db->store_metadata = store_metadata;
     sim_db->start_time = time(NULL);
     sim_db->buffer_size_pointers = 5;
     sim_db->pointers_to_free =
             (void**) malloc(sim_db->buffer_size_pointers * sizeof(void*));
     sim_db->n_pointers = 0;
 
-    char time_started[80];
-    sim_db_get_time_string(time_started);
-    sim_db_update(sim_db, "time_started", time_started);
+    if (store_metadata) {
+        char time_started[80];
+        sim_db_get_time_string(time_started);
+        sim_db_update(sim_db, "time_started", time_started);
+    }
 
     const size_t len_output = 3000;
     char output[len_output + 200];
     char command[4200];
 
-    if (is_a_git_project(path_sim_db_long)) {
+    if (store_metadata && is_a_git_project(path_sim_db_long)) {
         char path_sim_db_backslashed[PATH_MAX + 1];
         strcpy(path_sim_db_backslashed, path_sim_db_long);
         backslash_unslashed_spaces(path_sim_db_backslashed);
@@ -778,7 +793,9 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     }
     sim_db_add_pointer_to_free(self, name_subdir);
 
-    sim_db_write_string(self, "result_dir", name_subdir);
+    if (self->store_metadata) {
+        sim_db_write_string(self, "result_dir", name_subdir);
+    }
 
     return name_subdir;
 }
@@ -817,11 +834,13 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
 }
 
 void sim_db_dtor(SimDB* self) {
-    double used_time = difftime(time(NULL), self->start_time);
-    char used_time_string[100];
-    sprintf(used_time_string, "%dh %dm %fs", (int) used_time / 3600,
-            (int) used_time / 60, fmod(used_time, 60));
-    sim_db_update(self, "used_walltime", used_time_string);
+    if (self->store_metadata) {
+        double used_time = difftime(time(NULL), self->start_time);
+        char used_time_string[100];
+        sprintf(used_time_string, "%dh %dm %fs", (int) used_time / 3600,
+                (int) used_time / 60, fmod(used_time, 60));
+        sim_db_update(self, "used_walltime", used_time_string);
+    }
     for (size_t i = 0; i < self->n_pointers; i++) {
         free(self->pointers_to_free[i]);
     }

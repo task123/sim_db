@@ -4,12 +4,16 @@
 #include "../include/sim_db.hpp"
 
 namespace sim_db {
-Connection::Connection(int argc, char** argv) {
-    sim_db = sim_db_ctor(argc, argv);
+Connection::Connection(int argc, char** argv, bool store_metadata) {
+    if (store_metadata) {
+        sim_db = sim_db_ctor(argc, argv);
+    } else {
+        sim_db = sim_db_ctor_no_metadata(argc, argv);
+    }
 }
 
-Connection::Connection(std::string path_sim_db, int id) {
-    sim_db = sim_db_ctor_with_id(path_sim_db.c_str(), id);
+Connection::Connection(std::string path_sim_db, int id, bool store_metadata) {
+    sim_db = sim_db_ctor_with_id(path_sim_db.c_str(), id, store_metadata);
 }
 
 std::string Connection::make_unique_subdir(std::string path_directory,

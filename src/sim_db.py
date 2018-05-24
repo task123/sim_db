@@ -19,7 +19,7 @@ import helpers, update_sim, add_sim
 
 
 class SimDB:
-    def __init__(self, db_id=None, store_metadata=True):
+    def __init__(self, store_metadata=True, db_id=None):
         """Add metadata to database and note start time.
 
         Update 'time_started', 'git_hash', 'commit_message', 'git_diff_stat'
@@ -27,13 +27,13 @@ class SimDB:
 
         'time_started' used the format: 'Year-Month-Date_Hours-Minutes-Seconds'.
 
-        db_id (int): ID of the row in the database to update. If it is
-            'None', then it is read from the last argument passed to the program
-            after option '--id'.
-
         store_metadata (bool): If False, no metadata is added to the database.
             Typically used when postprocessing (visualizing) data from a
             simulation.
+
+        db_id (int): ID of the row in the database to update. If it is
+            'None', then it is read from the last argument passed to the program
+            after option '--id'.
         """
         self.store_metadata = store_metadata
         self.id, self.sim_db_dir = self.__read_from_command_line_arguments(
