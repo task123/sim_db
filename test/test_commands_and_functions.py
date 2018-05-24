@@ -28,10 +28,14 @@ import time
 import subprocess
 import combine_dbs
 
+
 def test_add_sim_print_sim_and_delete_sim(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
-    print_sim.print_sim("--id {0} -v --no_headers --columns name param1 param2 " \
-           "param3 param4 param5 param6 param7 param8 param9 param10" \
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
+    print_sim.print_sim("--id {0} -v --no_headers --columns name param1 " \
+           "param2 param3 param4 param5 param6 param7 param8 param9 param10" \
            .format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -42,11 +46,13 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
-    assert len(output_after_delete) == 0 \
-           or output_after_delete != "{0}".format(db_id)
+    assert (len(output_after_delete) == 0
+            ) or output_after_delete != "{0}".format(db_id)
+
 
 def __get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))
+
 
 def __assert_output_print_sim_after_add_sim(output_print_sim):
     printed_params = output_print_sim.split('\n')[0::2]
@@ -63,10 +69,14 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
     assert printed_params[9] == "None"
     assert printed_params[10] == "None"
 
+
 def test_run_sim_and_sim_db_methods(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15) # Wait for program.py to finish
+    time.sleep(0.15)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -80,6 +90,7 @@ def test_run_sim_and_sim_db_methods(capsys):
     os.rmdir(res_dir)
     __assert_output_python_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim)
+
 
 def __assert_output_python_program(output_program):
     printed_params = output_program.split('\n')
@@ -102,6 +113,7 @@ def __assert_output_python_program(output_program):
     assert printed_params[16] == "None"
     assert printed_params[17] == "None"
 
+
 def __assert_output_print_sim_after_run_sim(output_print_sim):
     printed_params = output_print_sim.split('\n')[0::2]
     printed_params = [param.strip() for param in printed_params]
@@ -117,10 +129,14 @@ def __assert_output_print_sim_after_run_sim(output_print_sim):
     assert printed_params[9] != None
     assert printed_params[10] != None
 
+
 def test_c_functions(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_c_program.txt".format(__get_test_dir())])
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_c_program.txt".format(__get_test_dir())
+    ])
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15) # Wait for c_program to finish
+    time.sleep(0.15)  # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -137,10 +153,14 @@ def test_c_functions(capsys):
     __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim)
 
+
 def test_cpp_functions(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_cpp_program.txt".format(__get_test_dir())])
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_cpp_program.txt".format(__get_test_dir())
+    ])
     run_sim.run_sim("--id {0}".format(db_id).split())
-    time.sleep(0.15) # Wait for cpp_program to finish
+    time.sleep(0.15)  # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
             "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
@@ -155,6 +175,7 @@ def test_cpp_functions(capsys):
     os.rmdir(res_dir)
     __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim)
+
 
 def __assert_output_c_and_cpp_program(output_popen):
     printed_lines = output_popen.split('\n')[1:]
@@ -179,9 +200,13 @@ def __assert_output_c_and_cpp_program(output_popen):
     assert printed_lines[26:29] == ['1', '0', '1']
     assert printed_lines[26:29] == printed_lines[29:32]
 
+
 def test_add_and_run(capsys):
-    db_id = add_and_run.add_and_run(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
-    time.sleep(0.15) # Wait for program.py to finish
+    db_id = add_and_run.add_and_run([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
+    time.sleep(0.15)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --no_headers --columns name param1 param2 " \
             "param3 param4 param5 param6 param7 param8 param9 param10" \
@@ -200,6 +225,7 @@ def test_add_and_run(capsys):
     __assert_output_print_sim_after_add_sim(output_print_sim_after_add_sim)
     __assert_output_python_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim)
+
 
 def test_list_sim_db_commands(capsys):
     list_sim_db_commands.list_sim_db_commands()
@@ -223,20 +249,27 @@ def test_list_sim_db_commands(capsys):
     assert output_lines[15] == "submit_sim"
     assert output_lines[16] == "update_sim"
 
+
 def test_add_column_and_delete_empty_columns(capsys):
     with capsys.disabled():
         print("\nTest add_column and delete_empty_columns...")
     add_column.add_column("--column new_column --type 'TEXT'".split())
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
-    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(
+            db_cursor)
     assert "new_column" in column_names
     delete_empty_columns.delete_empty_columns()
-    column_names, column_types = helpers.get_db_column_names_and_types(db_cursor)
+    column_names, column_types = helpers.get_db_column_names_and_types(
+            db_cursor)
     assert "new_column" not in column_names
-    
+
+
 def test_extract_params(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
     extract_params.extract_params("--id {0}".format(db_id).split())
     output_extract_params, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -251,34 +284,52 @@ def test_extract_params(capsys):
     assert "param5 (int array): [1, 2, 3]" == lines_extract_params[14]
     assert "param6 (float array): [1.5, 2.5, 3.5]" == lines_extract_params[16]
     assert "param7 (string array): [a, b, c]" == lines_extract_params[18]
-    assert "param8 (bool array): [True, False, True]" == lines_extract_params[20]
+    assert "param8 (bool array): [True, False, True]" == lines_extract_params[
+            20]
+
 
 def test_update_sim(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
-    update_sim.update_sim("--id {0} --columns param1 --values 100".format(db_id).split())
-    print_sim.print_sim("--id {0} --columns param1 --no_headers".format(db_id).split())
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
+    update_sim.update_sim(
+            "--id {0} --columns param1 --values 100".format(db_id).split())
+    print_sim.print_sim(
+            "--id {0} --columns param1 --no_headers".format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
         print("\nTest update_sim...")
     assert output_print_sim.strip() == "100"
 
+
 def test_add_comment(capsys):
-    db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
-    add_comment.add_comment(["--id", "{0}".format(db_id), "--comment",  \
-            "This is a test comment."])
-    print_sim.print_sim("--id {0} --columns comment --no_headers".format(db_id).split())
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
+    add_comment.add_comment([
+            "--id", "{0}".format(db_id), "--comment", "This is a test comment."
+    ])
+    print_sim.print_sim(
+            "--id {0} --columns comment --no_headers".format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
         print("\nTest add_comment...")
     assert output_print_sim.strip() == "This is a test comment."
 
+
 def test_cd_results(capsys):
-    db_id = add_and_run.add_and_run(["--filename", "{0}/sim_params_python_program.txt".format(__get_test_dir())])
+    db_id = add_and_run.add_and_run([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
     output_program, err_program = capsys.readouterr()
     result_dir = cd_results.cd_results("--id {0}".format(db_id).split())
-    print_sim.print_sim("--id {0} -v --columns result_dir --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns result_dir --no_headers".format(
+            db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
@@ -289,6 +340,7 @@ def test_cd_results(capsys):
     os.rmdir(res_dir)
     assert not os.path.isdir(result_dir)
 
+
 def test_submit_sim(capsys):
     settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
             __read_job_scheduler_settings()
@@ -297,19 +349,26 @@ def test_submit_sim(capsys):
         print("\nTest submit_sim...")
         for no_set in settings_no_set:
             print("WARNING: In settings.txt '{0}' is NOT set, but must be to test "
-                    "submit_sim.".format(no_set))
+                  "submit_sim.".format(no_set))
 
     if len(settings_no_set) == 0:
-        db_id = add_sim.add_sim(["--filename", "{0}/sim_params_python_program.txt" \
-                .format(__get_test_dir())])
-        job_script_name, job_id = submit_sim.submit_sim(["--id", str(db_id), \
-                "--do_not_submit_job_script", "--max_walltime", "03:34:00", "--n_nodes", "2"])
+        db_id = add_sim.add_sim([
+                "--filename",
+                "{0}/sim_params_python_program.txt".format(__get_test_dir())
+        ])
+        job_script_name, job_id = submit_sim.submit_sim([
+                "--id",
+                str(db_id), "--do_not_submit_job_script", "--max_walltime",
+                "03:34:00", "--n_nodes", "2"
+        ])
         delete_sim.delete_sim("--id {0}".format(db_id).split())
         job_script_file = open(job_script_name, 'r')
         lines = job_script_file.readlines()
         job_script_file.close()
         os.remove(job_script_name)
-        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node) 
+        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
+                                  memory_per_node)
+
 
 def __read_job_scheduler_settings():
     settings = helpers.Settings()
@@ -327,20 +386,25 @@ def __read_job_scheduler_settings():
 
     return (settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node)
 
-def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node):
+
+def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
+                              memory_per_node):
     if job_scheduler[0] == 'SLURM':
         assert lines[0] == '#!/bin/bash\n'
         assert lines[1] == '#SBATCH --job-name=test_sim\n'
         assert lines[2] == '#SBATCH --time=03:34:00\n'
-        assert lines[3] == '#SBATCH --ntasks={0}\n'.format(int(n_cpus_per_node[0])*2)
-        assert lines[4] == '#SBATCH --mem-per-cpu={0}M\n' \
-                .format(int(float(memory_per_node[0])/float(n_cpus_per_node[0])*1000))
+        assert lines[3] == '#SBATCH --ntasks={0}\n'.format(
+                int(n_cpus_per_node[0]) * 2)
+        assert lines[4] == '#SBATCH --mem-per-cpu={0}M\n'.format(int( \
+                float(memory_per_node[0]) / float(n_cpus_per_node[0]) * 1000))
     elif job_scheduler[0] == 'PBS':
         assert lines[0] == '#!/bin/bash\n'
         assert lines[1] == '#PBS -N test_sim\n'
         assert lines[2] == '#PBS -l walltime=03:34:00\n'
-        assert lines[3] == '#PBS -l nodes=2:ppn={0}\n'.format(int(n_cpus_per_node[0]))
+        assert lines[3] == '#PBS -l nodes=2:ppn={0}\n'.format(
+                int(n_cpus_per_node[0]))
         assert lines[4] == '#PBS --mem={0}GB\n'.format(memory_per_node[0])
+
 
 def test_add_and_submit(capsys):
     settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
@@ -350,18 +414,22 @@ def test_add_and_submit(capsys):
         print("\nTest add_and_submit...")
         for no_set in settings_no_set:
             print("WARNING: In settings.txt '{0}' is NOT set, but must be to test "
-                    "add_and_submit.".format(no_set))
+                  "add_and_submit.".format(no_set))
 
     if len(settings_no_set) == 0:
-        db_id, job_script_name, job_id = add_and_submit.add_and_submit(["--filename", \
-            "{0}/sim_params_python_program.txt".format(__get_test_dir()), "--n_nodes",
-            "2", "--max_walltime", "03:34:00", "--do_not_submit_job_script"])
+        db_id, job_script_name, job_id = add_and_submit.add_and_submit([
+                "--filename", "{0}/sim_params_python_program.txt".format(
+                        __get_test_dir()), "--n_nodes", "2", "--max_walltime",
+                "03:34:00", "--do_not_submit_job_script"
+        ])
         delete_sim.delete_sim("--id {0}".format(db_id).split())
         job_script_file = open(job_script_name, 'r')
         lines = job_script_file.readlines()
         job_script_file.close()
         os.remove(job_script_name)
-        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node, memory_per_node)
+        __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
+                                  memory_per_node)
+
 
 def test_combine_dbs(capsys):
     path_db_1 = __get_test_dir() + "/sim1_test_comb.db"
@@ -377,8 +445,10 @@ def test_combine_dbs(capsys):
     db_2 = helpers.connect_sim_db(path_db_2)
     db_2_cursor = db_2.cursor()
 
-    column_names_1, column_types_1 = helpers.get_db_column_names_and_types(db_1_cursor)
-    column_names_2, column_types_2 = helpers.get_db_column_names_and_types(db_2_cursor)
+    column_names_1, column_types_1 = helpers.get_db_column_names_and_types(
+            db_1_cursor)
+    column_names_2, column_types_2 = helpers.get_db_column_names_and_types(
+            db_2_cursor)
     column_names_comb, column_types_comb = helpers.get_db_column_names_and_types( \
             comb_sim_db_cursor)
 

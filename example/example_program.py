@@ -19,8 +19,8 @@ import sim_db
 sim_database = sim_db.SimDB()
 
 # Read parameters from database.
-example_param1 = sim_database.read("example_param1") # String
-example_param2 = sim_database.read("example_param2") # List of integers
+example_param1 = sim_database.read("example_param1")  # String
+example_param2 = sim_database.read("example_param2")  # List of integers
 
 # Write to database.
 small_result = 42.0
@@ -31,5 +31,5 @@ results = np.array([1, 3, 7])
 name_results_dir = sim_database.make_unique_subdir("example/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
-# Write final metadata to database. 
+# Write final metadata to database.
 sim_database.end()
