@@ -1,0 +1,24 @@
+This is a comment, as any line without a colon is a comment.
+# Adding a hashtag to the start of a comment line, make the comment easier to recognize.
+
+# The name parameter is highly recommended to include.
+name (string): extensive_c++_example
+
+# It is also recommended to include a description to further explain the intention of 
+# the simulation.
+description (string): Extensive C++ example to demonstrate most features in sim_db.
+
+# Here the the 'run_command' consists of two commands separeated with semi colon.
+# The first call make to compile the code and the second run the compiled example.
+# It is import that they are both on the same line.
+run_command (string): make -s -C sim_db/example extensive_cpp_example_updated; sim_db/example/extensive_cpp_example
+
+# A parameter is added for each of the avaiable types.
+param1 (int): 3
+param2 (float): -0.5e10
+param3 (string): "Extensive C++ example is running."
+param4 (bool): True
+param5 (int array): [1, 2, 3]
+param6 (float array): [1.5, 2.5, 3.5]
+param7 (string array): ["a", "b", "c"]
+param8 (bool array): [True, False, True]

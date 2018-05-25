@@ -3,23 +3,23 @@ CXX = c++
 
 all:
 	$(MAKE) c_example_updated
-	$(MAKE) cpp_example_updated
+	$(MAKE) extensive_cpp_example_updated
 
 c_example_updated: 
 	$(MAKE) -C ../lib libsimdbc.a # Compile sim_db's C library.
 	$(MAKE) c_example
 
-cpp_example_updated:
+extensive_cpp_example_updated:
 	$(MAKE) -C ../lib libsimdbcpp.a # Compile sim_db's C++ library. 
-	$(MAKE) cpp_example
+	$(MAKE) extensive_cpp_example 
 
 # Use target c_example_updated instead as it check libsimdbc.a's dependencies.
 c_example: example_program.c ../lib/libsimdbc.a
 	$(CC) -o c_example example_program.c -I../Include -L../lib -lsimdbc -lm -lpthread -ldl
 
 # Use target cpp_example_updated instead as it check libsimdbcpp.a's dependencies.
-cpp_example: example_program.cpp ../lib/libsimdbcpp.a
-	$(CXX) -std=c++11 -o cpp_example example_program.cpp -I../Include -L../lib -lsimdbcpp -lm -lpthread -ldl
+extensive_cpp_example: extensive_example.cpp ../lib/libsimdbcpp.a
+	$(CXX) -std=c++11 -o extensive_cpp_example extensive_example.cpp -I../Include -L../lib -lsimdbcpp -lm -lpthread -ldl
 
 c_example_without_lib: example_program.cpp ../src/sim_db.c ../include/sim_db.h
 	$(CC) -o c_example example_program.c ../src/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/ -lm -lpthread -ldl
