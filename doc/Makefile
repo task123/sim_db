@@ -23,3 +23,4 @@ else
 	doxygen Doxyfile
 endif
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	cp pygments.css build/html/_static/pygments.css

@@ -4,20 +4,26 @@ Use
 
 Include in your project
 =======================
-It is recommended to add **sim_db** as a git submodule in your project by running::
+It is recommended to add **sim_db** as a git submodule in your project by running:
+
+.. code-block:: console
 
     $ git submodule add https://github.com/klasdj
 
 (Otherwise it can taken from `github<https://github.com/alsfj>` and just copied into your project in a directory called '`sim_db`'.)
 
-Go into the sim_db directory and run make::
+Go into the sim_db directory and run make:
+
+.. code-block:: console
 
     $ cd sim_db
     $ make
 
 Answer yes when asked to add `sim_db/commands` to your PATH in `~/.bashrc` or `~/.bash_profile` and remember to source it. (Or if you already have projects using **sim_db**, let it add the path to this **sim_db** directory to the settings.txt of the other local **sim_db** copies.)
 
-All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command::
+All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
+
+.. code-block:: console
 
     $ list_sim_db_commands
 
@@ -25,13 +31,15 @@ It should list all the **sim_db** commands. How to use any of them can be found 
 
 (All the commands are just calls to python scripts, so they can all be called as :code:`$ python path_to_sim_db_dir/src/commands/'name_command'`.)
 
+The full set of tests can be run with ``$ pytest`` or ``$ python -m pytest`` provided `pytest` is installed.
+
 How it is used - an brief overview
 ==================================
 **sim_db** is used as follows:
  
 * All simulation parameters is placed in a text file with formatting described in :ref:`here<Parameter files>`.
 
-* The parameters are added to **sim_db's** database and the simulation is run with the :code:`$ add_and_run` command.
+* The parameters are added to **sim_db's** database and the simulation is run with the :code:`$ add_and_run` command, or with some of the other :ref:`commands <Commands>`.
 
 * In the simulation code the parameters are read from the database with the functions/methods documented :ref:`here for Python <sim_db for Python>`, :ref:`here for C++ <sim_db for C++>` and :ref:`here for C<sim_db for C>`.
 
@@ -50,11 +58,15 @@ A python script called `minimal_example.py` and is found in the same directory:
    :language: python
    :lines: 15-28
 
-Add the those simulations parameters to the **sim_db** database and run the simulation with::
+Add the those simulations parameters to the **sim_db** database and run the simulation with:
+
+.. code-block:: console
 
     $ add_and_run --filename sim_db/test/params_minimal_python_example.py
 
-Which can also be done from within the `test/` directory with::
+Which can also be done from within the `test/` directory with:
+
+.. code-block:: console
 
     $ add_and_run -f params_minimal_python_example.py
 
@@ -77,49 +89,71 @@ In the same directory `extensive_example.cpp` is also found:
    :language: c++
    :lines: 16-57
 
-Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example::
+Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example:
+
+.. code-block:: console
 
     $ add_and_run -f sim_db/test/params_extensive_cpp_example.txt
 
-Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from `sim_db/test/` (given that the static C++ library are compiled)::
+Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from `sim_db/test/` (given that the static C++ library are compiled):
+
+.. code-block:: console
 
     $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11
 
-The :code:`add_and_run` command is usually divided into adding the simulations parameters to the database with::
+The :code:`add_and_run` command is usually divided into adding the simulations parameters to the database with:
+
+.. code-block:: console
 
     $ add_sim
 
-and running the simulation::
+and running the simulation:
+
+.. code-block:: console
 
     $ run_sim --id 'ID'
 
-where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using `add_sim`, but to check the '`ID`' of the latest set of paramters added one can run::
+where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using `add_sim`, but to check the '`ID`' of the latest set of paramters added one can run:
+
+.. code-block:: console
 
     $ print_sim -n 1 -c id
 
-`print_sim` have lots of flags to control and limit what is printed. The ``-n 1`` flag prints the last entry. ``-c id`` limit the output to just the column named `id`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as::
+`print_sim` have lots of flags to control and limit what is printed. The ``-n 1`` flag prints the last entry. ``-c id`` limit the output to just the column named `id`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as:
+
+.. code-block:: console
 
     $ print_sim -p 'name_of_personalized_config' 
 
-When running ``$ run_sim --id 'ID'``, the flags ``--id 'ID' -p 'path_to_sim_db`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the the executable prodused by `make` or the compile command stated above. Can be run directoy as::
+When running ``$ run_sim --id 'ID'``, the flags ``--id 'ID' -p 'path_to_sim_db`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the the executable prodused by `make` or the compile command stated above. Can be run directoy as:
+
+.. code-block:: console
 
     $ ./extensive_cpp_example --id 'ID' -p ".."
 
-The example stored some results in a unique subdirectory, which is the recommended way to store large results. To change the directory to that subdirectory, so one can check out the results, just run::
+The example stored some results in a unique subdirectory, which is the recommended way to store large results. To change the directory to that subdirectory, so one can check out the results, just run:
+
+.. code-block:: console
 
     $ cd_results --id 'ID' 
 
-To run this example or any other simulation on a cluster or a super computer with a job scheduler, just fill out the `Settings for job scheduler` in `settings.txt` and run::
+To run this example or any other simulation on a cluster or a super computer with a job scheduler, just fill out the `Settings for job scheduler` in `settings.txt` and run:
+
+.. code-block:: console
 
     $ submit_sim --id 'ID' --max_walltime 00:00:10 --n_tasks 1 
 
 The command will create a job script and submit it to the job scheduler. **sim_db** supports job scheduler SLURM and PBS, but it should be quite easy to add more. `n_tasks` is here the number of logical CPUs you want to run on, and can together with `max_walltime` also be set in the parameter file.
 
-It does not make any sense to run such a small single threaded example on a super computer. If one uses a super computer, one are much more likely to want to run a large simulation on two entire nodes::
+It does not make any sense to run such a small single threaded example on a super computer. If one uses a super computer, one are much more likely to want to run a large simulation on two entire nodes:
+
+.. code-block:: console
 
     $ submit_sim --id 'ID' --max_walltime 10:30:00 --n_nodes 2
 
-If a number of simulations are added all including the paramters `max_walltime` and `n_tasks`, one can simply run::
+If a number of simulations are added all including the paramters `max_walltime` and `n_tasks`, one can simply run:
+
+.. code-block:: console
 
     $ submit_sim
 
