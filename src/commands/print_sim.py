@@ -243,7 +243,7 @@ def replace_element_in_list(the_list, element, replacement):
 
 def print_sim(argv=None):
     if argv == None and len(sys.argv) == 1:
-        args = get_arguments(['-p', 'default'])
+        args = command_line_arguments_parser().parse_args(['-p', 'default'])
     else:
         args = command_line_arguments_parser().parse_args(argv)
 
@@ -256,7 +256,7 @@ def print_sim(argv=None):
         p_arg_keys = [
                 key.strip('-') for key in print_config.split() if key[0] == '-'
         ]
-        p_args = get_arguments(print_config.split())
+        p_args = command_line_arguments_parser().parse_args(print_config.split())
 
         p_arg_keys = replace_element_in_list(p_arg_keys, 'v', 'vertically')
         p_arg_keys = replace_element_in_list(p_arg_keys, 'i', 'id')
