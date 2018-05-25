@@ -1,6 +1,0 @@
-name (string): example
-description (string): An example of a simulation parameter file for python program.
-run_command (string): python ./example_program.py
-
-example_param1 (string): "This is the first parameter."
-example_param2 (int array): [7, 9, 3, 5]

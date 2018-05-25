@@ -45,6 +45,7 @@ clean:
 	rm -f cpp_program
 	rm -fr c_program.dSYM
 	rm -fr cpp_program.dSYM
+	rm -fr results/*
 	$(MAKE) -C ../lib clean
 
 clean_except_third_party:
@@ -52,6 +53,7 @@ clean_except_third_party:
 	rm -f cpp_program
 	rm -fr c_program.dSYM
 	rm -fr cpp_program.dSYM
+	rm -fr results/*
 	$(MAKE) -C ../lib clean_except_third_party
 
 clean_etp:

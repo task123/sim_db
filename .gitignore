@@ -25,7 +25,9 @@ lib/libsimdbcpp.a
 # Executable test and example programs
 test/c_program
 test/cpp_program
-example/c_example
+example/minimal_c_example
+example/minimal_cpp_example
+example/extensive_c_example
 example/extensive_cpp_example
 
 # Test and example results not deleted
@@ -33,6 +35,12 @@ test/results/*
 !test/results/.keep
 example/results/*
 !example/results/.keep
+
+# Directories in doc/
+doc/build/
+doc/html/
+doc/latex/
+doc/xml/
 
 # Object files
 *.o

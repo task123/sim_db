@@ -69,6 +69,8 @@ A parameter file called params_extensive_cpp_example.txt is found in the `sim_db
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
 
+Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, `delete_sim` and `delete_empty_columns` must be used before making a new column with correct type.)
+
 In the same directory `extensive_example.cpp` is also found:
 
 .. literalinclude:: ../../example/extensive_example.cpp
@@ -122,6 +124,8 @@ If a number of simulations are added all including the paramters `max_walltime` 
     $ submit_sim
 
 , which will run all simulations that have not been run yet after a confimation question.
+
+Extensive examples for Python and C can also be found in the same directory, `sim_db/examples/`, on `github<https://github.com/lkajsdlf>`.
 
 Dependencies
 ============

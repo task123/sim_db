@@ -18,11 +18,11 @@ import sim_db # 'sim_db/src/' have been include in the path.
 sim_database = sim_db.SimDB()
 
 # Read parameters from database.
-param_1 = sim_database.read("param_1") # String
-param_2 = sim_database.read("param_2") # List of integers
+param1 = sim_database.read("param1") # String
+param2 = sim_database.read("param2") # Integer
 
-# Print param_1 just to show that the example is running.
-print(param_1)
+# Print param1 just to show that the example is running.
+print(param1)
 
 # Write final metadata to database.
 sim_database.end()

@@ -1,0 +1,7 @@
+name (string): minimal_c_example
+
+run_command (string): make -s -C sim_db/example minimal_c_example_updated; sim_db/example/minimal_c_example
+
+param1 (string): "Minimal C example is running."
+
+param2 (int): 42

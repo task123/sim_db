@@ -2,6 +2,6 @@ name (string): minimal_python_example
 
 run_command (string): python sim_db/example/minimal_example.py
 
-param_1 (string): "Minimal example is running."
+param1 (string): "Minimal Python example is running."
 
-param_2 (float array): [3.2, -1.5, 2.0]
+param2 (int): 42

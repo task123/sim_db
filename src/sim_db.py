@@ -15,7 +15,7 @@ import sys
 import os
 src_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(src_dir, "commands")))
-import helpers, update_sim, add_sim
+import helpers, update_sim, add_sim, add_column
 
 
 class SimDB:

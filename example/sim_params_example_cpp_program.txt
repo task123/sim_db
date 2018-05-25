@@ -1,6 +1,0 @@
-name (string): example
-description (string): An example of a simulation parameter file C++ program.
-run_command (string): make -C sim_db/example cpp_example_updated; sim_db/example/cpp_example
-
-example_param1 (string): "This is the first parameter."
-example_param2 (int array): [7, 9, 3, 5]
