@@ -182,6 +182,12 @@ def make_path_relative_to_sim_db(run_command, sim_params_filename):
     run_command = run_command.replace(' ./', ' sim_db/' + rel_path)
     return run_command
 
+def search_for_parameter_file_matching_settings():
+    files_in_current_dir = os.listdir('.')
+    for parameter_filename in helpers.Settings().read('parameter_files'):
+        if parameter_filename in files_in_current_dir:
+            return parameter_filename
+    return None
 
 def add_sim(argv=None):
     db = helpers.connect_sim_db()
@@ -193,8 +199,13 @@ def add_sim(argv=None):
         sim_params_filename = ( helpers.get_closest_sim_db_dir_path() + '/' +
                                sim_params_filename.split('/', 1)[1])
     if sim_params_filename == None:
-        sim_params_filename = (
-                helpers.search_for_parameter_file_matching_settings())
+        sim_params_filename = search_for_parameter_file_matching_settings()
+        if sim_params_filename == None:
+            print("No parameter files in the current directory matches the ones " \
+                    "under 'Parameter filenames'\nin sim_db's settings.txt.\n" \
+                    "\nAdd the '--filename' flag to specify the filename of " \
+                    "the parameter file.")
+            exit()
 
     try:
         sim_params_file = open(sim_params_filename, 'r')

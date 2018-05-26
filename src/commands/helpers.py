@@ -186,17 +186,6 @@ def get_db_column_names_and_types(db_cursor):
     return column_names, column_types
 
 
-def search_for_parameter_file_matching_settings():
-    settings_file = open(get_closest_sim_db_dir_path() + '/settings.txt', 'r')
-    line = ""
-    while len(line) < 11 or line[:11] != "# Databases":
-        line = settings_file.readline()
-        for file_in_current_dir in os.listdir('.'):
-            if file_in_current_dir == line.strip():
-                return file_in_current_dir
-    return None
-
-
 def get_run_command(db_cursor, db_id, n_tasks=None):
     db_cursor.execute(
             "SELECT run_command, n_tasks FROM runs WHERE id={0};".format(
