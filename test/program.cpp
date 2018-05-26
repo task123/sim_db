@@ -22,59 +22,60 @@ int main(int argc, char** argv) {
 
     sim_db::Connection sim_db(argc, argv, store_metadata = store_metadata);
 
-    int param1 = sim_db.read<int>("param1");
+    int param1 = sim_db.read<int>("test_param1");
     std::cout << param1 << std::endl;
-    sim_db.write<int>("new_param1", param1);
-    std::cout << sim_db.read<int>("new_param1") << std::endl;
+    sim_db.write<int>("new_test_param1", param1);
+    std::cout << sim_db.read<int>("new_test_param1") << std::endl;
 
-    double param2 = sim_db.read<double>("param2");
+    double param2 = sim_db.read<double>("test_param2");
     std::cout << param2 << std::endl;
-    sim_db.write<double>("new_param2", param2);
-    std::cout << sim_db.read<double>("new_param2") << std::endl;
+    sim_db.write<double>("new_test_param2", param2);
+    std::cout << sim_db.read<double>("new_test_param2") << std::endl;
 
-    std::string param3 = sim_db.read<std::string>("param3");
+    std::string param3 = sim_db.read<std::string>("test_param3");
     std::cout << param3 << std::endl;
-    sim_db.write<std::string>("new_param3", param3);
-    std::cout << sim_db.read<std::string>("new_param3") << std::endl;
+    sim_db.write<std::string>("new_test_param3", param3);
+    std::cout << sim_db.read<std::string>("new_test_param3") << std::endl;
 
-    bool param4 = sim_db.read<bool>("param4");
+    bool param4 = sim_db.read<bool>("test_param4");
     std::cout << param4 << std::endl;
-    sim_db.write<bool>("new_param4", param4);
-    std::cout << sim_db.read<bool>("new_param4") << std::endl;
+    sim_db.write<bool>("new_test_param4", param4);
+    std::cout << sim_db.read<bool>("new_test_param4") << std::endl;
 
-    std::vector<int> param5 = sim_db.read<std::vector<int> >("param5");
+    std::vector<int> param5 = sim_db.read<std::vector<int> >("test_param5");
     for (size_t i = 0; i < param5.size(); i++) {
         std::cout << param5[i] << std::endl;
     }
-    sim_db.write<std::vector<int> >("new_param5", param5);
+    sim_db.write<std::vector<int> >("new_test_param5", param5);
     for (size_t i = 0; i < param5.size(); i++) {
         std::cout << param5[i] << std::endl;
     }
 
-    std::vector<double> param6 = sim_db.read<std::vector<double> >("param6");
+    std::vector<double> param6 =
+            sim_db.read<std::vector<double> >("test_param6");
     for (size_t i = 0; i < param6.size(); i++) {
         std::cout << param6[i] << std::endl;
     }
-    sim_db.write<std::vector<double> >("new_param6", param6);
+    sim_db.write<std::vector<double> >("new_test_param6", param6);
     for (size_t i = 0; i < param6.size(); i++) {
         std::cout << param6[i] << std::endl;
     }
 
     std::vector<std::string> param7 =
-            sim_db.read<std::vector<std::string> >("param7");
+            sim_db.read<std::vector<std::string> >("test_param7");
     for (size_t i = 0; i < param7.size(); i++) {
         std::cout << param7[i] << std::endl;
     }
-    sim_db.write<std::vector<std::string> >("new_param7", param7);
+    sim_db.write<std::vector<std::string> >("new_test_param7", param7);
     for (size_t i = 0; i < param7.size(); i++) {
         std::cout << param7[i] << std::endl;
     }
 
-    std::vector<bool> param8 = sim_db.read<std::vector<bool> >("param8");
+    std::vector<bool> param8 = sim_db.read<std::vector<bool> >("test_param8");
     for (size_t i = 0; i < param8.size(); i++) {
         std::cout << param8[i] << std::endl;
     }
-    sim_db.write<std::vector<bool> >("new_param8", param8);
+    sim_db.write<std::vector<bool> >("new_test_param8", param8);
     for (size_t i = 0; i < param8.size(); i++) {
         std::cout << param8[i] << std::endl;
     }

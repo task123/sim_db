@@ -34,8 +34,9 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
             "--filename",
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
-    print_sim.print_sim("--id {0} -v --no_headers --columns name param1 " \
-           "param2 param3 param4 param5 param6 param7 param8 param9 param10" \
+    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 " \
+           "test_param2 test_param3 test_param4 test_param5 test_param6 " \
+           "test_param7 test_param8 test_param9 test_param10" \
            .format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -47,7 +48,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
 
     # Test that the added simulation parameters are deleted
     assert (len(output_after_delete) == 0
-            ) or output_after_delete != "{0}".format(db_id)
+            or output_after_delete != "{0}".format(db_id))
 
 
 def __get_test_dir():
@@ -73,8 +74,10 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
 def test_run_sim_and_python_functions(capsys):
     __run_sim_and_python_functions(capsys, True)
 
+
 def test_python_functions_without_storing_metadata(capsys):
     __run_sim_and_python_functions(capsys, False)
+
 
 def __run_sim_and_python_functions(capsys, store_metadata):
     db_id = add_sim.add_sim([
@@ -86,9 +89,10 @@ def __run_sim_and_python_functions(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for program.py to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
-            "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
-            "time_started used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
+            "new_test_param7 new_test_param8 result_dir time_started " \
+            "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
@@ -108,6 +112,7 @@ def __run_sim_and_python_functions(capsys, store_metadata):
         os.rmdir(res_dir)
     __assert_output_python_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
+
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):
     print_sim.print_sim(
@@ -168,8 +173,10 @@ def __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):
 def test_c_functions(capsys):
     __c_funcionts(capsys, True)
 
+
 def test_c_functions_without_storing_metadata(capsys):
     __c_funcionts(capsys, False)
+
 
 def __c_funcionts(capsys, store_metadata):
     db_id = add_sim.add_sim([
@@ -181,9 +188,10 @@ def __c_funcionts(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
-            "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
-            "time_started used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
+            "new_test_param7 new_test_param8 result_dir time_started " \
+            "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
@@ -208,8 +216,10 @@ def __c_funcionts(capsys, store_metadata):
 def test_cpp_functions(capsys):
     __cpp_functions(capsys, True)
 
+
 def test_cpp_functions_without_storing_metadata(capsys):
     __cpp_functions(capsys, False)
+
 
 def __cpp_functions(capsys, store_metadata):
     db_id = add_sim.add_sim([
@@ -221,9 +231,10 @@ def __cpp_functions(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
-            "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
-            "time_started used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
+            "new_test_param7 new_test_param8 result_dir time_started " \
+            "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
@@ -276,13 +287,15 @@ def test_add_and_run(capsys):
     ])
     time.sleep(0.1)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --no_headers --columns name param1 param2 " \
-            "param3 param4 param5 param6 param7 param8 param9 param10" \
+    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 " \
+            "test_param2 test_param3 test_param4 test_param5 test_param6 " \
+            "test_param7 test_param8 test_param9 test_param10" \
             .format(db_id).split())
     output_print_sim_after_add_sim, err = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_param1 new_param2 new_param3 " \
-            "new_param4 new_param5 new_param6 new_param7 new_param8 result_dir " \
-            "time_started used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
+            "new_test_param7 new_test_param8 result_dir time_started " \
+            "used_walltime --no_headers".format(db_id).split())
     output_print_sim_after_run_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
@@ -292,7 +305,8 @@ def test_add_and_run(capsys):
     os.rmdir(res_dir)
     __assert_output_print_sim_after_add_sim(output_print_sim_after_add_sim)
     __assert_output_python_program(output_program)
-    __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim, True)
+    __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
+                                            True)
 
 
 def test_list_sim_db_commands(capsys):
@@ -345,14 +359,15 @@ def test_extract_params(capsys):
     with capsys.disabled():
         print("\nTest extract_params...")
     assert "name (string): test_sim" == lines_extract_params[0]
-    assert "param1 (int): 3" == lines_extract_params[6]
-    assert "param2 (float): -5000000000.0" == lines_extract_params[8]
-    assert "param3 (string): hei" == lines_extract_params[10]
-    assert "param4 (bool): True" == lines_extract_params[12]
-    assert "param5 (int array): [1, 2, 3]" == lines_extract_params[14]
-    assert "param6 (float array): [1.5, 2.5, 3.5]" == lines_extract_params[16]
-    assert "param7 (string array): [a, b, c]" == lines_extract_params[18]
-    assert "param8 (bool array): [True, False, True]" == lines_extract_params[
+    assert "test_param1 (int): 3" == lines_extract_params[6]
+    assert "test_param2 (float): -5000000000.0" == lines_extract_params[8]
+    assert "test_param3 (string): hei" == lines_extract_params[10]
+    assert "test_param4 (bool): True" == lines_extract_params[12]
+    assert "test_param5 (int array): [1, 2, 3]" == lines_extract_params[14]
+    assert "test_param6 (float array): [1.5, 2.5, 3.5]" == lines_extract_params[
+            16]
+    assert "test_param7 (string array): [a, b, c]" == lines_extract_params[18]
+    assert "test_param8 (bool array): [True, False, True]" == lines_extract_params[
             20]
 
 
@@ -361,10 +376,10 @@ def test_update_sim(capsys):
             "--filename",
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
-    update_sim.update_sim(
-            "--id {0} --columns param1 --values 100".format(db_id).split())
-    print_sim.print_sim(
-            "--id {0} --columns param1 --no_headers".format(db_id).split())
+    update_sim.update_sim("--id {0} --columns test_param1 --values 100".format(
+            db_id).split())
+    print_sim.print_sim("--id {0} --columns test_param1 --no_headers".format(
+            db_id).split())
     output_print_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
