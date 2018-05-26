@@ -1,121 +1,25 @@
 ```sim_db``` - A Simulation Database
 ====================================
+**sim_db** is a set of commands and functions for conveniently running a large number of simulations with different parameter values, while keeping track of these all simulation parameters and results along with metadata in a database for you. 
+
+Documentation of the project is found [here]<link>.
+
+
+
+
+
+
 
 A set of programs/commands to keep track of the parameters used to run different simulations. The parameters is stored in a SQLite3 database, and the programs/commands does the direct interaction with the database for you. There is currently only a version for python, but any more languages can easily be added.
 
 ## Purpose
 When doing simulations, one will usually run a great number of simulations with different parameters. (This is especially true when developing the simulations.) After a while it will often become a bit difficult to keep track of all the simulations; the parameters used to run them, the results and metadate such at the time used to perform the simulation. sim_db aim towards providing a flexible and convenient way of keeping track of all the simulation and does this by storing the parameters in a SQLite3 database.
 
-## License
-The project is licensed under the MIT license. A copy of the license is provided in LICENCE.md.
 
-## Dependencies
-SQLite - Uses a SQLite, so it need to be installed on the system. Almost all the flavours of Linux OS are being shipped with SQLite and MacOS comes pre-installed with SQLite.
-
-Python - A Python interpreter is needed as all the commands are written in Python. Work with both Python 2 and 3. Pre-installed on almost all Linux distros and on MacOS.
-
-git - Some of the metadata require git. If git is not installed, some error messages may be generated, but these can just be overlooked.
-
-### For Windows:
-Cygwin/MinGW - The commands relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
 
 ## Use
 The are quite of few commands and options, so first the minimum that have to be done is presented and then more advanced options are added.
 
-### The Minimum
-1. Copy the entire ```sim_db``` into your project in a subdirectory called ```sim_db```. It is highly recommended to do this with a git submodule by running ``` git submodule add http//...```. 
-
-2. Generate commands by running ``` python generate_commands.py ``` inside the ```sim_db/``` directory.
-
-    Let the program add the directroy to your PATH or add it to the settings of other local ```sim\_db``` copies.
-
-3. Make a text file called ```sim_params.txt``` with the parameters using the following format:
-
-    ```
-    run_command (string): executable_program
-
-    comments about parameter 1
-    name_of_parameter_1 (type): value
-
-    comments about parameter 2
-    name_of_parameter_2 (type): value
-    ```
-
-    Only the lines with parameters (including ```run_command```) can have a colon on them and all the parameters must be on one line. Otherwise comments can be placed where ever.
-    
-    The ```type``` can be ```int```, ```float```, ```string```, ```bool``` or ```int/float/string/bool array```. 
-
-    The line ```run_command (string): executable_program``` must be included, where ```executable_program``` is an executable terminal command that run the simulation. Any paths in the command must either start with ```./``` or ```sim_db/``` to indicate the directory of the simulation parameter file or ```sim_db``` respectfully. (The parameter ID that will be passed as a command line argument should be excluded here, but will be added to the end when executed. ```' # '``` will be replaced with the number of threads/taskes for multithreaded/core Any other command line arguments should be included.)
- 
-    Examples of ```executable_program```:
-
-    ```
-    python ./python_program_in_sim_param_dir
-    ./compiled_executable
-    python ./../other_dir/python_program_in_other_project_dir
-    sim_db/../compiled_executable_in_parent_dir_of_sim_db
-    ```
-
-4. Read the parameters from the database in your program as shown below. (The ID of the parameters is here expected to be passes as a command line argument to the ```run_command``` as ```--id 'ID'```, but this is done automatically with the ```add_and_run``` command below.)
-
-    **Python:**
-
-    ```python
-    import sim_db
-    sim_db = sim_db.SimDB()
-    parameter = sim_db.read('name_of_parameter')
-    sim_db.end()
-    ```
-
-    **C:**
-    
-    ```c
-    #include "sim_db.h"
-    int main(int argc, char* argv[]){
-        sim_db = sim_db_ctor(argc, argv);
-        int param1 = sim_db_read_int(sim_db, 'name_of_parameter');
-        const size_t len_param2 = 10;
-        double* param2[len_param2]; 
-        sim_db_read_double_array(sim_db, 'name_of_parameter', param2, len_param2);
-        free(param2);
-        sim_db_dtor(sim_db);
-    }
-    ```
-    
-    **C++:**
-
-    ```cpp
-    #include "sim_db.hpp"
-    int main(int argc, char* argv[]){
-        sim_db = sim_db::SimDB(argc, argv);
-        int param1 = sim_db.read<int>('name_of_parameter')
-        std::vector<double> param2 = sim_db.read<std::vector<double>>('name_of_parameter')
-    }
-    ```
-
-5. Add the parameters to the database and run the simulation.
-    The following command should be run in the same directory as ```sim_params.txt```.
-    ```
-    add_and_run
-    ```
-
-### For a job scheduler (cluster/supercomputer)
-
-* Points 1-4 are the same as for 'The minimum'. If these points have already been performed, one only need to copy/clone the entire project to the cluster/supercomputer and repeate the 2. point (``` python generate_commands.py```).
-
-* Update all settings under 'Settings for job scripts submitted' in ```settings.txt```. ('Email for notificationsi' are optional.)
-
-* Add parameters to database. Either a 'Prefix for ```run_command``` for multithreaded/core simulations' should be added in ```settings.txt``` such as ```mpirun -n '#'```, or the ```run_command``` should be updated so the simulation will be run in parallel. (```' # '``` will be replaced with the number of tasks/threads.)
-    The following command should be run in the same directory as ```sim_params.txt```.
-    ```
-    add_sim
-    ```
-
-* Submit a job script to the job scheduler with the following command.
-    ``` 
-    submit_sim --id 'ID' -n 'N'
-    ```
-    Where ```'ID'``` is the id of the simulation parameter added with ```add_sim``` (can be found with ``` print_sim ```) and ```'N'``` is the number of threads/cores to run the simulation on. 
 
 ### All Commands
 
