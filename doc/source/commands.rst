@@ -2,10 +2,6 @@
 Commands
 ========
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Commands
-
 add_and_run
 ===========
 .. argparse::

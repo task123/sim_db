@@ -10,8 +10,8 @@ Welcome to sim_db's documentation!
 .. include:: about.rst
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
-   :caption: Contents:
 
    purpose_and_features
    use
@@ -20,9 +20,5 @@ Welcome to sim_db's documentation!
    python_sim_db
    cpp_sim_db
    c_sim_db
+   genindex
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`

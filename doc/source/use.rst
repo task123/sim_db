@@ -101,7 +101,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11
 
-The :code:`add_and_run` command is usually divided into adding the simulations parameters to the database with:
+If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in settings.txt and add and run the first match. The command is usually divided into adding the simulations parameters to the database with:
 
 .. code-block:: console
 
@@ -111,15 +111,21 @@ and running the simulation:
 
 .. code-block:: console
 
-    $ run_sim --id 'ID'
+    $ run_sim
 
-where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using `add_sim`, but to check the '`ID`' of the latest set of paramters added one can run:
+When passed without any flags :code:`run_sim` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
 
 .. code-block:: console
 
-    $ print_sim -n 1 -c id
+    $ run_sim --id 'ID'
 
-`print_sim` have lots of flags to control and limit what is printed. The ``-n 1`` flag prints the last entry. ``-c id`` limit the output to just the column named `id`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as:
+where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using `add_sim`, but to check the '`ID`' of the last couple of siulations added one can run:
+
+.. code-block:: console
+
+    $ print_sim -n 2 -c id name
+
+`print_sim` have lots of flags to control and limit what is printed. The ``-n 2`` flag prints the last two entries. ``-c id name`` limit the output to just the column named `id` and `name`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as:
 
 .. code-block:: console
 
@@ -176,6 +182,8 @@ Recommended:
 * **Git** - Your project must use Git to get the full range of metadata. If Git is not used, metadata from Git (and the executable's SHA1 hash) is not collected. (So, nothing dramatic. It might, however, be useful.)
 
 * **Make** - Makes the build process much easier.
+
+* **pytest** - `Python framework <https://docs.pytest.org/en/latest/index.html>`_ used to run the tests and nothing else. Installed with :code:`$ pip install -U pytest`.
 
 Windows:
 ++++++++
