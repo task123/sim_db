@@ -29,9 +29,9 @@ All **sim_db** commands should now be available and the C and C++ libraries shou
 
 It should list all the **sim_db** commands. How to use any of them can be found either by running the with the `--help` or `-h` flag or reading the documentation of the :ref:`commands <Commands>`. Most of the commands need to have some sets of simulation parameters added to the database to work, so read the examples below to see how to do that.
 
-(All the commands are just calls to python scripts, so they can all be called as :code:`$ python path_to_sim_db_dir/src/commands/'name_command'`.)
+(The full set of tests can be run with ``$ pytest`` or ``$ python -m pytest`` provided `pytest` is installed.)
 
-The full set of tests can be run with ``$ pytest`` or ``$ python -m pytest`` provided `pytest` is installed.
+Notice that it says `Include in your project` and not `Install`. **sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum, so it does not itself need to be installed just included. All the commands are just calls to python scripts, so they can all be called as :code:`$ python path_to_sim_db_dir/src/commands/'name_command'`.
 
 How it is used - an brief overview
 ==================================
@@ -169,7 +169,7 @@ Extensive examples for Python and C can also be found in the same directory, `si
 
 Dependencies
 ============
-The dependencies for **sim_db** is tried to keep at a minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.
+The dependencies for **sim_db** is tried to keep at a minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.
 
 * **SQLite** - Uses a SQLite database, so it need to be installed on the system. Almost all the flavours of Linux OS are being shipped with SQLite and MacOS comes pre-installed with SQLite. The SQLite Amalgamation (source code of SQLite in C) is even included to provide a painfree compilation of the C and C++ libraries.
 
