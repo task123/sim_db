@@ -90,10 +90,12 @@ void sim_db_get_time_string(char time_string[]) {
 }
 
 void sim_db_update(SimDB* self, const char* column, const char* value) {
-    char query[256];
+    char* query = (char*) malloc(sizeof(char)
+                                 * (strlen(column) + strlen(value) + 80));
     sprintf(query, "UPDATE runs SET '%s' = '%s' WHERE id = %d", column, value,
             self->id);
     int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
+    free(query);
     if (rc != SQLITE_OK) {
         fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
         exit(1);
@@ -120,13 +122,15 @@ int sim_db_run_shell_command(const char* command, char* output,
     }
 }
 
-bool is_a_git_project(char path_sim_db[PATH_MAX + 1]) {
+bool is_a_git_project(char path_sim_db_parent_dir[PATH_MAX + 1]) {
+    char path_in_project[PATH_MAX + 1];
+    strcpy(path_in_project, path_sim_db_parent_dir);
     char git_file[20] = "/.git/index";
-    for (int i = strlen(path_sim_db) - 1; i >= 0; i--) {
-        if (path_sim_db[i] == '/') {
-            path_sim_db[i] = '\0';
-            strcat(path_sim_db, git_file);
-            FILE* fp = fopen(path_sim_db, "r");
+    for (int i = strlen(path_in_project) - 1; i >= 0; i--) {
+        if (path_in_project[i] == '/') {
+            path_in_project[i] = '\0';
+            strcat(path_in_project, git_file);
+            FILE* fp = fopen(path_in_project, "r");
             if (fp != NULL) {
                 fclose(fp);
                 return true;
@@ -158,7 +162,8 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
     if (!is_id_found || !is_path_sim_db_found) {
         fprintf(stderr,
                 "ERROR: '--id ID' or '-i ID' and '--path_sim_db "
-                "PATH_TO_SIM_DB_DIR' or '-p PATH_TO_SIM_DB_DIR' MUST be passed "
+                "PATH_TO_SIM_DB_DIR' or '-p PATH_TO_SIM_DB_DIR' MUST be "
+                "passed "
                 "as command line arguments.\n");
         exit(1);
     }
@@ -252,18 +257,19 @@ SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
         sprintf(command, "cd %s/.. && git diff HEAD", path_sim_db_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             if (strlen(output) >= len_output) {
-                char warning[len_output + 200];
+                char warning[100];
+                char output_with_warning[len_output + 200];
                 sprintf(warning,
                         "WARNING: Diff limited to first %ld "
                         "characters.\n",
                         (long) len_output);
-                strcat(warning, "\n");
-                strcat(warning, output);
-                strcpy(output, warning);
-                strcat(output, "\n\n");
-                strcat(output, warning);
+                strcpy(output_with_warning, warning);
+                strcat(output_with_warning, output);
+                strcat(output_with_warning, warning);
+                sim_db_update(sim_db, "git_diff", output_with_warning);
+            } else {
+                sim_db_update(sim_db, "git_diff", output);
             }
-            sim_db_update(sim_db, "git_diff", output);
         }
     }
 
@@ -830,6 +836,7 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
             sha1[j] = sha1[j] ^ tmp[j];
         }
     }
+    sha1[40] = '\0';
     sim_db_update(self, "sha1_executables", sha1);
 }
 
