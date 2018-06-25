@@ -52,17 +52,17 @@ def run_sim(argv=None):
     ])
 
     for command in run_command.split(';'):
-        proc = subprocess.Popen(
+        process = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 shell=True)
-        (out, err) = proc.communicate()
-        if out != None:
-            print(out.decode('UTF-8'))
-        if err != None:
-            sys.stderr.write(err.decode('UTF-8'))
-            sys.stderr.flush()
+        if sys.version_info[0] < 3:
+            for line in iter(process.stdout.readline, ''): 
+                sys.stdout.write(line.decode('UTF-8'))
+        else:
+            for line in iter(process.stdout.readline, b''):
+                sys.stdout.write(line.decode('UTF-8'))
     update_sim.update_sim([
             "--id",
             str(args.id), "--columns", "status", "--values", "finished"
