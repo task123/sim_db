@@ -9,7 +9,7 @@ CXXFLAGS = $(CXXFLAGS_RELEASE)
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all generate_commands libsimdb libsimdbcpp clean clean_except_third_party
+.PHONY: all commands libsimdb libsimdbcpp clean clean_except_third_party
 
 all:
 	$(MAKE) commands
