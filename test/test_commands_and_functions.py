@@ -257,7 +257,7 @@ def __cpp_functions(capsys, store_metadata):
 
 
 def __assert_output_c_and_cpp_program(output_popen):
-    printed_lines = output_popen.split('\n')[1:]
+    printed_lines = output_popen.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
         printed_lines = output_popen.split('\n')[3:]
     assert printed_lines[0] == "3"
