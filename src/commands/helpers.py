@@ -59,7 +59,7 @@ class Settings:
     def read(self, key_settings_dict, path_settings=None):
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_closest_sim_db_dir_path() + '/settings.txt'
+            path_settings = get_sim_db_dir_path() + '/settings.txt'
         settings_file = open(path_settings, 'r')
         settings_found = []
         is_comment = False
@@ -86,7 +86,7 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_closest_sim_db_dir_path() + '/settings.txt'
+            path_settings = get_sim_db_dir_path() + '/settings.txt'
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_found = False
@@ -119,7 +119,7 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_closest_sim_db_dir_path() + '/settings.txt'
+            path_settings = get_sim_db_dir_path() + '/settings.txt'
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_found = False
@@ -146,33 +146,42 @@ class Settings:
         settings_file.close()
 
 
-def get_closest_sim_db_dir_path():
-    currect_dir = os.getcwd()
-    source_commands_dir = os.path.dirname(os.path.abspath(__file__))
-    sim_db_dir = os.path.abspath(
-            os.path.join(
-                    os.path.join(source_commands_dir, os.pardir), os.pardir))
-    settings = Settings()
-    sim_db_copies = settings.read('other_sim_db_copies',
-                                  sim_db_dir + '/settings.txt')
-    sim_db_copies.append(sim_db_dir)
-    longest_match_length = 0
-    closest_sim_db_path = None
-    for copy in sim_db_copies:
-        copy = copy.strip()
-        match_length = 0
-        for i in range(min(len(copy), len(currect_dir))):
-            if copy[i] == currect_dir[i]:
-                match_length += 1
-        if match_length > longest_match_length:
-            longest_match_length = match_length
-            closest_sim_db_path = copy
-    return closest_sim_db_path
+def get_sim_db_dir_path():
+    """Return absolute path to 'sim_db' directory or "" if unsuccessful.
+
+    Search current and all parent directories for the 'sim_db' directory or
+    a '.sim_db' file, containing the absoluth or relative path to 'sim_db',
+    and return the absoluth path to the 'sim_db directory. Path does NOT end 
+    with '/'."""
+
+    sim_db_path = ""
+    dir_path = os.getcwd()
+    while len(dir_path) > 0:
+        dir_path = dir_path[0:dir_path.rfind("/")]
+        if os.path.isdir(dir_path + "/sim_db"):
+            return dir_path + "/sim_db"
+        elif os.path.isfile(dir_path + "/.sim_db"):
+            sim_db_path = ""
+            with open(dir_path + "/.sim_db") as dot_sim_db_file:
+                sim_db_path = dot_sim_db_file.readline().strip()
+                sim_db_path = sim_db_path.replace("/ ", " ")
+                if not os.path.isabs(sim_db_path):
+                    sim_db_path = dir_path + '/' + sim_db_path
+                if sim_db_path[-1] == '/':
+                    sim_db_path = sim_db_path[0:-1]
+            if os.path.isdir(sim_db_path):
+                return sim_db_path
+            else:
+                print("ERROR: " + dir_path + "/.sim_db does NOT contain a "
+                    "valid path\n       to the sim_db directory or the file "
+                    "could NOT be opened.")
+                exit()
+    return ""
 
 
 def connect_sim_db(full_path_sim_db=None):
     if (full_path_sim_db == None):
-        full_path_sim_db = get_closest_sim_db_dir_path() + '/sim.db'
+        full_path_sim_db = get_sim_db_dir_path() + '/sim.db'
     return sqlite3.connect(full_path_sim_db)
 
 
@@ -203,13 +212,13 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
             prefix_run_command += prefix + ' '
         run_command = prefix_run_command + run_command
 
-    sim_db_dir = get_closest_sim_db_dir_path()
+    sim_db_dir = get_sim_db_dir_path()
     sim_db_dir = sim_db_dir.replace(' ', '\ ')
     run_command = run_command.replace('sim_db/', ' ' + sim_db_dir + '/')
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_sim_db "{0}"'.format(
-            get_closest_sim_db_dir_path())
+            get_sim_db_dir_path())
 
     return run_command
 
