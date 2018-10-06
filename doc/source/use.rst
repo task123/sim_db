@@ -19,6 +19,8 @@ Go into the sim_db directory and run make:
     $ cd sim_db
     $ make
 
+Answer yes when asked to add `sim_db/commands` to your PATH as well as a `cd_results` function to `~/.bashrc` or `~/.bash_profile` and remember to source it.
+
 All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
 
 .. code-block:: console

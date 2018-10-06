@@ -37,8 +37,8 @@ def add_path_to_bash_file(where_to_add_path):
                     return False
  
     # Add path
-    answer = helpers.user_input("\nWould you like to add 'sim_db/' to your "
-        "PATH and 'cd_results' function in {0}? (y/n)\n(Recommended and "
+    answer = helpers.user_input("\nWould you like to add 'sim_db/commands' to "
+        "your PATH and 'cd_results' function in {0}? (y/n)\n(Recommended and "
         "needed to run commands.)\n".format(where_to_add_path))
     if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
         if line_number_last_sim_db_path == -1:
