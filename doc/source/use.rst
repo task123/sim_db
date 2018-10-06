@@ -4,7 +4,7 @@ Use
 
 Include in your project
 =======================
-It is recommended to add **sim_db** as a git submodule in your project by running:
+It is recommended to add **sim_db** as a git submodule in the top level directory of your project by running:
 
 .. code-block:: console
 
@@ -18,8 +18,6 @@ Go into the sim_db directory and run make:
 
     $ cd sim_db
     $ make
-
-Answer yes when asked to add `sim_db/commands` to your PATH in `~/.bashrc` or `~/.bash_profile` and remember to source it. (Or if you already have projects using **sim_db**, let it add the path to this **sim_db** directory to the settings.txt of the other local **sim_db** copies.)
 
 All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
 

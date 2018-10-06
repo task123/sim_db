@@ -165,6 +165,8 @@ def get_sim_db_dir_path():
             with open(dir_path + "/.sim_db") as dot_sim_db_file:
                 sim_db_path = dot_sim_db_file.readline().strip()
                 sim_db_path = sim_db_path.replace("/ ", " ")
+                if len(sim_db_path) >= 2 and sim_db_path[0:2] == "./":
+                    sim_db_path = sim_db_path[2:]
                 if not os.path.isabs(sim_db_path):
                     sim_db_path = dir_path + '/' + sim_db_path
                 if sim_db_path[-1] == '/':
