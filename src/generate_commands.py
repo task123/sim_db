@@ -11,6 +11,7 @@ performed from anywhere. For Linux and Mac this involes adding a line to
 from commands import helpers
 import fnmatch
 from sys import platform
+import sys
 import os
 
 def add_path_to_bash_file(where_to_add_path):
@@ -81,7 +82,8 @@ def main():
     programs.remove('cd_results.py')
     sim_db_src_dir = sim_db_src_dir.replace(" ", "\ ")
     for program in programs:
-        script_name = "commands/" + program.split('.')[0]
+        script_name = (sys.argv[0].split('generate_commands.py')[0] 
+            + "../commands/" + program.split('.')[0])
         script_file = open(script_name, 'w')
         script_file.write('python {0}/commands/{1} "$@"'.format(sim_db_src_dir, program))
         script_file.close()
