@@ -38,28 +38,34 @@ def delete_results_dir(argv=None):
     results_dirs = []
     for delete_id in args.id:
         db_cursor.execute("SELECT results_dir FROM runs WHERE id = {0}".format(delete_id))
-        results_dirs.append(db_cursor.fetchone()[0])
+        results_dir = db_cursor.fetchone()[0]
+        if results_dir != None:
+            results_dirs.append(results_dir)
 
     if args.where:
         db_cursor.execute("SELECT results_dir FROM runs WHERE {0}".format(args.where))
         for selected_output in db_cursor.fetchall():
-            results_dirs.append(selected_output[0])
+            if selected_output[0] != None:
+                results_dirs.append(selected_output[0])
 
     db.commit()
     db_cursor.close()
     db.close()
 
-    print("Do you really want to delete the following directories and "
-        "everything in them:")
-    for results_dir in results_dirs:
-        print(results_dir)
-    answer = helpers.user_input("? (y/n)")
-    if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
+    if len(results_dirs) > 0:
+        print("Do you really want to delete the following directories and "
+            "everything in them:")
         for results_dir in results_dirs:
-            shutil.rmtree(results_dir)
-    else: 
-        print("No results deleted.")
-
+            print(results_dir)
+        answer = helpers.user_input("? (y/n)")
+        if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
+            for results_dir in results_dirs:
+                shutil.rmtree(results_dir)
+        else: 
+            print("No results deleted.")
+    else:
+        print("No 'results_dir' to delete.")
+ 
 
 if __name__ == '__main__':
     delete_results_dir()
