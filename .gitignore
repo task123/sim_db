@@ -10,6 +10,7 @@ add_sim
 add_run
 combine_dbs
 delete_empty_columns
+delete_results_dir
 delete_sim
 extract_params
 list_sim_db_commands

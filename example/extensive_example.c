@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     char* name_subdir =
-            sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
+            sim_db_make_unique_subdir_rel_path(sim_db, "example/results");
 
     // Write some results to a file in the newly create subdirectory.
     FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
