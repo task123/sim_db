@@ -15,7 +15,7 @@ default_db_columns = {
         'description': 'TEXT',
         'run_command': 'TEXT',
         'comment': 'TEXT',
-        'result_dir': 'TEXT',
+        'results_dir': 'TEXT',
         'add_to_job_script': 'TEXT',
         'max_walltime': 'TEXT',
         'n_tasks': 'INTEGER',

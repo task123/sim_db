@@ -91,7 +91,7 @@ def __run_sim_and_python_functions(capsys, store_metadata):
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 result_dir time_started " \
+            "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -190,7 +190,7 @@ def __c_funcionts(capsys, store_metadata):
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 result_dir time_started " \
+            "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -233,7 +233,7 @@ def __cpp_functions(capsys, store_metadata):
     output_program, err_program = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 result_dir time_started " \
+            "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -294,7 +294,7 @@ def test_add_and_run(capsys):
     output_print_sim_after_add_sim, err = capsys.readouterr()
     print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 result_dir time_started " \
+            "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim_after_run_sim, err = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
@@ -323,13 +323,14 @@ def test_list_sim_db_commands(capsys):
     assert output_lines[7] == "cd_results"
     assert output_lines[8] == "combine_dbs"
     assert output_lines[9] == "delete_empty_columns"
-    assert output_lines[10] == "delete_sim"
-    assert output_lines[11] == "extract_params"
-    assert output_lines[12] == "list_sim_db_commands"
-    assert output_lines[13] == "print_sim"
-    assert output_lines[14] == "run_sim"
-    assert output_lines[15] == "submit_sim"
-    assert output_lines[16] == "update_sim"
+    assert output_lines[10] == "delete_results_dir"
+    assert output_lines[11] == "delete_sim"
+    assert output_lines[12] == "extract_params"
+    assert output_lines[13] == "list_sim_db_commands"
+    assert output_lines[14] == "print_sim"
+    assert output_lines[15] == "run_sim"
+    assert output_lines[16] == "submit_sim"
+    assert output_lines[17] == "update_sim"
 
 
 def test_add_column_and_delete_empty_columns(capsys):
@@ -410,18 +411,18 @@ def test_cd_results(capsys):
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
     output_program, err_program = capsys.readouterr()
-    result_dir = cd_results.cd_results("--id {0}".format(db_id).split())
-    print_sim.print_sim("--id {0} -v --columns result_dir --no_headers".format(
+    results_dir = cd_results.cd_results("--id {0}".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns results_dir --no_headers".format(
             db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     delete_sim.delete_sim("--id {0}".format(db_id).split())
     with capsys.disabled():
         print("\nTest cd_results...")
-    assert os.path.isdir(result_dir)
+    assert os.path.isdir(results_dir)
     res_dir = output_print_sim.split('\n')[0].strip()
     os.remove(res_dir + "/results.txt")
     os.rmdir(res_dir)
-    assert not os.path.isdir(result_dir)
+    assert not os.path.isdir(results_dir)
 
 
 def test_submit_sim(capsys):

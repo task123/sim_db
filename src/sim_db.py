@@ -197,7 +197,7 @@ class SimDB:
         os.mkdir(subdir)
 
         if self.store_metadata:
-            self.write(column="result_dir", value=subdir)
+            self.write(column="results_dir", value=subdir)
 
         return subdir
 

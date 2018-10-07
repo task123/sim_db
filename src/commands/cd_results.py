@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Used by a bash function to change directory to the 'result_dir' of a simulation."""
+""" Used by a bash function to change directory to the 'results_dir' of a simulation."""
 
 # Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
@@ -11,8 +11,8 @@ import os
 
 def command_line_arguments_parser():
     # yapf: disable
-    parser = argparse.ArgumentParser(description="Return full path to 'result_dir' of simulation specified, of last entry if unspecified. Used by a bash function, 'cd_results', to change directory to this 'result_dir'.")
-    parser.add_argument('--id', '-i', type=int, help="'ID' of the 'result_dir' in the 'sim.db' database.")
+    parser = argparse.ArgumentParser(description="Return full path to 'results_dir' of simulation specified, of last entry if unspecified. Used by a bash function, 'cd_results', to change directory to this 'results_dir'.")
+    parser.add_argument('--id', '-i', type=int, help="'ID' of the 'results_dir' in the 'sim.db' database.")
     parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)") 
     # yapf: enable
 
@@ -26,27 +26,27 @@ def cd_results(argv=None):
     db_cursor = db.cursor()
 
     if args.id != None:
-        db_cursor.execute("SELECT result_dir FROM runs WHERE id={0}".format(
+        db_cursor.execute("SELECT results_dir FROM runs WHERE id={0}".format(
                 args.id))
-        result_dir = db_cursor.fetchone()[0]
+        results_dir = db_cursor.fetchone()[0]
     else:
-        db_cursor.execute("SELECT result_dir FROM runs")
+        db_cursor.execute("SELECT results_dir FROM runs")
         if args.n == None:
             args.n = 0
-        result_dir = db_cursor.fetchall()
-        if len(result_dir) > args.n:
-            result_dir = result_dir[len(result_dir) - args.n - 1][0]
+        results_dir = db_cursor.fetchall()
+        if len(results_dir) > args.n:
+            results_dir = results_dir[len(results_dir) - args.n - 1][0]
 
     db.commit()
     db_cursor.close()
     db.close()
 
-    if result_dir == None:
-        print("Specified simulation does not have a 'result_dir' path.")
+    if results_dir == None:
+        print("Specified simulation does not have a 'results_dir' path.")
         exit()
 
-    result_dir.replace(" ", "\ ")
-    return result_dir
+    results_dir.replace(" ", "\ ")
+    return results_dir
 
 
 if __name__ == '__main__':

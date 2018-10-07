@@ -769,17 +769,17 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 }
 
 char* sim_db_make_unique_subdir_abs_path(SimDB* self,
-                                         const char* abs_path_to_result_dir) {
+                                         const char* abs_path_to_results_dir) {
     char time_string[100];
     sim_db_get_time_string(time_string);
     char* name = sim_db_read_string(self, "name");
     char* name_subdir = (char*) malloc((PATH_MAX + 1) * sizeof(char));
-    if (abs_path_to_result_dir[strlen(abs_path_to_result_dir) - 1] == '/') {
-        sprintf(name_subdir, "%s%s_%s_%d", abs_path_to_result_dir, time_string,
+    if (abs_path_to_results_dir[strlen(abs_path_to_results_dir) - 1] == '/') {
+        sprintf(name_subdir, "%s%s_%s_%d", abs_path_to_results_dir, time_string,
                 name, self->id);
     } else {
-        sprintf(name_subdir, "%s/%s_%s_%d", abs_path_to_result_dir, time_string,
-                name, self->id);
+        sprintf(name_subdir, "%s/%s_%s_%d", abs_path_to_results_dir,
+                time_string, name, self->id);
     }
     struct stat st;
     if (stat(name_subdir, &st) == 0) {
@@ -800,16 +800,16 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     sim_db_add_pointer_to_free(self, name_subdir);
 
     if (self->store_metadata) {
-        sim_db_write_string(self, "result_dir", name_subdir);
+        sim_db_write_string(self, "results_dir", name_subdir);
     }
 
     return name_subdir;
 }
 
 char* sim_db_make_unique_subdir_rel_path(SimDB* self,
-                                         const char* rel_path_to_result_dir) {
+                                         const char* rel_path_to_results_dir) {
     char path_res_dir[PATH_MAX + 1];
-    sprintf(path_res_dir, "%s/%s", self->path_sim_db, rel_path_to_result_dir);
+    sprintf(path_res_dir, "%s/%s", self->path_sim_db, rel_path_to_results_dir);
     char real_path_res_dir[PATH_MAX + 1];
     if (!realpath(path_res_dir, real_path_res_dir)) {
         fprintf(stderr, "ERROR: Could NOT make realpath of %s\n.",
