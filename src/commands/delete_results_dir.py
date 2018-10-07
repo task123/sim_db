@@ -20,6 +20,7 @@ def command_line_arguments_parser():
     parser = argparse.ArgumentParser(description="Delete results in 'results_dir' of specified simulations.")
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of simulation which 'results_dir' to deleted.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which simulation's 'results_dir' to deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
+    parser.add_argument('--no_checks', action='store_true', help="No questions are asked about wheather you really want to delete the 'results_dir' of specified simulation.")
     # yapf: enable
 
     return parser
@@ -38,9 +39,9 @@ def delete_results_dir(argv=None):
     results_dirs = []
     for delete_id in args.id:
         db_cursor.execute("SELECT results_dir FROM runs WHERE id = {0}".format(delete_id))
-        results_dir = db_cursor.fetchone()[0]
+        results_dir = db_cursor.fetchone()
         if results_dir != None:
-            results_dirs.append(results_dir)
+            results_dirs.append(results_dir[0])
 
     if args.where:
         db_cursor.execute("SELECT results_dir FROM runs WHERE {0}".format(args.where))
@@ -53,12 +54,15 @@ def delete_results_dir(argv=None):
     db.close()
 
     if len(results_dirs) > 0:
-        print("Do you really want to delete the following directories and "
-            "everything in them:")
-        for results_dir in results_dirs:
-            print(results_dir)
-        answer = helpers.user_input("? (y/n)")
-        if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
+        answer = 'n'
+        if not args.no_checks:
+            print("Do you really want to delete the following directories and "
+                "everything in them:")
+            for results_dir in results_dirs:
+                print(results_dir)
+            answer = helpers.user_input("? (y/n)")
+        if (answer == 'y' or answer == 'Y' or answer == 'yes' 
+                or answer == 'Yes' or args.no_checks):
             for results_dir in results_dirs:
                 shutil.rmtree(results_dir)
         else: 

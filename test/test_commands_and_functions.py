@@ -39,7 +39,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
            "test_param7 test_param8 test_param9 test_param10" \
            .format(db_id).split())
     output_print_sim, err = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_check"))
     print_sim.print_sim("-n 1 --no_headers --columns id".split())
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
@@ -94,7 +94,7 @@ def __run_sim_and_python_functions(capsys, store_metadata):
             "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         if store_metadata:
             print("\nTest run_sim and python methods...")
@@ -193,7 +193,7 @@ def __c_funcionts(capsys, store_metadata):
             "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         if store_metadata:
             print("\nTest C functions...")
@@ -236,7 +236,7 @@ def __cpp_functions(capsys, store_metadata):
             "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         if store_metadata:
             print("\nTest C++ methods...")
@@ -297,7 +297,7 @@ def test_add_and_run(capsys):
             "new_test_param7 new_test_param8 results_dir time_started " \
             "used_walltime --no_headers".format(db_id).split())
     output_print_sim_after_run_sim, err = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         print("\nTest add_and_run...")
     res_dir = output_print_sim_after_run_sim.split('\n')[16].strip()
@@ -355,7 +355,7 @@ def test_extract_params(capsys):
     ])
     extract_params.extract_params("--id {0}".format(db_id).split())
     output_extract_params, err = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     lines_extract_params = output_extract_params.split('\n')
     with capsys.disabled():
         print("\nTest extract_params...")
@@ -382,7 +382,7 @@ def test_update_sim(capsys):
     print_sim.print_sim("--id {0} --columns test_param1 --no_headers".format(
             db_id).split())
     output_print_sim, err = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         print("\nTest update_sim...")
     assert output_print_sim.strip() == "100"
@@ -399,7 +399,7 @@ def test_add_comment(capsys):
     print_sim.print_sim(
             "--id {0} --columns comment --no_headers".format(db_id).split())
     output_print_sim, err = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         print("\nTest add_comment...")
     assert output_print_sim.strip() == "This is a test comment."
@@ -415,7 +415,7 @@ def test_cd_results(capsys):
     print_sim.print_sim("--id {0} -v --columns results_dir --no_headers".format(
             db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
-    delete_sim.delete_sim("--id {0}".format(db_id).split())
+    delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         print("\nTest cd_results...")
     assert os.path.isdir(results_dir)
@@ -445,7 +445,7 @@ def test_submit_sim(capsys):
                 str(db_id), "--do_not_submit_job_script", "--max_walltime",
                 "03:34:00", "--n_nodes", "2"
         ])
-        delete_sim.delete_sim("--id {0}".format(db_id).split())
+        delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
         job_script_file = open(job_script_name, 'r')
         lines = job_script_file.readlines()
         job_script_file.close()
@@ -506,7 +506,7 @@ def test_add_and_submit(capsys):
                         __get_test_dir()), "--n_nodes", "2", "--max_walltime",
                 "03:34:00", "--do_not_submit_job_script"
         ])
-        delete_sim.delete_sim("--id {0}".format(db_id).split())
+        delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
         job_script_file = open(job_script_name, 'r')
         lines = job_script_file.readlines()
         job_script_file.close()
