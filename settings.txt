@@ -5,7 +5,6 @@
 (If no parameter file is passed to 'add_sim', the first match here is used.)
 
 sim_params.txt
-example_sim_params.txt
 
 ## Personalized print configurations
 (print_sim -p 'KEY_STRING', print_sim == print_sim -p default)
