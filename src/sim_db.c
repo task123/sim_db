@@ -87,6 +87,9 @@ void sim_db_get_time_string(char time_string[]) {
     strcat(time_string, &local_time[8]);
     strcat(time_string, "_");
     strcat(time_string, &local_time[11]);
+    if (time_string[9] == ' ') {
+        time_string[9] = '0';
+    }
 }
 
 void sim_db_update(SimDB* self, const char* column, const char* value) {
