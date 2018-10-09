@@ -94,15 +94,17 @@ def add_range_sim(argv=None):
                         + args.lin_steps[i])
         elif len(args.lin_steps) == 0:
             j = 0
-            while ((start_values[i] < args.end_steps[i]) 
-                    != (column_range[i][j] < args.end_steps[i])):
+            while (start_values[i] != args.end_steps[i]
+                    and (start_values[i] < args.end_steps[i]) 
+                    == (column_range[i][j] < args.end_steps[i])):
                 column_range[i].append(column_range[i][-1] * args.exp_steps[i]
                         + args.lin_steps[i])
                 j += 1
         else:
             j = 0
-            while (j < args.n_steps[i] or ((start_values[i] < args.end_steps[i]) 
-                    != (column_range[i][j] < args.end_steps[i]))):
+            while (j < args.n_steps[i] or (start_values[i] != args.end_steps[i] 
+                    and(start_values[i] < args.end_steps[i]) 
+                    == (column_range[i][j] < args.end_steps[i]))):
                 column_range[i].append(column_range[i][-1] * args.exp_steps[i]
                         + args.lin_steps[i])
                 j += 1

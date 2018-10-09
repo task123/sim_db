@@ -23,6 +23,7 @@ import add_comment
 import cd_results
 import submit_sim
 import add_and_submit
+import add_range_sim
 import os
 import time
 import subprocess
@@ -106,10 +107,6 @@ def __run_sim_and_python_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    if store_metadata:
-        res_dir = output_print_sim.split('\n')[16].strip()
-        os.remove(res_dir + "/results.txt")
-        os.rmdir(res_dir)
     __assert_output_python_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
@@ -205,10 +202,6 @@ def __c_funcionts(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    if store_metadata:
-        res_dir = output_print_sim.split('\n')[16].strip()
-        os.remove(res_dir + "/results.txt")
-        os.rmdir(res_dir)
     __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
@@ -248,10 +241,6 @@ def __cpp_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    if store_metadata:
-        res_dir = output_print_sim.split('\n')[16].strip()
-        os.remove(res_dir + "/results.txt")
-        os.rmdir(res_dir)
     __assert_output_c_and_cpp_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
@@ -300,9 +289,6 @@ def test_add_and_run(capsys):
     delete_sim.delete_sim("--id {0}".format(db_id).split().append("--no_checks"))
     with capsys.disabled():
         print("\nTest add_and_run...")
-    res_dir = output_print_sim_after_run_sim.split('\n')[16].strip()
-    os.remove(res_dir + "/results.txt")
-    os.rmdir(res_dir)
     __assert_output_print_sim_after_add_sim(output_print_sim_after_add_sim)
     __assert_output_python_program(output_program)
     __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
@@ -319,18 +305,20 @@ def test_list_sim_db_commands(capsys):
     assert output_lines[3] == "add_and_submit"
     assert output_lines[4] == "add_column"
     assert output_lines[5] == "add_comment"
-    assert output_lines[6] == "add_sim"
-    assert output_lines[7] == "cd_results"
-    assert output_lines[8] == "combine_dbs"
-    assert output_lines[9] == "delete_empty_columns"
-    assert output_lines[10] == "delete_results_dir"
-    assert output_lines[11] == "delete_sim"
-    assert output_lines[12] == "extract_params"
-    assert output_lines[13] == "list_sim_db_commands"
-    assert output_lines[14] == "print_sim"
-    assert output_lines[15] == "run_sim"
-    assert output_lines[16] == "submit_sim"
-    assert output_lines[17] == "update_sim"
+    assert output_lines[6] == "add_range_sim"
+    assert output_lines[7] == "add_sim"
+    assert output_lines[8] == "cd_results"
+    assert output_lines[9] == "combine_dbs"
+    assert output_lines[10] == "delete_empty_columns"
+    assert output_lines[11] == "delete_results_dir"
+    assert output_lines[12] == "delete_sim"
+    assert output_lines[13] == "extract_params"
+    assert output_lines[14] == "list_print_configs"
+    assert output_lines[15] == "list_sim_db_commands"
+    assert output_lines[16] == "print_sim"
+    assert output_lines[17] == "run_sim"
+    assert output_lines[18] == "submit_sim"
+    assert output_lines[19] == "update_sim"
 
 
 def test_add_column_and_delete_empty_columns(capsys):
@@ -570,3 +558,57 @@ def test_combine_dbs(capsys):
         assert column_name in column_names_comb
     for (old_command, new_command) in zip(old_run_commands, new_run_commands):
         assert old_command == new_command
+
+def test_add_range_sim(capsys):
+    db_ids = add_range_sim.add_range_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir()),
+            "--columns", "test_param1", "test_param2", 
+            "--lin_steps", "0", "2",
+            "--exp_steps", "3", "1",
+            "--end_steps", "27", "-4999999999",
+            "--n_steps", "0", "2",
+    ])
+    db_ids_string = ""
+    for db_id in db_ids:
+        db_ids_string = db_ids_string + " " + str(db_id)
+    print_sim.print_sim("--id {0} -v --no_headers --columns test_param1 " \
+           "test_param2".format(db_ids_string).split())
+    output_print_sim, err = capsys.readouterr()
+    delete_sim.delete_sim("--id {0}".format(db_ids_string).split()
+            .append("--no_check"))
+    print_sim.print_sim("-n 1 --no_headers --columns id".split())
+    output_after_delete, err = capsys.readouterr()
+    with capsys.disabled():
+        print("\nTest add_range_sim...") 
+    test_param1_list, test_param2_list = output_print_sim.split('\n', 1)
+    test_param1_list = test_param1_list.split()
+    test_param2_list = test_param2_list.split()
+    assert (test_param1_list[0] == "3" and test_param1_list[1] == "3" 
+            and test_param1_list[2] == "3")
+    assert (test_param1_list[3] == "9" and test_param1_list[4] == "9" 
+            and test_param1_list[5] == "9")
+    assert (test_param1_list[6] == "27" and test_param1_list[7] == "27" 
+            and test_param1_list[8] == "27")
+    param2_start = -5000000000.0
+    assert (test_param2_list[0] == str(param2_start) 
+            and test_param2_list[3] == str(param2_start) 
+            and test_param2_list[6] == str(param2_start))
+    assert (test_param2_list[1] == str(param2_start + 2) 
+            and test_param2_list[4] == str(param2_start + 2) 
+            and test_param2_list[7] == str(param2_start + 2))
+    assert (test_param2_list[2] == str(param2_start + 4) 
+            and test_param2_list[5] == str(param2_start + 4) 
+            and test_param2_list[8] == str(param2_start + 4))
+
+    # Test that the added simulation parameters are deleted
+    assert (len(output_after_delete) == 0
+            or output_after_delete != "{0}".format(db_id))
+
+def test_delete_results_dir(capsys):
+    with capsys.disabled():
+        print("\nTest delete_results_dir...")
+    for entry in os.listdir(__get_test_dir() + '/results'):
+        assert not os.path.isdir(entry)
+     
+    
