@@ -20,6 +20,18 @@ add_column
    :ref: add_column.command_line_arguments_parser
    :prog: add_column
 
+add_comment
+===========
+.. argparse::
+   :ref: add_comment.command_line_arguments_parser
+   :prog: add_comment
+
+add_range_sim
+=============
+.. argparse::
+   :ref: add_range_sim.command_line_arguments_parser
+   :prog: add_range_sim
+
 add_sim
 =======
 .. argparse::
@@ -44,6 +56,12 @@ delete_empty_columns
    :ref: delete_empty_columns.command_line_arguments_parser
    :prog: delete_empty_columns
 
+delete_results_dir
+==================
+.. argparse::
+   :ref: delete_results_dir.command_line_arguments_parser
+   :prog: delete_results_dir
+
 delete_sim
 ==========
 .. argparse::
@@ -61,6 +79,12 @@ list_sim_db_commands
 .. argparse::
    :ref: list_sim_db_commands.command_line_arguments_parser
    :prog: list_sim_db_commands
+
+list_print_configs
+==================
+.. argparse::
+   :ref: list_print_configs.command_line_arguments_parser
+   :prog: list_print_configs
 
 print_sim
 =========

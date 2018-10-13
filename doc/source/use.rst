@@ -47,7 +47,7 @@ That is the brief overview. Reading the examples below and the links above will 
 
 Minimal example using Python
 ============================
-A parameter file called `params_mininal_python_example.txt` is located in the `sim_db/test/` directory in the `source code<https://github.com/jalsjf>`. The file contains the following:
+A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. The file contains the following:
 
 .. literalinclude:: ../../example/params_minimal_python_example.txt
    :language: none
@@ -62,13 +62,13 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run --filename sim_db/test/params_minimal_python_example.py
+    $ add_and_run --filename sim_db/example/params_minimal_python_example.txt
 
-Which can also be done from within the `test/` directory with:
+Which can also be done from within the *example/* directory with:
 
 .. code-block:: console
 
-    $ add_and_run -f params_minimal_python_example.py
+    $ add_and_run -f params_minimal_python_example.txt
 
 Minimal examples for C++ and C can also be found in the same directory.
 
@@ -76,7 +76,7 @@ Extensive example using C++
 ==============================
 This example is as the name suggerst much more extensive. It is not as straightforward as the minimal example, but it will demostrate a lot more and will also include explainations of more details.
 
-A parameter file called params_extensive_cpp_example.txt is found in the `sim_db/test/` directory in the `source code<https://github.com/jalsjf>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. This parameter file contains all the possible types available in addition to some comments:
 
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
@@ -87,19 +87,19 @@ In the same directory `extensive_example.cpp` is also found:
 
 .. literalinclude:: ../../example/extensive_example.cpp
    :language: c++
-   :lines: 16-57
+   :lines: 16-56
 
 Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example:
 
 .. code-block:: console
 
-    $ add_and_run -f sim_db/test/params_extensive_cpp_example.txt
+    $ add_and_run -f sim_db/example/params_extensive_cpp_example.txt
 
-Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from `sim_db/test/` (given that the static C++ library are compiled):
+Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/example/* (given that the static C++ library are compiled):
 
 .. code-block:: console
 
-    $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11
+    $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11 -lm -lpthread -ldl
 
 If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in settings.txt and add and run the first match. The command is usually divided into adding the simulations parameters to the database with:
 
@@ -165,7 +165,9 @@ If a number of simulations are added all including the paramters `max_walltime` 
 
 , which will run all simulations that have not been run yet after a confimation question.
 
-Extensive examples for Python and C can also be found in the same directory, `sim_db/examples/`, on `github<https://github.com/lkajsdlf>`.
+Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github<https://github.com/lkajsdlf>`.
+
+.. _dependencies:
 
 Dependencies
 ============

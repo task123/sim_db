@@ -25,4 +25,3 @@ int main(int argc, char** argv) {
     // Demonstrate that the simulation is running.
     std::cout << param1 << std::endl;
 }
-

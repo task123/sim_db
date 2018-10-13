@@ -27,16 +27,29 @@ It obviously stores all the parameters used to run the simulation, but it also p
 
 Stores a lot of metadata automatically
 ++++++++++++++++++++++++++++++++++++++
-**sim_db** stores a lot of metadata that might be useful down the line or even right away. A full list of what is stored is given in the list explaining the :ref:`default columns <Default columns - metadata stored>` in the database.  The `name` and `description` you are encourage to include with your parameters in addition to any `comments` you might add latter makes it easy to go throught the simulations at a later point and getting the gist of each one. 
-The `used_walltime`, together with `n_tasks` (which is the numer of logical core used) 
+**sim_db** stores a lot of metadata that might be useful down the line or even right away. A full list of what is stored is given in the list explaining the :ref:`default columns <Default columns - metadata stored>` in the database. In total what parameters was used, what was the result / where was it stored, what code was used to produce the result (for git projects) including what binary (was it compiled with this code), why this simulation was run, how long did it take to run on how many logical cpus on which hardware should be stored to the database — all while being less work to use that too not use **sim_db** (that is at least the idea).
 
 
+Few dependencies
+++++++++++++++++
+Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`this minimum <dependencies>`.
 
-		(What parameters was used, what was the result / where was it stored, what code was used to produce the result (for git projects) including what binary (was it compiled with this code), why was this simulation run, how long did it take to run on how many logical cpus on which hardware — while been less work to use that too not use it (that is at least the idea))
+Python, C and C++
++++++++++++++++++
+
+Build to run on both local machine and super computers/clusters
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Many print options
+++++++++++++++++++
+
+
+Multiple programs (of different languages) can read the same parameters
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 		few dependencies
-		python, c and c++
+		python, c and c++ (easy to add more languages, at least that can call c function)
 		metadata automatically 
 		many print options
 		build to run on both local machine and super computer / cluster 

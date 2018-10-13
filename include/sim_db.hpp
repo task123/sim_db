@@ -15,29 +15,55 @@ extern "C" {
 
 namespace sim_db {
 
-/// To interact with the 'sim_db' database.
+/// To interact with the **sim_db** database.
 class Connection {
 public:
-    /// To the 'sim_db' database.
+    /// Connect to the **sim_db** database.
+    //
     /// @param argc Length of \p argv.
     /// @param argv Array of command line arguments containg ```--id ID```.
     /// @param store_metadata Store metadata to database if true. Set to 'false'
-    ///         for postprocessing (visualization) of data from simulation.
+    /// for postprocessing (visualization) of data from simulation.
     Connection(int argc, char** argv, bool store_metadata = true);
 
-    /// To the 'sim_db' database.
+    /// Connect to the **sim_db** database.
+    //
+    /// @param path_sim_db Path to the *sim_db/* directory.
+    /// @param id ID number of the simulation paramters in the **sim_db**
+    /// database.
+    /// @param store_metadata Whether or not to store metadata automatically to
+    /// the database. (Recommended)
     Connection(std::string path_sim_db, int id, bool store_metadata = true);
 
     /// Read parameter from database.
+    //
+    /// @param column Name of the parameter and column in the database.
+    /// @return Parameter read from database.
     template <typename T>
     T read(std::string column);
 
+    /// Write \p value to database.
+    //
+    /// @param column Name of the parameter and column in the database.
+    /// @param value To be written to database.
     template <typename T>
     void write(std::string column, T value);
 
+    /// Make unique subdirectory in \p path_directory.
+    //
+    /// This new subdirectory is intended for storing results from the
+    /// simulation.
+    /// @param path_directory Relative or absolute path to where the new
+    /// directory is created.
+    /// @param is_path_relative Set false if \p path_directory is an absolute
+    /// path.
+    /// @return Path to new subdirectory.
     std::string make_unique_subdir(std::string path_directory,
                                    bool is_path_relative = true);
 
+    /// Save the sha1 hash of the file \p paths_executables to the database.
+    //
+    /// @param paths_executables Paths to executable files.
     void update_sha1_executables(std::vector<std::string> paths_executables);
 
     ~Connection();

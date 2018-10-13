@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Read the specified parameters from the database.
-
-The parameters is converted to correct type.
-"""
+"""Read and write parameters, results and metadata to the 'sim_db' database."""
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
@@ -27,13 +24,14 @@ class SimDB:
 
         'time_started' used the format: 'Year-Month-Date_Hours-Minutes-Seconds'.
 
-        store_metadata (bool): If False, no metadata is added to the database.
+        :param store_metadata: If False, no metadata is added to the database.
             Typically used when postprocessing (visualizing) data from a
             simulation.
-
-        db_id (int): ID of the row in the database to update. If it is
+        :type store_metadata: bool
+        :param db_id: ID of the row in the database to update. If it is
             'None', then it is read from the last argument passed to the program
             after option '--id'.
+        :type db_id: int
         """
         self.store_metadata = store_metadata
         self.id, self.sim_db_dir = self.__read_from_command_line_arguments(
@@ -88,14 +86,17 @@ class SimDB:
     def read(self, column, db_id=None, check_type_is=''):
         """Read parameter with id 'db_id' and column 'column' from the database.
 
-        column (string): Name of the column the parameter is read from.
-        db_id (int): ID of the row the parameter is read from. If it is
-            'None', then it is read from arguments passed to the program after
+        :param column: Name of the column the parameter is read from.
+        :type column: str
+        :param db_id: ID of the row the parameter is read from. If it is 
+            'None', then it is read from arguments passed to the program after 
             the option '--id'.
-        check_type_is (string or type): Throws ValueError if type does not
-            match 'check_type_is'. The valid types the strings 'int', 'float',
-            'bool', 'string' and 'int/float/bool/string array' or the types int,
-            float, bool, str and list.
+        :type db_id: int
+        :param check_type_is: Throws ValueError if type does not match 
+            'check_type_is'.The valid types the strings 'int', 'float', 'bool',
+            'string' and 'int/float/bool/string array' or the types int, float, 
+            bool, str and list.
+        :raises: ValueError - if return type does not match 'check_type_is'.
         """
         if db_id == None:
             db_id = self.id
@@ -127,17 +128,20 @@ class SimDB:
 
         If 'column' does not exists, a new is added.
 
-        column (string): Name of the column the parameter is read from.
-        value : New value of the specified entry in the database.
-        db_id (int): ID of the row the parameter is read from. If it is
+        :param column: Name of the column the parameter is read from.
+        :type column: str
+        :param value: New value of the specified entry in the database.
+        :param db_id: ID of the row the parameter is read from. If it is
             'None', then it is read from arguments passed to the program after
             the option '--id'.
-        type_of_value (string or type): Needed if column does note exists or if
+        :type db_id: int
+        :param type_of_value: Needed if column does note exists or if
             value is empty list. The valid types the strings 'int', 'float',
             'bool', 'string' and 'int/float/bool/string array' or the types int,
             float, bool and str.
-        Throws ValueError if column exists, but type does not match, or empty
-            list is passed without type_of_value given.
+        :type type_of_value: str or type
+        :raises: ValueError - if column exists, but type does not match, or 
+            empty list is passed without type_of_value given.
         """
         if db_id == None:
             db_id = self.id
@@ -176,9 +180,10 @@ class SimDB:
         The subdirectory will be named date_time_name_id and is intended to
         store results in.
 
-        name_result_directory (string): Full path to directory.
-
-        return (string): Full path to new subdirectory.
+        :param name_result_directory: Full path to directory.
+        :type name_result_directory: str
+        :returns: Full path to new subdirectory.
+        :rtype: str
         """
         if is_path_relative:
             subdir = self.sim_db_dir + '/' + path_directory
@@ -207,7 +212,8 @@ class SimDB:
         Sets the entry to the sha1 of all the executables. The order will
         affect the value.
 
-        paths_executables (list of strings): List of full paths to executables.
+        :param paths_executables: List of full paths to executables.
+        :type paths_executables: [str]
         """
         sha1 = hashlib.sha1()
         for executable in executables:

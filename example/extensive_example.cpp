@@ -54,4 +54,3 @@ int main(int argc, char** argv) {
         results_file << i << std::endl;
     }
 }
-
