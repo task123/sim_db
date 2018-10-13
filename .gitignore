@@ -7,6 +7,7 @@ commands/add_and_run
 commands/add_column
 commands/add_comment
 commands/add_sim
+commands/add_range_sim
 commands/add_run
 commands/combine_dbs
 commands/delete_empty_columns
@@ -17,6 +18,7 @@ commands/list_sim_db_commands
 commands/list_print_configs
 commands/print_sim
 commands/submit_sim
+commands/run_serial_sims
 commands/run_sim
 commands/update_sim
 
