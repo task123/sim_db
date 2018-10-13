@@ -43,7 +43,7 @@ def delete_results_dir(argv=None):
     for delete_id in args.id:
         db_cursor.execute("SELECT results_dir FROM runs WHERE id = {0}".format(delete_id))
         results_dir = db_cursor.fetchone()
-        if results_dir != None:
+        if results_dir != None and results_dir[0] != None:
             results_dirs.append(results_dir[0])
 
     if args.where:
@@ -55,7 +55,7 @@ def delete_results_dir(argv=None):
     if args.not_in_db_but_in_dir != None:
         db_cursor.execute("SELECT results_dir FROM runs")
         results_dir = db_cursor.fetchone()
-        while results_dir != None:
+        while results_dir != None and results_dir[0] != None:
             results_dirs.append(results_dir[0])    
             results_dir = db_cursor.fetchone()
 
