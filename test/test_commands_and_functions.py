@@ -24,11 +24,18 @@ import cd_results
 import submit_sim
 import add_and_submit
 import add_range_sim
+import run_serial_sims
+import combine_dbs
 import os
 import time
 import subprocess
-import combine_dbs
+import shutil
 
+def setup_module(module):
+    """Clean up 'results/' directory."""
+    for entry in os.listdir(__get_test_dir() + '/results'):
+        if os.path.isdir(__get_test_dir() + '/results/' + entry):
+            shutil.rmtree(__get_test_dir() + '/results/' + entry)
 
 def test_add_sim_print_sim_and_delete_sim(capsys):
     db_id = add_sim.add_sim([
@@ -625,6 +632,35 @@ def test_add_range_sim(capsys):
     # Test that the added simulation parameters are deleted
     assert (len(output_after_delete) == 0
             or output_after_delete != "{0}".format(db_id))
+
+def test_run_serial_sims(capsys):
+    id_1 = add_sim.add_sim(["--filename", 
+        __get_test_dir() + "/sim_params_python_program.txt"])
+    id_2 = add_sim.add_sim(["--filename", 
+        __get_test_dir() + "/sim_params_c_program.txt"])
+    id_3 = add_sim.add_sim(["--filename", 
+        __get_test_dir() + "/sim_params_cpp_program.txt"])
+    run_serial_sims.run_serial_sims(["--id", str(id_1), str(id_2), str(id_3)])
+    output_serial_run, err = capsys.readouterr()
+    print_sim.print_sim("--id {0} {1} {2} -v --no_headers --columns name "
+            "test_param1 ".format(id_1, id_2, id_3).split())
+    output_print_sim, err = capsys.readouterr()
+    del_sim_params = "--id {0} {1} {2}".format(id_1, id_2, id_3).split()
+    del_sim_params.append("--no_check")
+    delete_sim.delete_sim(del_sim_params)
+    print_sim.print_sim("-n 1 --no_headers --columns id".split())
+    output_after_delete, err = capsys.readouterr()
+    with capsys.disabled():
+        print("\nTest run_serial_sims...")
+    printed_params = output_print_sim.split('\n')[0::2]
+    printed_names = printed_params[0].split()
+    printed_params_1 = printed_params[1].split()
+    assert printed_names[0] == printed_names[1] == printed_names[2]
+    assert printed_params_1[0] == printed_params_1[1] == printed_params_1[2]
+
+    # Test that the added simulation parameters are deleted
+    assert (len(output_after_delete) == 0
+            or output_after_delete != "{0}".format(id_3))
 
 def test_delete_results_dir(capsys):
     with capsys.disabled():
