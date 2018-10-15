@@ -2,6 +2,8 @@
 Commands
 ========
 
+The name of all the commands is viewed with the ```print_sim_db_commands``` command from the command line, and what they do and which parameters and options they take is found be passing the ```--help``` or ```-h``` option to any of the commands. The same information is found below.
+
 add_and_run
 ===========
 .. argparse::

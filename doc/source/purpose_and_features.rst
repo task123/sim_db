@@ -2,6 +2,8 @@
 Purpose and Features
 ====================
 
+If you have already decided to use **sim_db**, then skip right ahead to :ref:`use`.
+
 Purpose
 =======
 Simulations are usually run with a large number of different sets of parameters. It may not happen at once, it may not even be the intent, but over time it probably will accumulate anyway. It is hard to keep track of all of these simulations including their parameters, without deleting any that one might want to checkout later. Especially, weeks, months or even years after the simulations were run.
@@ -36,26 +38,15 @@ Few dependencies make your project easier to install and to get running, and **s
 
 Python, C and C++
 +++++++++++++++++
+**sim_db** exists for both Python, C and C++ and wrappers for languages that can call C functions are quite easy to add. It is also very useful that multiple programs of different languages can read the same parameters from the database. This does for example allows the plotting, visualization and after work can be seperated in a in a python program and the actual computational intensive simulation in a C++ program.
 
 Build to run on both local machine and super computers/clusters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Can easily both run your simulations on your local machine and on a super computer/cluster with a job scheduler, where it will generate the job script and submit it for you. 
 
 Many print options
 ++++++++++++++++++
-
-
-Multiple programs (of different languages) can read the same parameters
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-		few dependencies
-		python, c and c++ (easy to add more languages, at least that can call c function)
-		metadata automatically 
-		many print options
-		build to run on both local machine and super computer / cluster 
-		multiple programs (of different languages) can read the same parameters - typically a program to run the simulation and a separate program to visualise the simulation. 
-
-
+With many parameters and lots of simulations it becomes important to be able to view only the simulations and parameters you want to see. **sim_db** has lots of print options to do that. 
 
 
 Default columns - metadata stored
