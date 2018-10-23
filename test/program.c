@@ -90,6 +90,16 @@ int main(int argc, char** argv) {
         printf("%d\n", bool_vec.array[i]);
     }
 
+    int param9 = sim_db_read_int(sim_db, "test_param9");
+    printf("%d\n", param9);
+    sim_db_write_int(sim_db, "new_test_param9", param9);
+    printf("%d\n", sim_db_read_int(sim_db, "new_test_param9"));
+
+    int param10 = sim_db_read_int(sim_db, "test_param10");
+    printf("%d\n", param10);
+    sim_db_write_int(sim_db, "new_test_param10", param10);
+    printf("%d\n", sim_db_read_int(sim_db, "new_test_param10"));
+
     if (store_metadata) {
         char* name_subdir =
                 sim_db_make_unique_subdir_rel_path(sim_db, "test/results");

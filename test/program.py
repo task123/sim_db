@@ -63,9 +63,19 @@ print(sim_database.read("new_test_param8"))
 
 param9 = sim_database.read("test_param9")
 print(param9)
+sim_database.write("new_test_param9", param9, type_of_value="int")
+print(sim_database.read("new_test_param9"))
 
 param10 = sim_database.read("test_param10")
 print(param10)
+sim_database.write("new_test_param10", param10, type_of_value="int")
+print(sim_database.read("new_test_param10"))
+
+param11 = sim_database.read("test_param11")
+print(param11)
+
+param12 = sim_database.read("test_param12")
+print(param12)
 
 if store_metadata:
     large_test_res = np.array(param6)

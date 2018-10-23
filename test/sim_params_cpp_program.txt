@@ -10,3 +10,6 @@ test_param5 (int array): [1, 2, 3]
 test_param6 (float array): [1.5, 2.5, 3.5]
 test_param7 (string array): ["a", "b", "c"]
 test_param8 (bool array): [True, False, True]
+
+include_parameter_file: sim_db/test/sim_params_extra.txt
+test_param10 (int): 11

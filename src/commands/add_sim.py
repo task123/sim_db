@@ -47,22 +47,30 @@ def split_parameter_line(line, i):
     return param_name, param_type, value
 
 
-def add_new_column(db_cursor, i, param_type, param_name, value):
+def add_new_column(db_cursor, i, param_type, param_name, value, column_names, column_types):
     if param_type == 'int':
-        db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                          {0} INTEGER"                                                                                                                  .format(param_name))
+        db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} INTEGER"
+                .format(param_name))
+        column_names.append(param_name)
+        column_types.append("INTEGER")
     elif param_type == 'float':
-        db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} REAL"                                                                                                            .format(param_name))
+        db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} REAL"
+                .format(param_name))
+        column_names.append(param_name)
+        column_types.append("REAL")
     elif param_type == 'string':
-        db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT"                                                                                                            .format(param_name))
+        db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} TEXT"
+                .format(param_name))
+        column_names.append(param_name)
+        column_types.append("TEXT")
     elif param_type == 'bool':
-        db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT"                                                                                                            .format(param_name))
+        db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} TEXT"
+                .format(param_name))
+        column_names.append(param_name)
+        column_types.append("TEXT")
     elif len(param_type) > 5 and param_type[-5:] == 'array':
-        db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                           {0} TEXT"                                                                                                            .format(param_name))
+        db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} TEXT"
+                .format(param_name))
         array_type = param_type[:-5].strip()
         if array_type != 'int' and array_type != 'float' \
                 and array_type != 'string' and array_type != 'bool':
@@ -72,6 +80,8 @@ def add_new_column(db_cursor, i, param_type, param_name, value):
             raise ValueError("Parameter on line no. {0} in the ".format(i) \
                            + "parameter file has INCORRECT format for " \
                            + "arrays. Square bracets missing.")
+        column_names.append(param_name)
+        column_types.append("TEXT")
     else:
         raise ValueError("Parameter on line no. {0} in the parameter".format(i) \
                        + "file has an INVALID type.")
@@ -189,6 +199,36 @@ def search_for_parameter_file_matching_settings():
             return parameter_filename
     return None
 
+def get_line_number_of_first_included_parameter_file(sim_params_file_lines):
+    for i, line in enumerate(sim_params_file_lines):
+        line_split = line.split(':', 1)
+        if (len(line_split) > 1
+            and (line_split[0].strip() == "include_parameter_file" 
+                 or line_split[0].strip() == "include parameter file")):
+            return i
+    return None
+
+def add_included_parameter_files(sim_params_file_lines):
+    i = get_line_number_of_first_included_parameter_file(sim_params_file_lines)
+    while i != None:
+        filename = sim_params_file_lines[i].split(':', 1)[1].strip()
+        if (len(filename.split('/')) > 1 and filename.split('/')[0] == 'sim_db'):
+            filename = (helpers.get_sim_db_dir_path() + '/' 
+                    + filename.split('/', 1)[1])
+        try:
+            included_sim_params_file = open(filename, 'r')
+        except:
+            print("Could NOT open {0}.".format(filename))
+            exit(1)
+        included_sim_params_file_lines = included_sim_params_file.readlines()
+        included_sim_params_file.close()
+        del sim_params_file_lines[i]
+        for line in included_sim_params_file_lines:
+            sim_params_file_lines.insert(i, line)
+            i += 1
+        i = get_line_number_of_first_included_parameter_file(sim_params_file_lines)
+    return sim_params_file_lines
+        
 def add_sim(argv=None):
     db = helpers.connect_sim_db()
 
@@ -213,6 +253,11 @@ def add_sim(argv=None):
         print("Could NOT open {0}.".format(sim_params_filename))
         exit(1)
 
+    sim_params_file_lines = sim_params_file.readlines()
+    sim_params_file.close()
+
+    sim_params_file_lines = add_included_parameter_files(sim_params_file_lines)
+
     db_cursor = db.cursor()
     default_db_columns = ""
     for key in helpers.default_db_columns:
@@ -226,7 +271,7 @@ def add_sim(argv=None):
             db_cursor)
 
     last_row_id = None
-    for i, line in enumerate(sim_params_file.readlines()):
+    for i, line in enumerate(sim_params_file_lines):
         if len(line.split(':')) > 1:
             param_name, param_type, value = split_parameter_line(line, i)
 
@@ -240,7 +285,8 @@ def add_sim(argv=None):
                 row_index = None
 
             if row_index is None:
-                add_new_column(db_cursor, i, param_type, param_name, value)
+                add_new_column(db_cursor, i, param_type, param_name, value, 
+                        column_names, column_types)
             else:
                 check_type_matches(param_type, column_types[row_index], value,
                                    i)

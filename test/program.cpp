@@ -80,6 +80,16 @@ int main(int argc, char** argv) {
         std::cout << param8[i] << std::endl;
     }
 
+    int param9 = sim_db.read<int>("test_param9");
+    std::cout << param9 << std::endl;
+    sim_db.write<int>("new_test_param9", param9);
+    std::cout << sim_db.read<int>("new_test_param9") << std::endl;
+
+    int param10 = sim_db.read<int>("test_param10");
+    std::cout << param10 << std::endl;
+    sim_db.write<int>("new_test_param10", param10);
+    std::cout << sim_db.read<int>("new_test_param10") << std::endl;
+
     if (store_metadata) {
         // Get full path to result directory.
         char cwd[4097];

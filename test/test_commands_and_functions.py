@@ -42,10 +42,10 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
             "--filename",
             "{0}/sim_params_python_program.txt".format(__get_test_dir())
     ])
-    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 " \
-           "test_param2 test_param3 test_param4 test_param5 test_param6 " \
-           "test_param7 test_param8 test_param9 test_param10" \
-           .format(db_id).split())
+    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 "
+           "test_param2 test_param3 test_param4 test_param5 test_param6 "
+           "test_param7 test_param8 test_param9 test_param10 test_param11 "
+           "test_param12".format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     del_sim_params = "--id {0}".format(db_id).split()
     del_sim_params.append("--no_check")
@@ -77,8 +77,10 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
     assert printed_params[6] == "float[1.5, 2.5, 3.5]"
     assert printed_params[7] == "string[a, b, c]"
     assert printed_params[8] == "bool[True, False, True]"
-    assert printed_params[9] == "None"
-    assert printed_params[10] == "None"
+    assert printed_params[9] == "9"
+    assert printed_params[10] == "11"
+    assert printed_params[11] == "None"
+    assert printed_params[12] == "None"
 
 
 def test_run_sim_and_python_functions(capsys):
@@ -99,10 +101,11 @@ def __run_sim_and_python_functions(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for program.py to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
-            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 results_dir time_started " \
-            "used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     del_sim_params = "--id {0}".format(db_id).split()
     del_sim_params.append("--no_checks")
@@ -153,8 +156,12 @@ def __assert_output_python_program(output_program):
     assert printed_params[13] == printed_params[12]
     assert printed_params[14] == "[True, False, True]"
     assert printed_params[15] == printed_params[14]
-    assert printed_params[16] == "None"
-    assert printed_params[17] == "None"
+    assert printed_params[16] == "9"
+    assert printed_params[17] == printed_params[16]
+    assert printed_params[18] == "11"
+    assert printed_params[19] == printed_params[18]
+    assert printed_params[20] == "None"
+    assert printed_params[21] == "None"
 
 
 def __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):
@@ -168,14 +175,16 @@ def __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):
     assert printed_params[5] == "float[1.5, 2.5, 3.5]"
     assert printed_params[6] == "string[a, b, c]"
     assert printed_params[7] == "bool[True, False, True]"
+    assert printed_params[8] == "9"
+    assert printed_params[9] == "11"
     if store_metadata:
-        assert printed_params[8] != 'None'
-        assert printed_params[9] != 'None'
         assert printed_params[10] != 'None'
+        assert printed_params[11] != 'None'
+        assert printed_params[12] != 'None'
     else:
-        assert printed_params[8] == 'None'
-        assert printed_params[9] == 'None'
         assert printed_params[10] == 'None'
+        assert printed_params[11] == 'None'
+        assert printed_params[12] == 'None'
 
 
 def test_c_functions(capsys):
@@ -196,10 +205,11 @@ def __c_funcionts(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
-            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 results_dir time_started " \
-            "used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     del_sim_params = "--id {0}".format(db_id).split()
     del_sim_params.append("--no_checks")
@@ -237,10 +247,11 @@ def __cpp_functions(capsys, store_metadata):
     run_sim.run_sim("--id {0}".format(db_id).split())
     time.sleep(0.1)  # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
-            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 results_dir time_started " \
-            "used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     del_sim_params = "--id {0}".format(db_id).split()
     del_sim_params.append("--no_checks")
@@ -282,6 +293,10 @@ def __assert_output_c_and_cpp_program(output_popen):
     assert printed_lines[20:23] == printed_lines[23:26]
     assert printed_lines[26:29] == ['1', '0', '1']
     assert printed_lines[26:29] == printed_lines[29:32]
+    assert printed_lines[32] == "9"
+    assert printed_lines[33] == printed_lines[32]
+    assert printed_lines[34] == "11"
+    assert printed_lines[35] == printed_lines[34]
 
 
 def test_add_and_run(capsys):
@@ -291,15 +306,16 @@ def test_add_and_run(capsys):
     ])
     time.sleep(0.1)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 " \
-            "test_param2 test_param3 test_param4 test_param5 test_param6 " \
-            "test_param7 test_param8 test_param9 test_param10" \
-            .format(db_id).split())
+    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 "
+            "test_param2 test_param3 test_param4 test_param5 test_param6 "
+            "test_param7 test_param8 test_param9 test_param10 test_param11 "
+            "test_param12".format(db_id).split())
     output_print_sim_after_add_sim, err = capsys.readouterr()
-    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 " \
-            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 " \
-            "new_test_param7 new_test_param8 results_dir time_started " \
-            "used_walltime --no_headers".format(db_id).split())
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(db_id).split())
     output_print_sim_after_run_sim, err = capsys.readouterr()
     del_sim_params = "--id {0}".format(db_id).split()
     del_sim_params.append("--no_checks")
@@ -378,6 +394,8 @@ def test_extract_params(capsys):
     assert "test_param7 (string array): [a, b, c]" == lines_extract_params[18]
     assert "test_param8 (bool array): [True, False, True]" == lines_extract_params[
             20]
+    assert "test_param9 (int): 9" == lines_extract_params[22]
+    assert "test_param10 (int): 11" == lines_extract_params[24]
 
 
 def test_update_sim(capsys):

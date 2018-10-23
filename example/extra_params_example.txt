@@ -1,0 +1,5 @@
+# Extra parameters included in the extensive examples.
+
+extra_param1 (int): 7
+extra_param2 (string): "Extra params added."
+extra_param3 (bool): False
