@@ -8,7 +8,7 @@ sim_db for C
 
 Minimal example using C
 =======================
-A parameter file called `params_mininal_c_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. The file contains the following:
+A parameter file called `params_mininal_c_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. The file contains the following:
 
 .. literalinclude:: ../../example/params_minimal_c_example.txt
    :language: none
@@ -33,7 +33,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
 Extensive example using C
 =========================
-A parameter file called params_extensive_c_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_c_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. This parameter file contains all the possible types available in addition to some comments:
 
 .. literalinclude:: ../../example/params_extensive_c_example.txt
    :language: none

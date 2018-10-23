@@ -24,7 +24,7 @@ sys.path.append('usr/local/bin')
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
-    subprocess.call('cd ../doxygen; doxygen', shell=True)
+    subprocess.call('doxygen ../Doxyfile', shell=True)
 
 # -- Project information -----------------------------------------------------
 
@@ -148,7 +148,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'sim_db.tex', 'sim\\_db Documentation',
-     'Håkon Austlid Taskén', 'manual'),
+     u'Håkon Austlid Taskén', 'manual'),
 ]
 
 

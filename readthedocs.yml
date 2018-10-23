@@ -1,6 +1,0 @@
-# .readthedocs.yml
-
-python:
-    pip_install: true
-    extra_requirements:
-        - sphinx-argparse

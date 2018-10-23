@@ -10,9 +10,9 @@ It is recommended to add **sim_db** as a git submodule in the top level director
 
 .. code-block:: console
 
-    $ git submodule add https://github.com/klasdj
+    $ git submodule add https://github.com/task123/sim_db
 
-(Otherwise it can taken from `github<https://github.com/alsfj>` and just copied into your project in a directory called '`sim_db`'.)
+(Otherwise it can taken from `github<https://github.com/task123/sim_db>` and just copied into your project in a directory called '`sim_db`'.)
 
 Go into the sim_db directory and run make:
 
@@ -49,7 +49,7 @@ That is the brief overview. Reading the examples below and the links above will 
 
 Minimal example using Python
 ============================
-A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. The file contains the following:
+A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. The file contains the following:
 
 .. literalinclude:: ../../example/params_minimal_python_example.txt
    :language: none
@@ -78,7 +78,7 @@ Extensive example using C++
 ==============================
 This example is as the name suggerst much more extensive. It is not as straightforward as the minimal example, but it will demostrate a lot more and will also include explainations of more details.
 
-A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/jalsjf>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. This parameter file contains all the possible types available in addition to some comments:
 
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
@@ -174,7 +174,7 @@ If a number of simulations are added all including the paramters `max_walltime` 
 
 , which will run all simulations that have not been run yet after a confimation question.
 
-Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github<https://github.com/lkajsdlf>`.
+Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github<https://github.com/task123/sim_db/tree/master/example>`.
 
 .. _dependencies:
 
@@ -204,4 +204,4 @@ Windows:
 
 License
 =======
-The project is licensed under the MIT license. A copy of the license is provided `here <https://github.com/asjfka>`_.
+The project is licensed under the MIT license. A copy of the license is provided `here <https://github.com/task123/sim_db/blob/master/LICENSE>`_.
