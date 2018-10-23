@@ -53,45 +53,45 @@ Default columns - metadata stored
 ---------------------------------
 The default columns in the database contain the metadata of the simulations run and are the columns not containing the parameters to the simulations or results saved from the simulations. The purpose of each one is explained below and is essentially a full list of the metadata stored.
 
-* ```id``` - To uniquely refer to a set of simulation parameters.
+* ``id`` - To uniquely refer to a set of simulation parameters.
 
-* ```status``` - Status of simulation: 'submitted', 'running' or 'finished'.
+* ``status`` - Status of simulation: 'submitted', 'running' or 'finished'.
 
-* ```name``` - To easily distinguage the different simulations.
+* ``name`` - To easily distinguage the different simulations.
 
-* ```describtion``` - To further explain the intent of the simulation.
+* ``describtion`` - To further explain the intent of the simulation.
 
-* ```run_command``` - Command to run the simulation.
+* ``run_command`` - Command to run the simulation.
 
-* ```comment``` - Comment about the simulation and how it ran. Standard error may be included.
+* ``comment`` - Comment about the simulation and how it ran. Standard error may be included.
 
-* ```add_to_job_script``` - Additional flags, import or load statement added to the job script for the job scheduler.
+* ``add_to_job_script`` - Additional flags, import or load statement added to the job script for the job scheduler.
 
-* ```result_dir``` - The path to where the results are stored. 
+* ``result_dir`` - The path to where the results are stored. 
 
-* ```time_submitted``` - To tell how long a submition have been in queque.
+* ``time_submitted`` - To tell how long a submition have been in queque.
 
-* ```time_started``` - To tell how long a simulation used in queque and how long it have been running. 
+* ``time_started`` - To tell how long a simulation used in queque and how long it have been running. 
 
-* ```used_walltime``` - To tell the total run time of the simulation.
+* ``used_walltime`` - To tell the total run time of the simulation.
 
-* ```max_walltime``` - Useful if the simulation is stopped for exceeding this limit. (Also in the context of understanding the time between ```time_submitted``` and ```time_started```.)
+* ``max_walltime`` - Useful if the simulation is stopped for exceeding this limit. (Also in the context of understanding the time between ``time_submitted`` and ``time_started``.)
 
-* ```job_id``` - To check the simulation when submitted to a job scheduler.
+* ``job_id`` - To check the simulation when submitted to a job scheduler.
 
-* ```n_tasks``` - Number of threads/cores. Needed to understand 'used_walltime'.
+* ``n_tasks`` - Number of threads/cores. Needed to understand 'used_walltime'.
 
-* ```cpu_info``` - Needed to compare ```used_walltime``` across different machines.
+* ``cpu_info`` - Needed to compare ``used_walltime`` across different machines.
 
-* ```git_hash``` - To be sure of which commit the simulation is run from.
+* ``git_hash`` - To be sure of which commit the simulation is run from.
 
-* ```commit_message``` - A easier way to distinguage the commits than the hash. 
+* ``commit_message`` - A easier way to distinguage the commits than the hash. 
 
-* ```git_diff_stat``` - Show summary of difference between the working directory and the current commit (HEAD) at the time the simulation is run.
+* ``git_diff_stat`` - Show summary of difference between the working directory and the current commit (HEAD) at the time the simulation is run.
 
-* ```git_diff``` - Show the explicit difference between the working directory and the current commit at the time when the simulation is run.
+* ``git_diff`` - Show the explicit difference between the working directory and the current commit at the time when the simulation is run.
 
-* ```sha1_executables``` - To tell exacetly which executable that was used to run the simulation. Useful to check that it have been compiled after any changes. Is the sha1 of any files in the ```run_command```.
+* ``sha1_executables`` - To tell exacetly which executable that was used to run the simulation. Useful to check that it have been compiled after any changes. Is the sha1 of any files in the ``run_command``.
 
 
 

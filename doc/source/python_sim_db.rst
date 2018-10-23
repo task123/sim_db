@@ -32,7 +32,12 @@ A parameter file called params_extensive_python_example.txt is found in the *sim
 .. literalinclude:: ../../example/params_extensive_python_example.txt
    :language: none
 
-In the same directory `extensive_example.py` is also found:
+The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
+
+.. literalinclude:: ../../example/extra_params_example.txt
+   :language: none
+
+`extensive_example.py` is also found in the same directory:
 
 .. literalinclude:: ../../example/extensive_example.py
    :language: python

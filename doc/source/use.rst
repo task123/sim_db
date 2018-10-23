@@ -85,7 +85,14 @@ A parameter file called params_extensive_cpp_example.txt is found in the *sim_db
 
 Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, `delete_sim` and `delete_empty_columns` must be used before making a new column with correct type.)
 
-In the same directory `extensive_example.cpp` is also found:
+The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
+
+.. literalinclude:: ../../example/extra_params_example.txt
+   :language: none
+
+This syntax for can be used to simplify the parameter files for projects with many parameters. One can for instance have different parameter files for different kindes of parameters, such as printing parameters. The same parameter name, with the same type, can be added to multiple lines in the parameter files, but all the previous parameter values will be overwritting by the last one. This way one can have a default paramter file, include that in any other parameter file and just change the necesarry parameters. Consider including the other parameter file before the parameters to the sure that they are not modified in the other parameter files, and be careful with the order of included parameter files.
+
+`extensive_example.cpp` is also found in the same directory:
 
 .. literalinclude:: ../../example/extensive_example.cpp
    :language: c++

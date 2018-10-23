@@ -13,7 +13,7 @@ A parameter file called `params_mininal_cpp_example.txt` is located in the *sim_
 .. literalinclude:: ../../example/params_minimal_cpp_example.txt
    :language: none
 
-A python script called `minimal_example.cpp` and is found in the same directory:
+A C++ file called `minimal_example.cpp` and is found in the same directory:
 
 .. literalinclude:: ../../example/minimal_example.cpp
    :language: C++
@@ -38,7 +38,12 @@ A parameter file called params_extensive_cpp_example.txt is found in the *sim_db
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
 
-In the same directory `extensive_example.cpp` is also found:
+The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
+
+.. literalinclude:: ../../example/extra_params_example.txt
+   :language: none
+
+`extensive_example.py` is also found in the same directory:
 
 .. literalinclude:: ../../example/extensive_example.cpp
    :language: C++
