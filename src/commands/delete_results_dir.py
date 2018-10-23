@@ -16,6 +16,7 @@ import argparse
 import os
 import shutil
 
+
 def command_line_arguments_parser():
     # yapf: disable
     parser = argparse.ArgumentParser(description="Delete results in 'results_dir' of specified simulations.")
@@ -33,21 +34,23 @@ def delete_results_dir(argv=None):
     db_cursor = db.cursor()
 
     args = command_line_arguments_parser().parse_args(argv)
-    if (len(args.id) == 0 and args.where == None 
-            and args.not_in_db_but_in_dir == None):
+    if (len(args.id) == 0 and args.where == None
+                and args.not_in_db_but_in_dir == None):
         print("No 'results_dir' was deleted. --id 'ID' or --where 'CONDITION' "
               + "must be passed to the program.")
         exit(0)
 
     results_dirs = []
     for delete_id in args.id:
-        db_cursor.execute("SELECT results_dir FROM runs WHERE id = {0}".format(delete_id))
+        db_cursor.execute("SELECT results_dir FROM runs WHERE id = {0}"
+                          .format(delete_id))
         results_dir = db_cursor.fetchone()
         if results_dir != None and results_dir[0] != None:
             results_dirs.append(results_dir[0])
 
     if args.where:
-        db_cursor.execute("SELECT results_dir FROM runs WHERE {0}".format(args.where))
+        db_cursor.execute("SELECT results_dir FROM runs WHERE {0}"
+                          .format(args.where))
         for selected_output in db_cursor.fetchall():
             if selected_output[0] != None:
                 results_dirs.append(selected_output[0])
@@ -56,7 +59,7 @@ def delete_results_dir(argv=None):
         db_cursor.execute("SELECT results_dir FROM runs")
         results_dir = db_cursor.fetchone()
         while results_dir != None and results_dir[0] != None:
-            results_dirs.append(results_dir[0])    
+            results_dirs.append(results_dir[0])
             results_dir = db_cursor.fetchone()
 
     db.commit()
@@ -69,15 +72,16 @@ def delete_results_dir(argv=None):
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[2:]
             if args.not_in_db_but_in_dir[-1] == '/':
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[:-1]
-            args.not_in_db_but_in_dir = os.getcwd() + "/" + args.not_in_db_but_in_dir
+            args.not_in_db_but_in_dir = (
+                    os.getcwd() + "/" + args.not_in_db_but_in_dir)
         for path in os.listdir(args.not_in_db_but_in_dir):
             path = args.not_in_db_but_in_dir + "/" + path
             if os.path.isdir(path) and (path not in results_dirs):
                 print("\nDo you really want to delete:")
                 print(path)
                 answer = helpers.user_input("? (y/n)")
-                if (answer == 'y' or answer == 'Y' or answer == 'yes' 
-                        or answer == 'Yes' or args.no_checks):
+                if (answer == 'y' or answer == 'Y' or answer == 'yes'
+                            or answer == 'Yes' or args.no_checks):
                     shutil.rmtree(path)
                 else:
                     print(path)
@@ -86,19 +90,19 @@ def delete_results_dir(argv=None):
         answer = 'n'
         if not args.no_checks:
             print("Do you really want to delete the following directories and "
-                "everything in them:")
+                  "everything in them:")
             for results_dir in results_dirs:
                 print(results_dir)
             answer = helpers.user_input("? (y/n)")
-        if (answer == 'y' or answer == 'Y' or answer == 'yes' 
-                or answer == 'Yes' or args.no_checks):
+        if (answer == 'y' or answer == 'Y' or answer == 'yes'
+                    or answer == 'Yes' or args.no_checks):
             for results_dir in results_dirs:
                 shutil.rmtree(results_dir)
-        else: 
+        else:
             print("No results deleted.")
     else:
         print("No 'results_dir' to delete.")
- 
+
 
 if __name__ == '__main__':
     delete_results_dir()

@@ -58,7 +58,7 @@ def run_sim(argv=None):
                 stderr=subprocess.PIPE,
                 shell=True)
         if sys.version_info[0] < 3:
-            for line in iter(process.stdout.readline, ''): 
+            for line in iter(process.stdout.readline, ''):
                 sys.stdout.write(line.decode('UTF-8'))
         else:
             for line in iter(process.stdout.readline, b''):

@@ -48,7 +48,8 @@ def delete_empty_columns():
     new_columns_and_types = new_columns_and_types[:-2]
     new_columns = new_columns[:-2]
 
-    assert new_columns_and_types[0:2] == 'id', "Name of first column in database is not 'id'."
+    assert new_columns_and_types[0:2] == 'id', (
+            "Name of first column in database is not 'id'.")
     new_columns_and_types = new_columns_and_types[0:10] + " PRIMARY KEY" \
             +new_columns_and_types[10:] # Correct id type
 

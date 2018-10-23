@@ -36,19 +36,21 @@ def delete_sim(argv=None):
 
     answer = 'n'
     if len(args.id) == 0 and args.where == None:
-        print("--id 'ID' or --where 'CONDITION' must be passed to the program.")
+        print("--id 'ID' or --where 'CONDITION' must be passed to the "
+              "program.")
     elif len(args.id) > 0 and not args.no_checks:
         print("Do you really want to delete simulations with following ID's:")
         for delete_id in args.id:
             print(delete_id)
         answer = helpers.user_input("? (y/n)")
     elif args.where != None and not args.no_checks:
-        print("Do you really want to delete simulations with following condition:")
+        print("Do you really want to delete simulations with following "
+              "condition:")
         print(args.where)
         answer = helpers.user_input("? (y/n)")
 
-    if (answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes' 
-            or args.no_checks):
+    if (answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes'
+                or args.no_checks):
         if len(args.id) > 0:
             if args.no_checks:
                 delete_results_dir_params = ['--no_checks', '--id']
@@ -58,7 +60,8 @@ def delete_sim(argv=None):
                 delete_results_dir_params.append(str(delete_id))
             delete_results_dir.delete_results_dir(delete_results_dir_params)
         for delete_id in args.id:
-            db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(delete_id))
+            db_cursor.execute(
+                    "DELETE FROM runs WHERE id = {0}".format(delete_id))
 
         if args.where:
             delete_results_dir.delete_results_dir(["--where", args.where])

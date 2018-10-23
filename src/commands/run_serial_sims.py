@@ -37,7 +37,7 @@ def run_serial_sims(argv=None):
         ids = args.id
     elif len(args.where) > 0:
         db_cursor.execute("SELECT id FROM runs WHERE status = '{0}';"
-                .format(args.where))
+                          .format(args.where))
         ids = db_cursor.fetchall()
         ids = [i[0] for i in ids]
     else:
@@ -77,7 +77,7 @@ def run_serial_sims(argv=None):
                     stderr=subprocess.PIPE,
                     shell=True)
             if sys.version_info[0] < 3:
-                for line in iter(process.stdout.readline, ''): 
+                for line in iter(process.stdout.readline, ''):
                     sys.stdout.write(line.decode('UTF-8'))
             else:
                 for line in iter(process.stdout.readline, b''):

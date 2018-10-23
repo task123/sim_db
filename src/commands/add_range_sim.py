@@ -47,17 +47,18 @@ def add_range_sim(argv=None):
 
     # Check command line arguments
     n_cols = len(args.columns)
-    if ((len(args.lin_steps) != n_cols or len(args.exp_steps) != 0) 
-        and (len(args.lin_steps) != 0 or len(args.exp_steps) != n_cols)
-        and (len(args.lin_steps) != n_cols or len(args.exp_steps) != n_cols)):
+    if ((len(args.lin_steps) != n_cols or len(args.exp_steps) != 0)
+                and (len(args.lin_steps) != 0 or len(args.exp_steps) != n_cols)
+                and
+        (len(args.lin_steps) != n_cols or len(args.exp_steps) != n_cols)):
         print("ERROR: Either '--lin_steps', '--exp_steps' or both have to be provided "
-                "and they have to be same length as '--columns'.")
+              "and they have to be same length as '--columns'.")
         exit()
-    elif ((len(args.end_steps) != n_cols or len(args.n_steps) != 0) 
-        and (len(args.end_steps) != 0 or len(args.n_steps) != n_cols)
-        and (len(args.end_steps) != n_cols or len(args.n_steps) != n_cols)):
+    elif ((len(args.end_steps) != n_cols or len(args.n_steps) != 0)
+          and (len(args.end_steps) != 0 or len(args.n_steps) != n_cols)
+          and (len(args.end_steps) != n_cols or len(args.n_steps) != n_cols)):
         print("ERROR: Either '--end_steps', '--n_steps' or both have to be provided "
-                "and they have to be same length as '--columns'.")
+              "and they have to be same length as '--columns'.")
         exit()
 
     ids_added = []
@@ -72,8 +73,8 @@ def add_range_sim(argv=None):
 
     start_values = []
     for column in args.columns:
-        db_cursor.execute("SELECT {0} FROM runs WHERE id = {1}"
-                .format(column, ids_added[0]))
+        db_cursor.execute("SELECT {0} FROM runs WHERE id = {1}".format(
+                column, ids_added[0]))
         start_values.append(db_cursor.fetchone()[0])
 
     db.commit()
@@ -90,30 +91,31 @@ def add_range_sim(argv=None):
         column_range[i].append(start_values[i])
         if len(args.end_steps) == 0:
             for j in range(args.n_steps[i]):
-                column_range[i].append(column_range[i][-1] * args.exp_steps[i]
-                        + args.lin_steps[i])
+                column_range[i].append(column_range[i][-1] *
+                                       args.exp_steps[i] + args.lin_steps[i])
         elif len(args.lin_steps) == 0:
             j = 0
             while (start_values[i] != args.end_steps[i]
-                    and (start_values[i] < args.end_steps[i]) 
-                    == (column_range[i][j] < args.end_steps[i])):
-                column_range[i].append(column_range[i][-1] * args.exp_steps[i]
-                        + args.lin_steps[i])
+                   and (start_values[i] < args.end_steps[i]) == (
+                           column_range[i][j] < args.end_steps[i])):
+                column_range[i].append(column_range[i][-1] *
+                                       args.exp_steps[i] + args.lin_steps[i])
                 j += 1
         else:
             j = 0
-            while (j < args.n_steps[i] or (start_values[i] != args.end_steps[i] 
-                    and(start_values[i] < args.end_steps[i]) 
-                    == (column_range[i][j] < args.end_steps[i]))):
-                column_range[i].append(column_range[i][-1] * args.exp_steps[i]
-                        + args.lin_steps[i])
+            while (j < args.n_steps[i]
+                   or (start_values[i] != args.end_steps[i] and
+                       (start_values[i] < args.end_steps[i]) ==
+                       (column_range[i][j] < args.end_steps[i]))):
+                column_range[i].append(column_range[i][-1] *
+                                       args.exp_steps[i] + args.lin_steps[i])
                 j += 1
     cartisian_product = [[] for i in range(n_cols)]
     for i in range(n_cols - 1, -1, -1):
         cartisian_product = add_new_column_in_cartisian_product(
                 cartisian_product, column_range[i], i)
 
-    # Add all simulations. 
+    # Add all simulations.
     for i in range(1, len(cartisian_product[0])):
         if args.filename == None:
             ids_added.append(add_sim.add_sim())
@@ -124,7 +126,7 @@ def add_range_sim(argv=None):
         update_params.append('--values')
         for j in range(n_cols):
             update_params.append(str(cartisian_product[j][i]))
-        update_sim.update_sim(update_params)      
+        update_sim.update_sim(update_params)
 
     return ids_added
 

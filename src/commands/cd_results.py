@@ -13,7 +13,7 @@ def command_line_arguments_parser():
     # yapf: disable
     parser = argparse.ArgumentParser(description="Return full path to 'results_dir' of simulation specified, of last entry if unspecified. Used by a bash function, 'cd_results', to change directory to this 'results_dir'.")
     parser.add_argument('--id', '-i', type=int, help="'ID' of the 'results_dir' in the 'sim.db' database.")
-    parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)") 
+    parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)")
     # yapf: enable
 
     return parser

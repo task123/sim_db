@@ -175,8 +175,8 @@ def get_sim_db_dir_path():
                 return sim_db_path
             else:
                 print("ERROR: " + dir_path + "/.sim_db does NOT contain a "
-                    "valid path\n       to the sim_db directory or the file "
-                    "could NOT be opened.")
+                      "valid path\n       to the sim_db directory or the file "
+                      "could NOT be opened.")
                 exit()
     return ""
 

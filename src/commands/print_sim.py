@@ -256,7 +256,8 @@ def print_sim(argv=None):
         p_arg_keys = [
                 key.strip('-') for key in print_config.split() if key[0] == '-'
         ]
-        p_args = command_line_arguments_parser().parse_args(print_config.split())
+        p_args = command_line_arguments_parser().parse_args(
+                print_config.split())
 
         p_arg_keys = replace_element_in_list(p_arg_keys, 'v', 'vertically')
         p_arg_keys = replace_element_in_list(p_arg_keys, 'i', 'id')
