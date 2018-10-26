@@ -157,7 +157,6 @@ def get_sim_db_dir_path():
     sim_db_path = ""
     dir_path = os.getcwd()
     while len(dir_path) > 0:
-        dir_path = dir_path[0:dir_path.rfind("/")]
         if os.path.isdir(dir_path + "/sim_db"):
             return dir_path + "/sim_db"
         elif os.path.isfile(dir_path + "/.sim_db"):
@@ -178,6 +177,7 @@ def get_sim_db_dir_path():
                       "valid path\n       to the sim_db directory or the file "
                       "could NOT be opened.")
                 exit()
+        dir_path = dir_path[0:dir_path.rfind("/")]
     return ""
 
 
