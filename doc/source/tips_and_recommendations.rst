@@ -10,6 +10,8 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * It is recommended to use '*./*' or '*sim_db/*' in the *run_command* to give the path to the *executable_program* relative to the directory of *sim_params.txt* or **sim_db**. This is because the '*./*' or '*sim_db/*' will be replaced with the full path to the file when running the simulation, which may be necessary when running on a cluster or supercomputer.
 
+* Any stand alone hashtages, ``#``, that occure in the *run_command* will be replaced with the number passed after the ``-n`` flag in the ``run_sim`` command. Ex. : ``mpirun -n # python program.py``.
+
 * All the command can be called with ``python 'path_to_sim_db_dir/command.py'`` instead of just ``'command'``, if it is perferable or windows without Cygwin or MinGW.
 
 * Multiple default names for the parameter files can be added in prioritized order in *settings.txt* to replace or in addition to *sim_params.txt*.
