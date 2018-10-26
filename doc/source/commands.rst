@@ -2,7 +2,7 @@
 Commands
 ========
 
-The name of all the commands is listed with the ``print_sim_db_commands`` command from the command line, and what they do and which parameters and options they take is found be passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. All the commands can be called from the directory where **sim_db** is included (the top directory of your project) or any of its subdirectories.
+The name of all the commands is listed with the ``list_sim_db_commands`` command from the command line, and what they do and which parameters and options they take is found be passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. All the commands can be called from the directory where **sim_db** is included (the top directory of your project) or any of its subdirectories.
 
 add_and_run
 ===========
