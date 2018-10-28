@@ -31,6 +31,7 @@ def command_line_arguments_parser():
     parser.add_argument('--first_line', action='store_true', help="Print only the first line of any entry.")
     parser.add_argument('--vertically', '-v', action='store_true', help="Print columns vertically.")
     parser.add_argument('-p', type=str, default=None, help="Personal print configuration. Apply the print configuration in 'settings.txt' corresponding to the provided key string.")
+    parser.add_argument('--diff', '-d', action='store_true', help="Remove columns with the same value for all the simulations. This leaves only the parameters that are different between the simulations.")
     # yapf: enable
 
     return parser
@@ -161,6 +162,24 @@ def get_max_widths(selected_output, column_names, no_headers, extra_space):
     return widths
 
 
+def remove_columns_with_only_same_values(selected_output, column_names):
+    column_indices_to_remove = []
+    for column_index in range(len(column_names)):
+        remove_column = True
+        for row_index in range(len(selected_output) - 1):
+            if (selected_output[row_index][column_index] !=
+                        selected_output[row_index + 1][column_index]):
+                remove_column = False
+                break
+        if remove_column:
+            column_indices_to_remove.append(column_index)
+    for i in reversed(column_indices_to_remove):
+        del column_names[i]
+        for row in range(len(selected_output)):
+            del selected_output[row][i]
+    return selected_output, column_names
+
+
 def print_selected_parameters(selected_output, column_names, no_headers,
                               max_width, first_line):
     extra_space = 2
@@ -277,6 +296,10 @@ def print_sim(argv=None):
 
     selected_output, column_names = select_command(db_cursor, args,
                                                    column_names)
+
+    if args.diff:
+        selected_output, column_names = remove_columns_with_only_same_values(
+                selected_output, column_names)
 
     if not args.vertically:
         print_selected_parameters(selected_output, column_names,
