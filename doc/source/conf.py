@@ -15,6 +15,7 @@
 import subprocess
 import os
 import sys
+sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../src'))
 sys.path.insert(0, os.path.abspath('../../src/commands'))
 sys.path.append('usr/local/bin')
@@ -86,6 +87,8 @@ exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
+autodoc_member_order = 'bysource'
 
 
 # -- Options for HTML output -------------------------------------------------

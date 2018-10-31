@@ -55,3 +55,5 @@ Python API referance
 .. autoclass:: SimDB
     :members:
     :special-members: __init__
+.. autofunction:: add_empty_sim
+.. autofunction:: delete_sim
