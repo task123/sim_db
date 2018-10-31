@@ -16,6 +16,7 @@ status: --columns id name status job_id
 time: --columns id name status time_submitted time_started used_walltime job_id
 git: --columns id name git_hash commit_message git_diff_stat sha1_executables
 cpu: -v --columns id name used_walltime cpu_info
+size: --columns id name size n_weeks seed
 
 ## Prefix for 'run_command' for multithreaded/core simulations 
 (Added to the start of 'run_command' when run or submitted with >1 tasks.)
