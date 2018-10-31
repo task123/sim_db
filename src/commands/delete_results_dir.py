@@ -11,7 +11,10 @@ Usage: python delete_results_dir.py -id 'ID'
 # Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.helpers as helpers
 import argparse
 import os
 import shutil

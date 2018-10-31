@@ -3,20 +3,16 @@
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
+import src.commands.helpers as helpers
+import src.commands.update_sim as update_sim
+import src.commands.add_sim as add_sim
+import src.commands.add_column as add_column
 import sqlite3
 import argparse
 import subprocess
 import time
 import hashlib
-import sys
 import os
-src_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.abspath(src_dir))
-sys.path.append(os.path.abspath(os.path.join(src_dir, "commands")))
-import commands.helpers as helpers
-import commands.update_sim as update_sim
-import commands.add_sim as add_sim
-import commands.add_column as add_column
 
 
 class SimDB:

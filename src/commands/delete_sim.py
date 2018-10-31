@@ -10,8 +10,11 @@ Usage: python delete_sim.py --id 'ID'
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import delete_results_dir
-import helpers
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.delete_results_dir as delete_results_dir
+import src.commands.helpers as helpers
 import sqlite3
 import argparse
 import os.path

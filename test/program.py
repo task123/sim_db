@@ -9,8 +9,8 @@ Finally add empty simulation, write to it and read from it and then delete it.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import __init__
-import sim_db
+import add_root_dir_to_path
+import src.sim_db as sim_db
 import argparse
 import os.path
 import sys

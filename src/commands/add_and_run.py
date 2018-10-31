@@ -18,8 +18,11 @@ Usage: 'python add_and_run.py'
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import add_sim
-import run_sim
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.add_sim as add_sim
+import src.commands.run_sim as run_sim
 import argparse
 
 

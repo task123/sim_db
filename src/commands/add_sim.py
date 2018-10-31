@@ -17,7 +17,10 @@ Usage: 'python add_sim.py' or 'python add_sim.py -filename name_param_file.txt'
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.helpers as helpers
 import sqlite3
 import argparse
 import sys

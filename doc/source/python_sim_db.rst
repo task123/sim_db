@@ -17,7 +17,7 @@ A python script called `minimal_example.py` and is found in the same directory:
 
 .. literalinclude:: ../../example/minimal_example.py
    :language: python
-   :lines: 15-28
+   :lines: 16-29
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from the *sim_db/example/* directory with:
 
@@ -41,7 +41,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../example/extensive_example.py
    :language: python
-   :lines: 16-65
+   :lines: 17-66
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from the *sim_db/example/* directory with:
 

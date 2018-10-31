@@ -25,6 +25,7 @@ def list_sim_db_commands():
     programs = fnmatch.filter(os.listdir(sim_db_dir), "*.py")
     programs.remove('helpers.py')
     programs.remove('__init__.py')
+    programs.remove('add_root_dir_to_path.py')
     programs.sort()
     sim_db_dir = sim_db_dir.replace(" ", "\ ")
     print("All commands: ('command -h' will explain command and use.)\n")

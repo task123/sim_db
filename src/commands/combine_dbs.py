@@ -10,8 +10,11 @@ Usage:
 # Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
-import add_sim
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.helpers as helpers
+import src.commands.add_sim as add_sim
 import sqlite3
 import argparse
 from collections import OrderedDict

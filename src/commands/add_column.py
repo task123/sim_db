@@ -8,7 +8,10 @@ Usage: 'python add_column.py -column NAME'
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import helpers
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.helpers as helpers
 import sqlite3
 import argparse
 

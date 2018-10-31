@@ -8,24 +8,27 @@ the database.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import add_sim
-import print_sim
-import delete_sim
-import run_sim
-import list_sim_db_commands
-import add_and_run
-import add_column
-import helpers
-import delete_empty_columns
-import extract_params
-import update_sim
-import add_comment
-import cd_results
-import submit_sim
-import add_and_submit
-import add_range_sim
-import run_serial_sims
-import combine_dbs
+if __name__ == '__main__':
+    import add_root_dir_to_path
+
+import src.commands.add_sim as add_sim
+import src.commands.print_sim as print_sim
+import src.commands.delete_sim as delete_sim
+import src.commands.run_sim as run_sim
+import src.commands.list_sim_db_commands as list_sim_db_commands
+import src.commands.add_and_run as add_and_run
+import src.commands.add_column as add_column
+import src.commands.helpers as helpers
+import src.commands.delete_empty_columns as delete_empty_columns
+import src.commands.extract_params as extract_params
+import src.commands.update_sim as update_sim
+import src.commands.add_comment as add_comment
+import src.commands.cd_results as cd_results
+import src.commands.submit_sim as submit_sim
+import src.commands.add_and_submit as add_and_submit
+import src.commands.add_range_sim as add_range_sim
+import src.commands.run_serial_sims as run_serial_sims
+import src.commands.combine_dbs as combine_dbs
 import os
 import time
 import subprocess
