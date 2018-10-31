@@ -843,6 +843,16 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
     sim_db_update(self, "sha1_executables", sha1);
 }
 
+int sim_db_get_id(SimDB* self) { return self->id; }
+
+char* sim_db_get_path(SimDB* self) {
+    char* path_sim_db =
+            (char*) malloc(sizeof(char) * (strlen(self->path_sim_db) + 1));
+    sim_db_add_pointer_to_free(self, path_sim_db);
+    strcpy(path_sim_db, self->path_sim_db);
+    return path_sim_db;
+}
+
 void sim_db_dtor(SimDB* self) {
     if (self->store_metadata) {
         double used_time = difftime(time(NULL), self->start_time);
@@ -856,4 +866,60 @@ void sim_db_dtor(SimDB* self) {
     }
     free(self->pointers_to_free);
     sqlite3_close(self->db);
+}
+
+int add_empty_sim(const char* path_sim_db) {
+    char path_sim_db_long[PATH_MAX + 1];
+    strcpy(path_sim_db_long, path_sim_db);
+    int len_path_sim_db = strlen(path_sim_db_long);
+    if (len_path_sim_db > 0 && path_sim_db_long[len_path_sim_db - 1] == '/') {
+        path_sim_db_long[len_path_sim_db - 1] = '\0';
+    }
+    strcat(path_sim_db_long, "/sim.db");
+    sqlite3* db;
+    int rc = sqlite3_open(path_sim_db_long, &db);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db_long,
+                sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    rc = sqlite3_exec(db, "INSERT INTO runs DEFAULT VALUES", NULL, NULL, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr,
+                "Could NOT perform the SQLite3 query: INSERT INTO runs "
+                "DEFAULT "
+                "VALUES\n");
+        exit(1);
+    }
+    int id = (int) sqlite3_last_insert_rowid(db);
+    sqlite3_close(db);
+
+    return id;
+}
+
+void delete_sim(const char* path_sim_db, int id) {
+    char path_sim_db_long[PATH_MAX + 1];
+    strcpy(path_sim_db_long, path_sim_db);
+    int len_path_sim_db = strlen(path_sim_db_long);
+    if (len_path_sim_db > 0 && path_sim_db_long[len_path_sim_db - 1] == '/') {
+        path_sim_db_long[len_path_sim_db - 1] = '\0';
+    }
+    strcat(path_sim_db_long, "/sim.db");
+    sqlite3* db;
+    int rc = sqlite3_open(path_sim_db_long, &db);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db_long,
+                sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    char query[80];
+    sprintf(query, "DELETE FROM runs WHERE id = %d", id);
+    rc = sqlite3_exec(db, query, NULL, NULL, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Could NOT perform the SQLite3 query: %s\n", query);
+        exit(1);
+    }
+    sqlite3_close(db);
 }

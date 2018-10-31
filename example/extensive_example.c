@@ -62,6 +62,21 @@ int main(int argc, char** argv) {
     }
     fclose(result_file);
 
+    // Get the path to sim_db and the 'ID' of the connected simulation.
+    char* path_sim_db = sim_db_get_path(sim_db);
+    int db_id = sim_db_get_id(sim_db);
+
     // Write final metadata to database and free memory allocated by sim_db.
     sim_db_dtor(sim_db);
+
+    // Add an empty simulation to the database.
+    db_it = add_empty_sim(path_sim_db);
+
+    // Open this empty simulation and write to it.
+    SimDB* sim_db_2 = sim_db_ctor_with_id(path_sim_db, id, false);
+    sim_db_write_int(sim_db_2, "param1_extensive", 7);
+    sim_db_dtor(sim_db_2);
+
+    // Delete this simulation.
+    delete_sim(db_id);
 }

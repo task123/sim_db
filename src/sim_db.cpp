@@ -2,6 +2,15 @@
 // Licensed under the MIT License.
 
 #include "../include/sim_db.hpp"
+#include <iostream>
+
+int call_c_add_empty_sim(std::string path_sim_db) {
+    return add_empty_sim(path_sim_db.c_str());
+}
+
+void call_c_delete_sim(std::string path_sim_db, int id) {
+    delete_sim(path_sim_db.c_str(), id);
+}
 
 namespace sim_db {
 Connection::Connection(int argc, char** argv, bool store_metadata) {
@@ -44,6 +53,21 @@ void Connection::update_sha1_executables(
     delete[] string_vec;
 }
 
+int Connection::get_id() { return sim_db_get_id(sim_db); }
+
+std::string Connection::get_path() {
+    std::string path_sim_db(sim_db_get_path(sim_db));
+    return path_sim_db;
+}
+
 Connection::~Connection() { sim_db_dtor(sim_db); }
+
+int add_empty_sim(std::string path_sim_db) {
+    return call_c_add_empty_sim(path_sim_db.c_str());
+}
+
+void delete_sim(std::string path_sim_db, int id) {
+    call_c_delete_sim(path_sim_db.c_str(), id);
+}
 
 }  // namespace sim_db

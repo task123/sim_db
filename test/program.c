@@ -110,5 +110,20 @@ int main(int argc, char** argv) {
         fclose(result_file);
     }
 
+    char path_sim_db[4096];
+    strcpy(path_sim_db, sim_db_get_path(sim_db));
+
     sim_db_dtor(sim_db);
+
+    int id = add_empty_sim(path_sim_db);
+    printf("%d\n", id);
+
+    SimDB* sim_db_2 = sim_db_ctor_with_id(path_sim_db, id, false);
+    sim_db_write_int(sim_db_2, "test_param1", 7);
+    param1 = sim_db_read_int(sim_db_2, "test_param1");
+    printf("%d\n", param1);
+
+    sim_db_dtor(sim_db_2);
+
+    delete_sim(path_sim_db, id);
 }

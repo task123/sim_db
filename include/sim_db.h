@@ -224,6 +224,18 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
 void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
                                     size_t len);
 
+/// Return ID number of simulation in the database that is connected.
+//
+/// @param self Return value of {@link sim_db_ctor()} or {@link
+/// sim_db_ctor_with_id()}.
+int sim_db_get_id(SimDB* self);
+
+/// Return path to the *sim_db* directory.
+//
+/// @param self Return value of {@link sim_db_ctor()} or {@link
+/// sim_db_ctor_with_id()}.
+char* sim_db_get_path(SimDB* self);
+
 /// Clean up SimDB.
 //
 /// Add metadate for 'used_walltime' to database and update 'status' to
@@ -231,5 +243,18 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
 void sim_db_dtor(SimDB* self);
+
+/// Add empty simulation to database and return its 'ID'.
+//
+/// @param path_sim_db Path to *sim_db/* directory.
+/// @return Integer ID of the added simulation.
+int add_empty_sim(const char* path_sim_db);
+
+/// Delete simulation from database with ID number \p id.
+//
+/// @param path_sim_db Path to *sim_db/* directory.
+/// @param id ID number of the simulation paramters in the **sim_db**
+/// database.
+void delete_sim(const char* path_sim_db, int id);
 
 #endif

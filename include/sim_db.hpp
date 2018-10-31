@@ -66,11 +66,29 @@ public:
     /// @param paths_executables Paths to executable files.
     void update_sha1_executables(std::vector<std::string> paths_executables);
 
+    /// Return ID number of simulation in the database that is connected.
+    int get_id();
+
+    /// Return path to the *sim_db* directory.
+    std::string get_path();
+
     ~Connection();
 
 private:
     struct SimDB* sim_db;
 };
+
+/// Add empty simulation to database and return its 'ID'.
+//
+/// @param path_sim_db Path to the *sim_db/* directory.
+/// @return Integer ID of the added simulation.
+int add_empty_sim(std::string path_sim_db);
+
+/// Delete simulation from database with ID number \p id.
+//
+/// @param path_sim_db Path to the *sim_db/* directory.
+/// @param id ID number of the simulation paramters in the **sim_db** database.
+void delete_sim(std::string path_sim_db, int id);
 
 template <typename T>
 class TemplateSpecializationHelper {};

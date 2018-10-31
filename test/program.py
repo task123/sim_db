@@ -3,6 +3,8 @@
 
 Read in parameters from database, write parameters to database, make unique 
 subdirectory for results and save 'results.txt' in this directory.
+
+Finally add empty simulation, write to it and read from it and then delete it.
 """
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
@@ -83,3 +85,16 @@ if store_metadata:
     np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
 sim_database.end()
+
+db_id = sim_db.add_empty_sim()
+print(db_id)
+
+sim_database = sim_db.SimDB(db_id = db_id, store_metadata=False)
+
+sim_database.write("test_param1", 7, type_of_value="int")
+param1 = sim_database.read("test_param1")
+print(param1)
+
+sim_database.end()
+
+sim_db.delete_sim(db_id)

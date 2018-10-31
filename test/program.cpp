@@ -109,4 +109,16 @@ int main(int argc, char** argv) {
             result_file << param6[i] << std::endl;
         }
     }
+
+    std::string path_sim_db = sim_db.get_path();
+
+    int id = sim_db::add_empty_sim(path_sim_db);
+    std::cout << id << std::endl;
+
+    sim_db::Connection sim_db_2(path_sim_db, id, false);
+    sim_db_2.write<int>("test_param1", 7);
+    param1 = sim_db_2.read<int>("test_param1");
+    std::cout << param1 << std::endl;
+
+    sim_db::delete_sim(path_sim_db, id);
 }

@@ -46,5 +46,20 @@ results = np.array(param6)
 name_results_dir = sim_database.make_unique_subdir("example/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
+# Get the path to sim_db and the 'ID' of the connected simulation.
+db_id = sim_database.get_id()
+path_sim_db = sim_database.get_path()
+
 # Write final metadata to database.
 sim_database.end()
+
+# Add an empty simulation to database.
+db_id = sim_db.add_empty_sim()
+
+# Open this empty simulation and write to it.
+sim_database = sim_db.SimDB(db_id=db_id)
+sim_database.write("param1_extensive", 7, type_of_value="int")
+sim_database.end()
+
+# Delete this simulation.
+sim_db.delete_sim(db_id)

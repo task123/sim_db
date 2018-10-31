@@ -53,4 +53,18 @@ int main(int argc, char** argv) {
     for (auto i : param6) {
         results_file << i << std::endl;
     }
+
+    // Get the path to sim_db and the 'ID' of the connected simulation.
+    std::string path_sim_db = sim_db.get_path(sim_db_2);
+    int id = sim_db.get_id(sim_db_2);
+
+    // Add an empty simulation to the database.
+    db_it = sim_db::add_empty_sim(path_sim_db);
+
+    // Open this empty simulation and write to it.
+    sim_db::Connection sim_db_2(path_sim_db, id);
+    sim_db_2.write<int>("param1_extensive", 7);
+
+    // Delete this simulation.
+    sim_db::delete_sim(db_id);
 }

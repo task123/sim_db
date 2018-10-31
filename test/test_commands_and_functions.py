@@ -121,7 +121,7 @@ def __run_sim_and_python_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    __assert_output_python_program(output_program)
+    __assert_output_python_program(output_program, db_id)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
@@ -138,7 +138,7 @@ def __add_no_metadata_flag_to_run_command(capsys, db_id):
     return run_command
 
 
-def __assert_output_python_program(output_program):
+def __assert_output_python_program(output_program, db_id):
     printed_params = output_program.split('\n')
     assert printed_params[0] == "3"
     assert printed_params[1] == printed_params[0]
@@ -162,6 +162,8 @@ def __assert_output_python_program(output_program):
     assert printed_params[19] == printed_params[18]
     assert printed_params[20] == "None"
     assert printed_params[21] == "None"
+    assert printed_params[22] == str(db_id + 1)
+    assert printed_params[23] == "7"
 
 
 def __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):
@@ -225,7 +227,7 @@ def __c_funcionts(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    __assert_output_c_and_cpp_program(output_program)
+    __assert_output_c_and_cpp_program(output_program, db_id)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
@@ -267,14 +269,14 @@ def __cpp_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    __assert_output_c_and_cpp_program(output_program)
+    __assert_output_c_and_cpp_program(output_program, db_id)
     __assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
-def __assert_output_c_and_cpp_program(output_popen):
-    printed_lines = output_popen.split('\n')
+def __assert_output_c_and_cpp_program(output_program, db_id):
+    printed_lines = output_program.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
-        printed_lines = output_popen.split('\n')[3:]
+        printed_lines = output_program.split('\n')[3:]
     assert printed_lines[0] == "3"
     assert printed_lines[1] == printed_lines[0]
     assert abs(float(printed_lines[2]) - -5000000000.0) < 0.001
@@ -297,6 +299,8 @@ def __assert_output_c_and_cpp_program(output_popen):
     assert printed_lines[33] == printed_lines[32]
     assert printed_lines[34] == "11"
     assert printed_lines[35] == printed_lines[34]
+    assert printed_lines[36] == str(db_id + 1)
+    assert printed_lines[37] == "7"
 
 
 def test_add_and_run(capsys):
@@ -323,7 +327,7 @@ def test_add_and_run(capsys):
     with capsys.disabled():
         print("\nTest add_and_run...")
     __assert_output_print_sim_after_add_sim(output_print_sim_after_add_sim)
-    __assert_output_python_program(output_program)
+    __assert_output_python_program(output_program, db_id)
     __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
                                             True)
 

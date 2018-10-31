@@ -242,7 +242,7 @@ class SimDB:
             db_id = args.id
             path_sim_db = args.path_sim_db
         if (path_sim_db == None):
-            path_sim_db = helpers.get_closest_sim_db_dir_path()
+            path_sim_db = helpers.get_sim_db_dir_path()
         if (db_id == None):
             ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
                     + "If not passed as function parameters, then '--id ID' " \
@@ -388,3 +388,25 @@ class SimDB:
     def get_date_and_time_as_string(self):
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""
         return time.strftime("%Y-%b-%d_%H-%M-%S")
+
+def add_empty_sim():
+    """Add an empty entry into the database and return its 'ID'."""
+    db = helpers.connect_sim_db()
+    db_cursor = db.cursor()
+    db_cursor.execute("INSERT INTO runs DEFAULT VALUES")
+    db_id = db_cursor.lastrowid
+    db.commit()
+    db_cursor.close()
+    db.close()
+
+    return db_id
+
+def delete_sim(db_id):
+    """Delete simulation from database with 'ID' db_id.""" 
+    db = helpers.connect_sim_db()
+    db_cursor = db.cursor()
+    db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(db_id))
+    db_id = db_cursor.lastrowid
+    db.commit()
+    db_cursor.close()
+    db.close()
