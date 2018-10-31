@@ -18,6 +18,18 @@ def add_path_to_bash_file(where_to_add_path):
     sim_db_dir = helpers.get_sim_db_dir_path()
     sim_db_dir = sim_db_dir.replace(" ", "\ ")
 
+    # Chec if bash setting file exists
+    if not os.path.isfile(where_to_add_path):
+        answer = helpers.user_input("{0} does not seem to exists. Would you )"
+                "like to add one? (y/n)\n (Recommended and needed to run "
+                "commands.)\n".format(where_to_add_path))
+        if (answer == 'y' or answer == 'Y' or answer == 'yes' 
+                or answer == 'Yes'):
+            bash_file = open(where_to_add_path, 'w') 
+            bash_file.close()
+        else:
+            exit()
+
     # Check if path is already added
     bash_file = open(where_to_add_path, 'r')
     line_number = 0
