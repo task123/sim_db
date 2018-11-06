@@ -92,6 +92,7 @@ def main():
     programs.remove('helpers.py')
     programs.remove('__init__.py')
     programs.remove('cd_results.py')
+    programs.remove('add_root_dir_to_path.py')
     sim_db_src_dir = sim_db_src_dir.replace(" ", "\ ")
     for program in programs:
         script_name = (sys.argv[0].split('generate_commands.py')[0] 
