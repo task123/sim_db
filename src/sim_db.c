@@ -868,6 +868,16 @@ void sim_db_dtor(SimDB* self) {
     sqlite3_close(self->db);
 }
 
+const char* get_create_table_query() {
+    return "CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, status "
+           "TEXT, name TEXT, description TEXT, run_command TEXT, comment TEXT, "
+           "results_dir TEXT, add_to_job_script TEXT, max_walltime TEXT, "
+           "n_tasks INTEGER, job_id INTEGER, time_submitted TEXT, time_started "
+           "TEXT, used_walltime TEXT, cpu_info TEXT, git_hash TEXT, "
+           "commit_message TEXT, git_diff_stat TEXT, git_diff TEXT, "
+           "sha1_executables TEXT)";
+}
+
 int add_empty_sim(const char* path_sim_db) {
     char path_sim_db_long[PATH_MAX + 1];
     strcpy(path_sim_db_long, path_sim_db);
@@ -883,7 +893,12 @@ int add_empty_sim(const char* path_sim_db) {
                 sqlite3_errmsg(db));
         exit(1);
     }
-
+    rc = sqlite3_exec(db, get_create_table_query(), NULL, NULL, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Could NOT perform the SQLite3 query: %s\n",
+                get_create_table_query());
+        exit(1);
+    }
     rc = sqlite3_exec(db, "INSERT INTO runs DEFAULT VALUES", NULL, NULL, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr,

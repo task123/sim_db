@@ -393,6 +393,13 @@ def add_empty_sim():
     """Add an empty entry into the database and return its 'ID'."""
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
+    default_db_columns = ""
+    for key in helpers.default_db_columns:
+        default_db_columns += key + " " + str(
+                helpers.default_db_columns[key]) + ", "
+    default_db_columns = default_db_columns[:-2]
+    db_cursor.execute("CREATE TABLE IF NOT EXISTS runs ({0});".format(
+            default_db_columns))
     db_cursor.execute("INSERT INTO runs DEFAULT VALUES")
     db_id = db_cursor.lastrowid
     db.commit()
