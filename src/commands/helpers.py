@@ -8,6 +8,7 @@ import subprocess
 import os
 from sys import version_info, platform
 
+# Update 'get_create_table_query' function in src/sim_db.c if ever changed.
 default_db_columns = {
         'id': 'INTEGER PRIMARY KEY',
         'status': 'TEXT',
