@@ -63,9 +63,17 @@ def run_sim(argv=None):
         if sys.version_info[0] < 3:
             for line in iter(process.stdout.readline, ''):
                 sys.stdout.write(line.decode('UTF-8'))
+                sys.stdout.flush()
+            for line in iter(process.stderr.readline, ''):
+                sys.stdout.write(line.decode('UTF-8'))
+                sys.stdout.flush()
         else:
             for line in iter(process.stdout.readline, b''):
                 sys.stdout.write(line.decode('UTF-8'))
+                sys.stdout.flush()
+            for line in iter(process.stderr.readline, b''):
+                sys.stdout.write(line.decode('UTF-8'))
+                sys.stdout.flush()
     update_sim.update_sim([
             "--id",
             str(args.id), "--columns", "status", "--values", "finished"
