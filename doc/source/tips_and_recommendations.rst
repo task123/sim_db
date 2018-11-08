@@ -4,7 +4,7 @@ Tips and Recommendations
 
 A number of tips, recommendations and explainations that might be useful is listed here:
 
-* If the *sim_db/* directory is empty after having cloned a projet that uses **sim_db**, go into the *sim_db/* directory and run these two commands; `git submodule init` and `git submodule update`.
+* If the *sim_db/* directory is empty after having cloned a projet that uses **sim_db**, go into the *sim_db/* directory and run these two commands; ``$ git submodule init`` and ``$ git submodule update``.
 
 * For Python and C++ the instance of ``SimDB`` must be kept initialized at the beginning of the simulation and kept to the end. This is because its initializer and destructor take the time of the simulation as well as writing a number of thing to the database, including the simulations status. For C ``sim_db_start()`` and ``sim_db_end()`` must for the same reason be called at the beginning and end of the simulation.
 

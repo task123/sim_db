@@ -83,7 +83,7 @@ A parameter file called params_extensive_cpp_example.txt is found in the *sim_db
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
 
-Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, `delete_sim` and `delete_empty_columns` must be used before making a new column with correct type.)
+Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, ``delete_sim`` and ``delete_empty_columns`` must be used before making a new column with correct type.)
 
 The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
 
@@ -104,11 +104,11 @@ Adding the simulation parameters to the **sim_db** database and running the simu
 
     $ add_and_run -f sim_db/example/params_extensive_cpp_example.txt
 
-If the filename passed to either the `add_sim` or `add_and_run` commands starts with either *sim_db/* or *root/* that part will be substituted with the full path to *sim_db/* or *sim_db/../* (assumed to be the projects root directory) respectivly. This way the same path to a parameter file can be passed from anywhere within the project.
+If the filename passed to either the ``add_sim`` or ``add_and_run`` commands starts with either *sim_db/* or *root/* that part will be substituted with the full path to *sim_db/* or *sim_db/../* (assumed to be the projects root directory) respectivly. This way the same path to a parameter file can be passed from anywhere within the project.
 
-It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the `run_sim`, `add_and_run` and `submit_sim` commands to work. (The *name* parameter is needed for the *make_unique_subdir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
+It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. (The *name* parameter is needed for the *make_unique_subdir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
 
-Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/example/* (given that the static C++ library are compiled):
+Notice that when it is run, it first call ``make`` to compile the code if needed. What ``make`` does is equvalient to the following command called from *sim_db/example/* (given that the static C++ library are compiled):
 
 .. code-block:: console
 
@@ -126,13 +126,13 @@ and running the simulation:
 
     $ run_sim
 
-When passed without any flags :code:`run_sim` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
+When passed without any flags ``run_sim`` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
 
 .. code-block:: console
 
     $ run_sim --id 'ID'
 
-where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using `add_sim`, but to check the '`ID`' of the last couple of siulations added one can run:
+where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using ``add_sim``, but to check the '`ID`' of the last couple of siulations added one can run:
 
 .. code-block:: console
 
@@ -144,7 +144,7 @@ where '`ID`' is the a unique number given to each set of simulation parameters a
 
     $ print_sim -p 'name_of_personalized_config' 
 
-When running ``$ run_sim --id 'ID'``, the flags ``--id 'ID' -p 'path_to_sim_db`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the the executable prodused by `make` or the compile command stated above. Can be run directoy as:
+When running ``$ run_sim --id 'ID'``, the flags ``--id 'ID' -p 'path_to_sim_db`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the the executable prodused by ``make`` or the compile command stated above. Can be run directoy as:
 
 .. code-block:: console
 
