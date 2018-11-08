@@ -809,10 +809,20 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     return name_subdir;
 }
 
-char* sim_db_make_unique_subdir_rel_path(SimDB* self,
-                                         const char* rel_path_to_results_dir) {
+char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_results_dir) {
     char path_res_dir[PATH_MAX + 1];
-    sprintf(path_res_dir, "%s/%s", self->path_sim_db, rel_path_to_results_dir);
+    if (strlen(path_to_results_dir) >= 7
+        && strncmp(path_to_results_dir, "sim_db/", 7) == 0) {
+        path_to_results_dir += 7;
+        sprintf(path_res_dir, "%s/%s", self->path_sim_db, path_to_results_dir);
+    } else if (strlen(path_to_results_dir) >= 5
+               && strncmp(path_to_results_dir, "root/", 5) == 0) {
+        path_to_results_dir += 5;
+        sprintf(path_res_dir, "%s/../%s", self->path_sim_db,
+                path_to_results_dir);
+    } else {
+        sprintf(path_res_dir, "%s", path_to_results_dir);
+    }
     char real_path_res_dir[PATH_MAX + 1];
     if (!realpath(path_res_dir, real_path_res_dir)) {
         fprintf(stderr, "ERROR: Could NOT make realpath of %s\n.",

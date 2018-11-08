@@ -53,13 +53,12 @@ public:
     //
     /// This new subdirectory is intended for storing results from the
     /// simulation.
-    /// @param path_directory Relative or absolute path to where the new
-    /// directory is created.
-    /// @param is_path_relative Set false if \p path_directory is an absolute
-    /// path.
+    /// @param path_directory Path to where the new directory is created. If it
+    /// starts with 'sim_db/' or 'root/', that part will be replaced with the
+    /// full path to 'sim_db/' or 'sim_db/..' (assumed project root directory)
+    /// respectfully.
     /// @return Path to new subdirectory.
-    std::string make_unique_subdir(std::string path_directory,
-                                   bool is_path_relative = true);
+    std::string make_unique_subdir(std::string path_directory);
 
     /// Save the sha1 hash of the file \p paths_executables to the database.
     //

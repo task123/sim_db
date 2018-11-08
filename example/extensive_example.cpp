@@ -45,7 +45,8 @@ int main(int argc, char** argv) {
 
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
-    std::string name_results_dir = sim_db.make_unique_subdir("example/results");
+    std::string name_results_dir =
+            sim_db.make_unique_subdir("sim_db/example/results");
 
     // Write some results to a file in the newly create subdirectory.
     std::ofstream results_file;
@@ -55,16 +56,16 @@ int main(int argc, char** argv) {
     }
 
     // Get the path to sim_db and the 'ID' of the connected simulation.
-    std::string path_sim_db = sim_db.get_path(sim_db_2);
-    int id = sim_db.get_id(sim_db_2);
+    std::string path_sim_db = sim_db.get_path();
+    int id = sim_db.get_id();
 
     // Add an empty simulation to the database.
-    db_it = sim_db::add_empty_sim(path_sim_db);
+    id = sim_db::add_empty_sim(path_sim_db);
 
     // Open this empty simulation and write to it.
     sim_db::Connection sim_db_2(path_sim_db, id);
     sim_db_2.write<int>("param1_extensive", 7);
 
     // Delete this simulation.
-    sim_db::delete_sim(db_id);
+    sim_db::delete_sim(path_sim_db, id);
 }

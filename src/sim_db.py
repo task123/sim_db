@@ -174,19 +174,32 @@ class SimDB:
         update_sim.update_sim(["--id", str(db_id), "--columns", column,
                     "--value", value_string])
 
-    def make_unique_subdir(self, path_directory, is_path_relative=True):
+    def get_id(self):
+        """Return 'ID' of the connected simulation."""
+        return self.id
+
+    def get_path(self):
+        """Return the path to the 'sim_db' directory."""
+        return self.sim_db_dir
+
+    def make_unique_subdir(self, path_directory):
         """Make a unique subdirectory in 'name_result_directory'.
 
         The subdirectory will be named date_time_name_id and is intended to
         store results in.
 
-        :param name_result_directory: Full path to directory.
-        :type name_result_directory: str
+        :param path_directory: Path to directory of which to make a 
+        subdirectory. If 'path_directory' starts with 'sim_db/' or 'root/', 
+        that part will be replaced by the full path of 'sim_db/' and 
+        'sim_db/../' (assumed project root directory) respectfully.
+        :type path_directory: str
         :returns: Full path to new subdirectory.
         :rtype: str
         """
-        if is_path_relative:
-            subdir = self.sim_db_dir + '/' + path_directory
+        if (len(path_directory) >= 7 and path_directory[0:7] == 'sim_db/'):
+            subdir = self.sim_db_dir + '/' + path_directory[7:]
+        elif (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
+            subdir = self.sim_db_dir + '/../' + path_directory[5:]
         else:
             subdir = path_directory
         if len(subdir) > 0 and subdir[-1] != '/':

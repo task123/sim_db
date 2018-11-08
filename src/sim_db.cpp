@@ -25,17 +25,9 @@ Connection::Connection(std::string path_sim_db, int id, bool store_metadata) {
     sim_db = sim_db_ctor_with_id(path_sim_db.c_str(), id, store_metadata);
 }
 
-std::string Connection::make_unique_subdir(std::string path_directory,
-                                           bool is_path_relative) {
-    std::string name_subdir;
-    if (is_path_relative) {
-        name_subdir = std::string(sim_db_make_unique_subdir_rel_path(
-                sim_db, path_directory.c_str()));
-    } else {
-        name_subdir = std::string(sim_db_make_unique_subdir_abs_path(
-                sim_db, path_directory.c_str()));
-    }
-    return name_subdir;
+std::string Connection::make_unique_subdir(std::string path_directory) {
+    return std::string(
+            sim_db_make_unique_subdir(sim_db, path_directory.c_str()));
 }
 
 void Connection::update_sha1_executables(

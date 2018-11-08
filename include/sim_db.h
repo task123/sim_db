@@ -198,18 +198,19 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 /// This new subdirectory is intended for storing results from the simulation.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
-/// @param rel_path_to_result_dir Realative path to where the new directory is
-/// created.
+/// @param path_to_result_dir Path to where the new directory is created. If it
+/// starts with 'sim_db/' or 'root/', that part will be replaced with the full
+/// path to 'sim_db/' or 'sim_db/..' (assumed project root directory)
+/// respectfully.
 /// @return Path to new subdirectory.
-char* sim_db_make_unique_subdir_rel_path(SimDB* self,
-                                         const char* rel_path_to_result_dir);
+char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_result_dir);
 
 /// Make unique subdirectory in \p abs_path_to_result_dir.
 //
 /// This new subdirectory is intended for storing results from the simulation.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
-/// @param rel_path_to_result_dir Absolute path to where the new directory is
+/// @param abs_path_to_result_dir Absolute path to where the new directory is
 /// created.
 /// @return Path to new subdirectory.
 char* sim_db_make_unique_subdir_abs_path(SimDB* self,

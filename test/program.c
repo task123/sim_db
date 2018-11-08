@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 
     if (store_metadata) {
         char* name_subdir =
-                sim_db_make_unique_subdir_rel_path(sim_db, "test/results");
+                sim_db_make_unique_subdir(sim_db, "sim_db/test/results");
         FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
         for (size_t i = 0; i < double_vec.size; i++) {
             fprintf(result_file, "%f\n", double_vec.array[i]);

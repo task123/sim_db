@@ -100,7 +100,8 @@ int main(int argc, char** argv) {
 
         // Make unique subdirectory in results/.
         std::string filename_result =
-                sim_db.make_unique_subdir("test/results/") + "/results.txt";
+                sim_db.make_unique_subdir("sim_db/test/results/")
+                + "/results.txt";
 
         // Save param6 to file in this unique subdirectory.
         std::ofstream result_file;

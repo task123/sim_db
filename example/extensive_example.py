@@ -12,7 +12,7 @@ import numpy as np
 import sys, os
 # Include the 'sim_db/src/' directory to path.
 sys.path.append(os.path.join(os.path.dirname(__file__), 
-                os.join.path(os.pardir, os.pardir)))
+                os.path.join(os.pardir, os.pardir)))
 
 import sim_db # 'sim_db/src/' have been include in the path.
 
@@ -44,7 +44,7 @@ sim_database.write("example_result_8", param8, type_of_value="bool array")
 
 # Make unique subdirectory for storing results and write its name to database.
 results = np.array(param6)
-name_results_dir = sim_database.make_unique_subdir("example/results")
+name_results_dir = sim_database.make_unique_subdir("sim_db/example/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
 # Get the path to sim_db and the 'ID' of the connected simulation.
