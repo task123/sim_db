@@ -104,6 +104,10 @@ Adding the simulation parameters to the **sim_db** database and running the simu
 
     $ add_and_run -f sim_db/example/params_extensive_cpp_example.txt
 
+If the filename passed to either the `add_sim` or `add_and_run` commands starts with either *sim_db/* or *root/* that part will be substituted with the full path to *sim_db/* or *sim_db/../* (assumed to be the projects root directory) respectivly. This way the same path to a parameter file can be passed from anywhere within the project.
+
+It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the `run_sim`, `add_and_run` and `submit_sim` commands to work. (The *name* parameter is needed for the *make_unique_subdir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
+
 Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/example/* (given that the static C++ library are compiled):
 
 .. code-block:: console

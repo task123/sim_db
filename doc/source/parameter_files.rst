@@ -17,6 +17,8 @@ The format of the parameter file is for each parameter as following:
 
 *type* can be *int*, *float*, *string*, *bool* or *int*/*float*/*string*/*bool array*. Lines without any colon is ignored. This means that the parameter name, type, colon and value MUST all be on the same line and colons can ONLY be used on lines with parameters (except when including other parameter files).
 
+The '*run_command* (*string*): *command*' parameter need to be one of the parameters in the parameter file for the `run_sim`, `add_and_run` and `submit_sim` commands to work. The '*name* (*string*): *name_of_simulation*' stricly only needed if the *make_unique_subdir* function is used, but it is always recommeneded to include.
+
 The parameters from other parameter files can be included with a line like this:
 
 include_parameter_file: *name_parameter_file*
