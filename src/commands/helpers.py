@@ -217,7 +217,8 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
 
     sim_db_dir = get_sim_db_dir_path()
     sim_db_dir = sim_db_dir.replace(' ', '\ ')
-    run_command = run_command.replace('sim_db/', ' ' + sim_db_dir + '/')
+    run_command = run_command.replace(' sim_db/', ' ' + sim_db_dir + '/')
+    run_command = run_command.replace(' root/', ' ' + sim_db_dir + '/../')
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_sim_db "{0}"'.format(

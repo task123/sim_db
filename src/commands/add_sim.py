@@ -249,6 +249,10 @@ def add_sim(argv=None):
                 and sim_params_filename.split('/')[0] == 'sim_db'):
         sim_params_filename = (helpers.get_sim_db_dir_path() + '/' +
                                sim_params_filename.split('/', 1)[1])
+    if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
+                and sim_params_filename.split('/')[0] == 'root'):
+        sim_params_filename = (helpers.get_sim_db_dir_path() + '/../' +
+                               sim_params_filename.split('/', 1)[1])
     if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_matching_settings()
         if sim_params_filename == None:
