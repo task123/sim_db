@@ -57,11 +57,13 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
         print("\nTest add_sim, print_sim and delete_sim...")
+
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
     assert (len(output_after_delete) == 0
-            or output_after_delete != "{0}".format(db_id))
+            or output_after_delete.splitlines()[-1].strip() 
+                != "{0}".format(db_id))
 
 
 def __get_test_dir():
@@ -527,7 +529,6 @@ def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
                 int(n_cpus_per_node[0]))
         assert lines[4] == '#PBS --mem={0}GB\n'.format(memory_per_node[0])
 
-
 def test_add_and_submit(capsys):
     settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
             __read_job_scheduler_settings()
@@ -553,7 +554,6 @@ def test_add_and_submit(capsys):
         os.remove(job_script_name)
         __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
                                   memory_per_node)
-
 
 def test_combine_dbs(capsys):
     path_db_1 = __get_test_dir() + "/sim1_test_comb.db"
@@ -627,7 +627,7 @@ def test_add_range_sim(capsys):
     print_sim.print_sim("--id {0} -v --no_headers --columns test_param1 " \
            "test_param2".format(db_ids_string).split())
     output_print_sim, err = capsys.readouterr()
-    del_sim_params = "--id {0}".format(db_id).split()
+    del_sim_params = "--id {0}".format(db_ids_string).split()
     del_sim_params.append("--no_check")
     delete_sim.delete_sim(del_sim_params)
     print_sim.print_sim("-n 1 --no_headers --columns id".split())
