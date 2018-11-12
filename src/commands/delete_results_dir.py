@@ -100,7 +100,10 @@ def delete_results_dir(argv=None):
         if (answer == 'y' or answer == 'Y' or answer == 'yes'
                     or answer == 'Yes' or args.no_checks):
             for results_dir in results_dirs:
-                shutil.rmtree(results_dir)
+                try:
+                    shutil.rmtree(results_dir)
+                except FileNotFoundError:
+                    print("Results directory NOT found: {0}".format(results_dir))
         else:
             print("No results deleted.")
     else:
