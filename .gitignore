@@ -13,6 +13,7 @@ commands/combine_dbs
 commands/delete_empty_columns
 commands/delete_results_dir
 commands/delete_sim
+commands/duplicate_sim
 commands/extract_params
 commands/list_sim_db_commands
 commands/list_print_configs
