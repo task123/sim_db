@@ -19,16 +19,16 @@ import sqlite3
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description="Duplicate simulation in database. All parameters (including possible results) of specified simulation is duplicated with the exception of 'id' and 'status', which is kept unique and set to 'new' respectfully.")
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> 'ID' of the simulation parameters in the 'sim.db' database that should be duplicated.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 def duplicate_sim(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

@@ -28,13 +28,13 @@ import os
 import subprocess
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation to database.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def split_parameter_line(line, i):
@@ -243,7 +243,7 @@ def add_included_parameter_files(sim_params_file_lines):
 def add_sim(argv=None):
     db = helpers.connect_sim_db()
 
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
     sim_params_filename = args.filename
     if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
                 and sim_params_filename.split('/')[0] == 'sim_db'):

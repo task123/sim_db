@@ -26,18 +26,18 @@ import src.commands.run_sim as run_sim
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file to add and run.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def add_and_run(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     if args.filename == None:
         added_id = add_sim.add_sim()

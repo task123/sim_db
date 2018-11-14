@@ -20,7 +20,7 @@ import os
 import shutil
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description="Delete results in 'results_dir' of specified simulations.")
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of simulation which 'results_dir' to deleted.")
@@ -29,14 +29,14 @@ def command_line_arguments_parser():
     parser.add_argument('--not_in_db_but_in_dir', type=str, default=None, help="Delete every folder in the specified directory that is not a 'results_dir' in the 'sim_db', so use with care. Both relative and absolute paths can be used.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def delete_results_dir(argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
     if (len(args.id) == 0 and args.where == None
                 and args.not_in_db_but_in_dir == None):
         print("No 'results_dir' was deleted. --id 'ID' or --where 'CONDITION' "

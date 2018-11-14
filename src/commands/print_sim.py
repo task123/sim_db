@@ -16,7 +16,7 @@ import os
 import sys
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.')
     parser.add_argument('--id', '-i', type=int, nargs='+', help="List of ID's.")
@@ -37,7 +37,7 @@ def command_line_arguments_parser():
     parser.add_argument('--diff', '-d', action='store_true', help="Remove columns with the same value for all the simulations. This leaves only the parameters that are different between the simulations.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def get_personalized_print_config(key_string):
@@ -265,9 +265,9 @@ def replace_element_in_list(the_list, element, replacement):
 
 def print_sim(argv=None):
     if argv == None and len(sys.argv) == 1:
-        args = command_line_arguments_parser().parse_args(['-p', 'default'])
+        args = command_line_arguments_parser(['-p', 'default'])
     else:
-        args = command_line_arguments_parser().parse_args(argv)
+        args = command_line_arguments_parser(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
@@ -278,8 +278,7 @@ def print_sim(argv=None):
         p_arg_keys = [
                 key.strip('-') for key in print_config.split() if key[0] == '-'
         ]
-        p_args = command_line_arguments_parser().parse_args(
-                print_config.split())
+        p_args = command_line_arguments_parser(print_config.split())
 
         p_arg_keys = replace_element_in_list(p_arg_keys, 'v', 'vertically')
         p_arg_keys = replace_element_in_list(p_arg_keys, 'i', 'id')

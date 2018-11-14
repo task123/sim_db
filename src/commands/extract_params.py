@@ -22,7 +22,7 @@ no_extract_columns = {
 }
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Extract parameter file from sim.db.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
@@ -32,7 +32,7 @@ def command_line_arguments_parser():
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def get_param_type_as_string(col_type, value):
@@ -53,7 +53,7 @@ def get_param_type_as_string(col_type, value):
 
 
 def extract_params(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     is_printing_parameters = True
     if args.default_file:

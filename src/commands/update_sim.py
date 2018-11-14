@@ -19,7 +19,7 @@ import argparse
 import os.path
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Update content in sim.db.')
     parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
@@ -29,11 +29,11 @@ def command_line_arguments_parser():
     parser.add_argument('--db_path', type=str, default=None, help="Full path to the database used.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def update_sim(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
     if args.id == None and args.where == "id > -1":
         print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be " \
               + "passed to the program.")

@@ -20,7 +20,7 @@ import argparse
 import os.path
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Delete simulations from sim.db.')
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of runs to delete.")
@@ -28,14 +28,14 @@ def command_line_arguments_parser():
     parser.add_argument('--no_checks', action='store_true', help="No questions are asked about wheter you really want to delete simulation or the 'results_dir' of the simulation.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def delete_sim(argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     answer = 'n'
     if len(args.id) == 0 and args.where == None:

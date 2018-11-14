@@ -17,19 +17,19 @@ import subprocess
 import sys
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Run simulation with ID in database.')
     parser.add_argument('--id', '-i', type=int, default=None, help="'ID' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def run_sim(argv=None):
     """Run simulation with parameters with ID passed or the highest ID."""
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

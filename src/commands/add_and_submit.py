@@ -27,7 +27,7 @@ import src.commands.submit_sim as submit_sim
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
@@ -42,11 +42,11 @@ def command_line_arguments_parser():
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def add_and_submit(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     if args.filename == None:
         added_id = add_sim.add_sim()

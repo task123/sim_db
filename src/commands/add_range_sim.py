@@ -31,7 +31,7 @@ import sqlite3
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add a range of simulations to the database.')
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added as the first in the range.")
@@ -42,11 +42,11 @@ def command_line_arguments_parser():
     parser.add_argument('--n_steps', type=int, nargs='+', default=[], help="Number of steps in the range. That means one step gives to simulations added. If both 'end_steps' and 'n_steps' are used, both endpoint need to be reached.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def add_range_sim(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
 
     # Check command line arguments
     n_cols = len(args.columns)

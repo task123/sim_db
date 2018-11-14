@@ -16,7 +16,7 @@ import src.commands.helpers as helpers
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add comment to simulation in database.')
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation to add the comment.")
@@ -25,11 +25,11 @@ def command_line_arguments_parser():
     parser.add_argument('--append', '-a', action='store_true', help="Append comment or file to the current comment.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def add_comment(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
     if (args.comment == None and args.filename == None):
         print("ERROR: Either '--comment'/'-c' or '--filename'/'-f' need to be provided."
               )

@@ -21,7 +21,7 @@ import os
 import math
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv):
     # yapf: disable
     parser = argparse.ArgumentParser(description='Submit job')
     parser.add_argument('--id', '-i', type=int, default=None, nargs='+', help="ID of simulations to submit.")
@@ -36,7 +36,7 @@ def command_line_arguments_parser():
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def make_job_script(db_cursor, i, args, id_submit):
@@ -184,7 +184,7 @@ def make_job_script(db_cursor, i, args, id_submit):
 
 
 def submit_sim(argv=None):
-    args = command_line_arguments_parser().parse_args(argv)
+    args = command_line_arguments_parser(argv)
     ids = args.id
 
     db = helpers.connect_sim_db()

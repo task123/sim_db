@@ -11,16 +11,16 @@ import fnmatch
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv=None):
     # yapf: disable
     parser = argparse.ArgumentParser(description="Print a list of all the sim_db commands.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def list_sim_db_commands():
-    command_line_arguments_parser().parse_args()
+    command_line_arguments_parser()
     sim_db_dir = os.path.dirname(os.path.abspath(__file__))
     programs = fnmatch.filter(os.listdir(sim_db_dir), "*.py")
     programs.remove('helpers.py')

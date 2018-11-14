@@ -17,16 +17,16 @@ import src.commands.helpers as helpers
 import argparse
 
 
-def command_line_arguments_parser():
+def command_line_arguments_parser(argv=None):
     # yapf: disable
     parser = argparse.ArgumentParser(description="Print a list of all the personalized print configurations.")
     # yapf: enable
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def list_print_configs():
-    command_line_arguments_parser().parse_args()
+    command_line_arguments_parser()
     settings = helpers.Settings()
     print_configs = settings.read('print_config')
     for print_config in print_configs:
