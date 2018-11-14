@@ -29,7 +29,7 @@ import argparse
 def command_line_arguments_parser():
     # yapf: disable
     parser = argparse.ArgumentParser(description='Add simulation and submit it.')
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
+    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file to add and run.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     # yapf: enable
 

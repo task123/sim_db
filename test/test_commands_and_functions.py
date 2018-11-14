@@ -30,6 +30,7 @@ import src.commands.add_range_sim as add_range_sim
 import src.commands.run_serial_sims as run_serial_sims
 import src.commands.combine_dbs as combine_dbs
 import src.commands.duplicate_sim as duplicate_sim
+import src.commands.duplicate_and_run as duplicate_and_run
 import os
 import time
 import subprocess
@@ -355,15 +356,16 @@ def test_list_sim_db_commands(capsys):
     assert output_lines[10] == "delete_empty_columns"
     assert output_lines[11] == "delete_results_dir"
     assert output_lines[12] == "delete_sim"
-    assert output_lines[13] == "duplicate_sim"
-    assert output_lines[14] == "extract_params"
-    assert output_lines[15] == "list_print_configs"
-    assert output_lines[16] == "list_sim_db_commands"
-    assert output_lines[17] == "print_sim"
-    assert output_lines[18] == "run_serial_sims"
-    assert output_lines[19] == "run_sim"
-    assert output_lines[20] == "submit_sim"
-    assert output_lines[21] == "update_sim"
+    assert output_lines[13] == "duplicate_and_run"
+    assert output_lines[14] == "duplicate_sim"
+    assert output_lines[15] == "extract_params"
+    assert output_lines[16] == "list_print_configs"
+    assert output_lines[17] == "list_sim_db_commands"
+    assert output_lines[18] == "print_sim"
+    assert output_lines[19] == "run_serial_sims"
+    assert output_lines[20] == "run_sim"
+    assert output_lines[21] == "submit_sim"
+    assert output_lines[22] == "update_sim"
 
 
 def test_add_column_and_delete_empty_columns(capsys):
@@ -706,6 +708,39 @@ def test_duplicate_sim(capsys):
     assert output_duplicated_sim.split('\n')[2].strip() == 'new'
     assert (output_original_sim.split('\n', 3)[3] 
             == output_duplicated_sim.split('\n', 3)[3])
+
+
+def test_duplicate_and_run(capsys):
+    db_id = add_sim.add_sim([
+            "--filename",
+            "{0}/sim_params_python_program.txt".format(__get_test_dir())
+    ])
+    new_id = duplicate_and_run.duplicate_and_run(["--id", str(db_id)])
+    time.sleep(0.1)  # Wait for program.py to finish
+    output_program, err = capsys.readouterr()
+    print_sim.print_sim("--id {0} -v --no_headers --columns name test_param1 "
+            "test_param2 test_param3 test_param4 test_param5 test_param6 "
+            "test_param7 test_param8 test_param9 test_param10 test_param11 "
+            "test_param12".format(new_id).split())
+    output_print_sim_after_duplicate_sim, err = capsys.readouterr()
+    print_sim.print_sim("--id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(new_id).split())
+    output_print_sim_after_run_sim, err = capsys.readouterr()
+    del_sim_params = "--id {0}".format(db_id).split()
+    del_sim_params.append("--no_checks")
+    delete_sim.delete_sim(del_sim_params)
+    del_sim_params = "--id {0}".format(new_id).split()
+    del_sim_params.append("--no_checks")
+    delete_sim.delete_sim(del_sim_params)
+    with capsys.disabled():
+        print("\nTest duplicate_and_run...")
+    __assert_output_print_sim_after_add_sim(output_print_sim_after_duplicate_sim)
+    __assert_output_python_program(output_program, new_id)
+    __assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
+                                            True)
     
 
 def test_delete_results_dir(capsys):
