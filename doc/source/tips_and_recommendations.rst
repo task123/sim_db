@@ -10,7 +10,9 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * It is recommended to add a '*name* (string): *name of simulation run*' and a '*describtion* (string): *describtion of simulation*' to explain which simulation it is and the intent of the simulation. This makes it much easier to navigate all the simulations that accumulates at a later time.
 
-* It is recommended to use '*./*' or '*sim_db/*' in the *run_command* to give the path to the *executable_program* relative to the directory of *sim_params.txt* or **sim_db**. This is because the '*./*' or '*sim_db/*' will be replaced with the full path to the file when running the simulation, which may be necessary when running on a cluster or supercomputer.
+* The ``run_sim`` and ``add_and_run`` commands will print the output from the *run_command* to the terminal while the program runs, but it may take some time before start printing the output.
+
+* It is recommended to use '*./*' '*root/*' or '*sim_db/*' in the *run_command* to give the path to the *executable_program* relative to the directory of *sim_params.txt* or **sim_db**. This is because the '*./*', '*root/*' or '*sim_db/*' will be replaced with the full path to the file when running the simulation, which may be necessary when running on a cluster or supercomputer.
 
 * Any stand alone hashtages, ``#``, that occure in the *run_command* will be replaced with the number passed after the ``-n`` flag in the ``run_sim`` command. Ex. : ``mpirun -n # python program.py``.
 
@@ -20,7 +22,7 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * **sim_db** commands can be called from the directory where **sim_db** is included (the top directory of your project) or any of its subdirectories. (Provided that ``$ make`` have been run in 'sim_db/'.)
 
-* If one do not wish to include **sim_db** in the top directory of your project, one can add in in a subdirectory and add a text file named '.sim_db' in the top directory with a path to the locaton of the '*sim_db/*' directory.
+* If one do not wish to include **sim_db** in the top directory of your project, one can add in in a subdirectory and add a text file named '.sim_db' in the top directory with a path to the locaton of the '*sim_db/*' directory. ('*root/...*' will be replace with '*sim_db/..*' reguardless.)
 
 * If the ``sim_db`` directory is moved, the `` python generate_commands.py `` should be run again to add the new location to the path in the '~/.bash_rc' or '~/.bash_profile' file. One can also remove the old path.
 
