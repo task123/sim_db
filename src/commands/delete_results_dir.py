@@ -17,6 +17,7 @@ if __name__ == '__main__':
 import src.commands.helpers as helpers
 import argparse
 import os
+import sys
 import shutil
 
 
@@ -102,8 +103,13 @@ def delete_results_dir(argv=None):
             for results_dir in results_dirs:
                 try:
                     shutil.rmtree(results_dir)
-                except (FileNotFoundError, OSError, IOError):
-                    print("Results directory NOT found: {0}".format(results_dir))
+                except Exception as e:
+                    if ((sys.version < 3.0 and (e == OSError or e == IOError))
+                          or (sys.version >= 3.0 and e ==  FileNotFoundError)):
+                        print("Results directory NOT found: {0}"
+                                .format(results_dir))
+                    else:
+                        raise e
         else:
             print("No results deleted.")
     else:
