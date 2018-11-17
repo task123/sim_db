@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -* coding: utf-8 -*-
 """Delete results in 'results_dir' of specified simulation in the sim.db.
 
 One must either provide a list of ID's or a condition to delete the results in 
@@ -17,7 +17,7 @@ if __name__ == '__main__':
 import src.commands.helpers as helpers
 import argparse
 import os
-import sys
+import errno
 import shutil
 
 
@@ -104,8 +104,7 @@ def delete_results_dir(argv=None):
                 try:
                     shutil.rmtree(results_dir)
                 except Exception as e:
-                    if ((sys.version < 3.0 and (e == OSError or e == IOError))
-                          or (sys.version >= 3.0 and e ==  FileNotFoundError)):
+                    if e.errno == errno.ENOENT:
                         print("Results directory NOT found: {0}"
                                 .format(results_dir))
                     else:
