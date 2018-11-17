@@ -135,7 +135,7 @@ def add_range_sim(argv=None):
 
 
 def add_new_column_in_cartisian_product(car_prod_table, new_col, col_no):
-    prev_car_prod_table = car_prod_table.copy()
+    prev_car_prod_table = list(car_prod_table)
     for i in range(col_no, len(car_prod_table)):
         car_prod_table[i] = []
     for val in new_col:

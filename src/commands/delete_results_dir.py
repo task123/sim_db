@@ -102,7 +102,7 @@ def delete_results_dir(argv=None):
             for results_dir in results_dirs:
                 try:
                     shutil.rmtree(results_dir)
-                except FileNotFoundError:
+                except (FileNotFoundError, OSError, IOError):
                     print("Results directory NOT found: {0}".format(results_dir))
         else:
             print("No results deleted.")
