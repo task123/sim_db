@@ -1,6 +1,6 @@
 name (string): minimal_cpp_example
 
-run_command (string): make -s -C sim_db/example minimal_cpp_example_updated; sim_db/example/minimal_cpp_example
+run_command (string): make -s -C root/example minimal_cpp_example_updated; root/example/minimal_cpp_example
 
 param1 (string): "Minimal C++ example is running."
 

@@ -11,7 +11,7 @@ description (string): Extensive C++ example to demonstrate most features in sim_
 # Here the the 'run_command' consists of two commands separeated with semi colon.
 # The first call make to compile the code and the second run the compiled example.
 # It is import that they are both on the same line.
-run_command (string): make -s -C sim_db/example extensive_cpp_example_updated; sim_db/example/extensive_cpp_example
+run_command (string): make -s -C root/example extensive_cpp_example_updated; root/example/extensive_cpp_example
 
 # A parameter is added for each of the avaiable types.
 param1_extensive (int): 3
@@ -24,7 +24,7 @@ param7_extensive (string array): ["a", "b", "c"]
 param8_extensive (bool array): [True, False, True]
 
 # Include parameters from another parameter file.
-include_parameter_file: sim_db/example/extra_params_example.txt
+include_parameter_file: root/example/extra_params_example.txt
 
 # Change a parameter value from the included parameter file to demonstrate that
 # it is the last parameter value that count for a given parameter name. 

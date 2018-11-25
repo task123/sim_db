@@ -21,7 +21,7 @@
 struct SimDB {
     sqlite3* db;
     int id;
-    char path_sim_db[PATH_MAX + 1];
+    char path_proj_root[PATH_MAX + 1];
     bool store_metadata;
     time_t start_time;
     void** pointers_to_free;
@@ -125,9 +125,9 @@ int sim_db_run_shell_command(const char* command, char* output,
     }
 }
 
-bool is_a_git_project(char path_sim_db_parent_dir[PATH_MAX + 1]) {
+bool is_a_git_project(char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
     char path_in_project[PATH_MAX + 1];
-    strcpy(path_in_project, path_sim_db_parent_dir);
+    strcpy(path_in_project, path_dot_sim_db_parent_dir);
     char git_file[20] = "/.git/index";
     for (int i = strlen(path_in_project) - 1; i >= 0; i--) {
         if (path_in_project[i] == '/') {
@@ -143,9 +143,24 @@ bool is_a_git_project(char path_sim_db_parent_dir[PATH_MAX + 1]) {
     return false;
 }
 
+char* sim_db_escape_single_quote_with_two_quotes(const char* string) {
+    char* escaped_string =
+            (char*) malloc(2 * (strlen(string) + 1) * sizeof(char));
+    int j = 0;
+    for (int i = 0; i < strlen(string) + 1; i++) {
+        if (string[i] != '\'') {
+            escaped_string[i + j] = string[i];
+        } else {
+            escaped_string[i + j] = '\'';
+            escaped_string[i + (++j)] = '\'';
+        }
+    }
+    return escaped_string;
+}
+
 SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
-    char path_sim_db[PATH_MAX + 1];
-    bool is_path_sim_db_found = false;
+    char path_proj_root[PATH_MAX + 1];
+    bool is_path_proj_root_found = false;
     bool is_id_found = false;
     int id = -1;
     for (int i = 0; i < argc - 1; i++) {
@@ -153,32 +168,32 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
             is_id_found = true;
             id = atoi(argv[i + 1]);
         }
-        if ((strcmp(argv[i], "--path_sim_db") == 0)
+        if ((strcmp(argv[i], "--path_proj_root") == 0)
             || (strcmp(argv[i], "-p") == 0)) {
-            is_path_sim_db_found = true;
-            strcpy(path_sim_db, argv[i + 1]);
+            is_path_proj_root_found = true;
+            strcpy(path_proj_root, argv[i + 1]);
         }
-        if (is_id_found && is_path_sim_db_found) {
+        if (is_id_found && is_path_proj_root_found) {
             break;
         }
     }
-    if (!is_id_found || !is_path_sim_db_found) {
+    if (!is_id_found || !is_path_proj_root_found) {
         fprintf(stderr,
-                "ERROR: '--id ID' or '-i ID' and '--path_sim_db "
-                "PATH_TO_SIM_DB_DIR' or '-p PATH_TO_SIM_DB_DIR' MUST be "
-                "passed "
-                "as command line arguments.\n");
+                "ERROR: '--id ID' or '-i ID' and '--path_proj_root "
+                "PATH_TO_PROJECT_ROOT_DIR' or '-p PATH_TO_PROJECT_ROOT_DIR' "
+                "MUST be passed as command line arguments.\n");
         exit(1);
     }
 
-    SimDB* sim_db = sim_db_ctor_with_id(path_sim_db, id, store_metadata);
+    SimDB* sim_db = sim_db_ctor_with_id(path_proj_root, id, store_metadata);
 
     if (store_metadata) {
-        int len_path_sim_db = strlen(path_sim_db);
-        if (len_path_sim_db > 0 && path_sim_db[len_path_sim_db - 1] == '/') {
-            path_sim_db[len_path_sim_db - 1] = '\0';
+        int len_path_proj_root = strlen(path_proj_root);
+        if (len_path_proj_root > 0
+            && path_proj_root[len_path_proj_root - 1] == '/') {
+            path_proj_root[len_path_proj_root - 1] = '\0';
         }
-        if (is_a_git_project(path_sim_db)) {
+        if (is_a_git_project(path_proj_root)) {
             char* program_name[1];
             program_name[0] = argv[0];
             sim_db_update_sha1_executables(sim_db, program_name, 1);
@@ -196,28 +211,29 @@ SimDB* sim_db_ctor_no_metadata(int argc, char** argv) {
     return sim_db_ctor_metadata(argc, argv, false);
 }
 
-SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
+SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
                            bool store_metadata) {
-    char path_sim_db_long[PATH_MAX + 1];
-    strcpy(path_sim_db_long, path_sim_db);
+    char path_database[PATH_MAX + 1];
+    strcpy(path_database, path_proj_root);
     sqlite3* db;
-    int len_path_sim_db = strlen(path_sim_db_long);
-    if (len_path_sim_db > 0 && path_sim_db_long[len_path_sim_db - 1] == '/') {
-        path_sim_db_long[len_path_sim_db - 1] = '\0';
+    int len_path_proj_root = strlen(path_database);
+    if (len_path_proj_root > 0
+        && path_database[len_path_proj_root - 1] == '/') {
+        path_database[len_path_proj_root - 1] = '\0';
     }
-    strcat(path_sim_db_long, "/sim.db");
-    int rc = sqlite3_open(path_sim_db_long, &db);
+    strcat(path_database, "/.sim_db/sim.db");
+    int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db_long,
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
                 sqlite3_errmsg(db));
         exit(1);
     }
-    path_sim_db_long[strlen(path_sim_db_long) - 7] = '\0';
 
     SimDB* sim_db = (SimDB*) malloc(sizeof(struct SimDB));
     sim_db->db = db;
     sim_db->id = id;
-    strcpy(sim_db->path_sim_db, path_sim_db_long);
+    path_database[strlen(path_database) - 15] = '\0';
+    strcpy(sim_db->path_proj_root, path_database);
     sim_db->store_metadata = store_metadata;
     sim_db->start_time = time(NULL);
     sim_db->buffer_size_pointers = 5;
@@ -235,29 +251,35 @@ SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
     char output[len_output + 200];
     char command[4200];
 
-    if (store_metadata && is_a_git_project(path_sim_db_long)) {
-        char path_sim_db_backslashed[PATH_MAX + 1];
-        strcpy(path_sim_db_backslashed, path_sim_db_long);
-        backslash_unslashed_spaces(path_sim_db_backslashed);
-        sprintf(command, "cd %s/.. && git rev-parse HEAD",
-                path_sim_db_backslashed);
+    if (store_metadata && is_a_git_project(sim_db->path_proj_root)) {
+        char path_proj_root_backslashed[PATH_MAX + 1];
+        strcpy(path_proj_root_backslashed, sim_db->path_proj_root);
+        backslash_unslashed_spaces(path_proj_root_backslashed);
+        sprintf(command, "cd %s && git rev-parse HEAD",
+                path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             sim_db_update(sim_db, "git_hash", output);
         }
 
-        sprintf(command, "cd %s/.. && git log -n --format=%%B HEAD",
-                path_sim_db_backslashed);
+        sprintf(command, "cd %s && git log -n --format=%%B HEAD",
+                path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
+            char* escaped_string =
+                    sim_db_escape_single_quote_with_two_quotes(output);
             sim_db_update(sim_db, "commit_message", output);
+            free(escaped_string);
         }
 
-        sprintf(command, "cd %s/.. && git diff HEAD --stat",
-                path_sim_db_backslashed);
+        sprintf(command, "cd %s && git diff HEAD --stat",
+                path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
-            sim_db_update(sim_db, "git_diff_stat", output);
+            char* escaped_string =
+                    sim_db_escape_single_quote_with_two_quotes(output);
+            sim_db_update(sim_db, "git_diff_stat", escaped_string);
+            free(escaped_string);
         }
 
-        sprintf(command, "cd %s/.. && git diff HEAD", path_sim_db_backslashed);
+        sprintf(command, "cd %s && git diff HEAD", path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             if (strlen(output) >= len_output) {
                 char warning[100];
@@ -269,9 +291,15 @@ SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
                 strcpy(output_with_warning, warning);
                 strcat(output_with_warning, output);
                 strcat(output_with_warning, warning);
-                sim_db_update(sim_db, "git_diff", output_with_warning);
+                char* escaped_string =
+                        sim_db_escape_single_quote_with_two_quotes(output);
+                sim_db_update(sim_db, "git_diff", escaped_string);
+                free(escaped_string);
             } else {
-                sim_db_update(sim_db, "git_diff", output);
+                char* escaped_string =
+                        sim_db_escape_single_quote_with_two_quotes(output);
+                sim_db_update(sim_db, "git_diff", escaped_string);
+                free(escaped_string);
             }
         }
     }
@@ -640,12 +668,14 @@ void sim_db_write_double(SimDB* self, const char* column, double value) {
 
 void sim_db_write_string(SimDB* self, const char* column, const char* value) {
     sim_db_add_column_if_not_exists(self, column, "TEXT");
-    sim_db_update(self, column, value);
+    char* escaped_string = sim_db_escape_single_quote_with_two_quotes(value);
+    sim_db_update(self, column, escaped_string);
+    free(escaped_string);
 }
 
 void sim_db_write_bool(SimDB* self, const char* column, bool value) {
     sim_db_add_column_if_not_exists(self, column, "TEXT");
-    char string_value[100];
+    char string_value[6];
     if (value) {
         strcpy(string_value, "True");
     } else {
@@ -788,7 +818,6 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     if (stat(name_subdir, &st) == 0) {
         strcat(name_subdir, "__no2");
         while (stat(name_subdir, &st) == 0) {
-            printf("%s\n", name_subdir);
             char* ending_num = strstr(name_subdir, "__no") + 4;
             int new_num = atoi(ending_num) + 1;
             ending_num[0] = '\0';
@@ -811,14 +840,10 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
 
 char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_results_dir) {
     char path_res_dir[PATH_MAX + 1];
-    if (strlen(path_to_results_dir) >= 7
-        && strncmp(path_to_results_dir, "sim_db/", 7) == 0) {
-        path_to_results_dir += 7;
-        sprintf(path_res_dir, "%s/%s", self->path_sim_db, path_to_results_dir);
-    } else if (strlen(path_to_results_dir) >= 5
-               && strncmp(path_to_results_dir, "root/", 5) == 0) {
+    if (strlen(path_to_results_dir) >= 5
+        && strncmp(path_to_results_dir, "root/", 5) == 0) {
         path_to_results_dir += 5;
-        sprintf(path_res_dir, "%s/../%s", self->path_sim_db,
+        sprintf(path_res_dir, "%s/%s", self->path_proj_root,
                 path_to_results_dir);
     } else {
         sprintf(path_res_dir, "%s", path_to_results_dir);
@@ -855,12 +880,12 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
 
 int sim_db_get_id(SimDB* self) { return self->id; }
 
-char* sim_db_get_path(SimDB* self) {
-    char* path_sim_db =
-            (char*) malloc(sizeof(char) * (strlen(self->path_sim_db) + 1));
-    sim_db_add_pointer_to_free(self, path_sim_db);
-    strcpy(path_sim_db, self->path_sim_db);
-    return path_sim_db;
+char* sim_db_get_path_proj_root(SimDB* self) {
+    char* path_proj_root =
+            (char*) malloc(sizeof(char) * (strlen(self->path_proj_root) + 1));
+    sim_db_add_pointer_to_free(self, path_proj_root);
+    strcpy(path_proj_root, self->path_proj_root);
+    return path_proj_root;
 }
 
 void sim_db_dtor(SimDB* self) {
@@ -879,27 +904,27 @@ void sim_db_dtor(SimDB* self) {
 }
 
 const char* get_create_table_query() {
-    return "CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, status "
-           "TEXT, name TEXT, description TEXT, run_command TEXT, comment TEXT, "
-           "results_dir TEXT, add_to_job_script TEXT, max_walltime TEXT, "
-           "n_tasks INTEGER, job_id INTEGER, time_submitted TEXT, time_started "
-           "TEXT, used_walltime TEXT, cpu_info TEXT, git_hash TEXT, "
-           "commit_message TEXT, git_diff_stat TEXT, git_diff TEXT, "
-           "sha1_executables TEXT)";
+    return "CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, "
+           "status TEXT, name TEXT, description TEXT, run_command TEXT, "
+           "comment TEXT, results_dir TEXT, add_to_job_script TEXT, "
+           "max_walltime TEXT, n_tasks INTEGER, job_id INTEGER, "
+           "time_submitted TEXT, time_started TEXT, used_walltime TEXT, "
+           "cpu_info TEXT, git_hash TEXT, commit_message TEXT, "
+           "git_diff_stat TEXT, git_diff TEXT, sha1_executables TEXT)";
 }
 
-int add_empty_sim(const char* path_sim_db) {
-    char path_sim_db_long[PATH_MAX + 1];
-    strcpy(path_sim_db_long, path_sim_db);
-    int len_path_sim_db = strlen(path_sim_db_long);
-    if (len_path_sim_db > 0 && path_sim_db_long[len_path_sim_db - 1] == '/') {
-        path_sim_db_long[len_path_sim_db - 1] = '\0';
+int add_empty_sim(const char* path_proj_root) {
+    char path_database[PATH_MAX + 1];
+    strcpy(path_database, path_proj_root);
+    int len_path_database = strlen(path_database);
+    if (len_path_database > 0 && path_database[len_path_database - 1] == '/') {
+        path_database[len_path_database - 1] = '\0';
     }
-    strcat(path_sim_db_long, "/sim.db");
+    strcat(path_database, "/.sim_db/sim.db");
     sqlite3* db;
-    int rc = sqlite3_open(path_sim_db_long, &db);
+    int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db_long,
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
                 sqlite3_errmsg(db));
         exit(1);
     }
@@ -913,8 +938,7 @@ int add_empty_sim(const char* path_sim_db) {
     if (rc != SQLITE_OK) {
         fprintf(stderr,
                 "Could NOT perform the SQLite3 query: INSERT INTO runs "
-                "DEFAULT "
-                "VALUES\n");
+                "DEFAULT VALUES\n");
         exit(1);
     }
     int id = (int) sqlite3_last_insert_rowid(db);
@@ -923,18 +947,18 @@ int add_empty_sim(const char* path_sim_db) {
     return id;
 }
 
-void delete_sim(const char* path_sim_db, int id) {
-    char path_sim_db_long[PATH_MAX + 1];
-    strcpy(path_sim_db_long, path_sim_db);
-    int len_path_sim_db = strlen(path_sim_db_long);
-    if (len_path_sim_db > 0 && path_sim_db_long[len_path_sim_db - 1] == '/') {
-        path_sim_db_long[len_path_sim_db - 1] = '\0';
+void delete_sim(const char* path_proj_root, int id) {
+    char path_database[PATH_MAX + 1];
+    strcpy(path_database, path_proj_root);
+    int len_path_database = strlen(path_database);
+    if (len_path_database > 0 && path_database[len_path_database - 1] == '/') {
+        path_database[len_path_database - 1] = '\0';
     }
-    strcat(path_sim_db_long, "/sim.db");
+    strcat(path_database, "/.sim_db/sim.db");
     sqlite3* db;
-    int rc = sqlite3_open(path_sim_db_long, &db);
+    int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_sim_db_long,
+        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
                 sqlite3_errmsg(db));
         exit(1);
     }

@@ -8,7 +8,7 @@ name (string): extensive_python_example
 # the simulation.
 description (string): Extensive Python example to demonstrate most features in sim_db.
 
-run_command (string): python sim_db/example/extensive_example.py
+run_command (string): python root/example/extensive_example.py
 
 # A parameter is added for each of the avaiable types.
 param1_extensive (int): 3
@@ -21,7 +21,7 @@ param7_extensive (string array): ["a", "b", "c"]
 param8_extensive (bool array): [True, False, True]
 
 # Include parameters from another parameter file.
-include_parameter_file: sim_db/example/extra_params_example.txt
+include_parameter_file: root/example/extra_params_example.txt
 
 # Change a parameter value from the included parameter file to demonstrate that
 # it is the last parameter value that count for a given parameter name. 

@@ -3,10 +3,10 @@
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import src.commands.helpers as helpers
-import src.commands.update_sim as update_sim
-import src.commands.add_sim as add_sim
-import src.commands.add_column as add_column
+import src.command_line_tool.commands.helpers as helpers
+import src.command_line_tool.commands.update_sim as update_sim
+import src.command_line_tool.commands.add_sim as add_sim
+import src.command_line_tool.commands.add_column as add_column
 import sqlite3
 import argparse
 import subprocess
@@ -34,7 +34,7 @@ class SimDB:
         :type db_id: int
         """
         self.store_metadata = store_metadata
-        self.id, self.sim_db_dir = self.__read_from_command_line_arguments(
+        self.id, self.path_proj_root = self.__read_from_command_line_arguments(
                 db_id)
         self.start_time = time.time()
 
@@ -43,9 +43,9 @@ class SimDB:
             self.write('time_started', self.get_date_and_time_as_string())
 
         if self.store_metadata and self.__is_a_git_project():
-            sim_db_dir = self.sim_db_dir.replace(' ', '\ ')
+            path_proj_root = self.path_proj_root.replace(' ', '\ ')
             proc = subprocess.Popen(
-                    ["cd {0}/..; git rev-parse HEAD".format(sim_db_dir)],
+                    ["cd {0}; git rev-parse HEAD".format(path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -54,8 +54,8 @@ class SimDB:
 
             proc = subprocess.Popen(
                     [
-                            "cd {0}/..; git log -n 1 --format=%B HEAD".format(
-                                    sim_db_dir)
+                            "cd {0}; git log -n 1 --format=%B HEAD".format(
+                                    path_proj_root)
                     ],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
@@ -64,7 +64,7 @@ class SimDB:
             self.write(column="commit_message", value=out.decode('UTF-8'))
 
             proc = subprocess.Popen(
-                    ["cd {0}/..; git diff HEAD --stat".format(sim_db_dir)],
+                    ["cd {0}; git diff HEAD --stat".format(path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -72,7 +72,7 @@ class SimDB:
             self.write(column="git_diff_stat", value=out.decode('UTF-8'))
 
             proc = subprocess.Popen(
-                    ["cd {0}/..; git diff HEAD".format(sim_db_dir)],
+                    ["cd {0}; git diff HEAD".format(path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -178,9 +178,13 @@ class SimDB:
         """Return 'ID' of the connected simulation."""
         return self.id
 
-    def get_path(self):
-        """Return the path to the 'sim_db' directory."""
-        return self.sim_db_dir
+    def get_path_proj_root(self):
+        """Return the path to the root directory of the project.
+
+        The project's root directory is assumed to be where the '.sim_db/'
+        directory is located.
+        """
+        return self.path_proj_root
 
     def make_unique_subdir(self, path_directory):
         """Make a unique subdirectory in 'name_result_directory'.
@@ -189,24 +193,21 @@ class SimDB:
         store results in.
 
         :param path_directory: Path to directory of which to make a 
-        subdirectory. If 'path_directory' starts with 'sim_db/' or 'root/', 
-        that part will be replaced by the full path of 'sim_db/' and 
-        'sim_db/../' (assumed project root directory) respectfully.
+        subdirectory. If 'path_directory' starts with 'root/', that part will 
+        be replaced by the full path of the root directory of the project.
         :type path_directory: str
         :returns: Full path to new subdirectory.
         :rtype: str
         """
-        if (len(path_directory) >= 7 and path_directory[0:7] == 'sim_db/'):
-            subdir = self.sim_db_dir + '/' + path_directory[7:]
-        elif (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
-            subdir = self.sim_db_dir + '/../' + path_directory[5:]
+        if (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
+            subdir = self.path_proj_root + '/' + path_directory[5:]
         else:
             subdir = path_directory
         if len(subdir) > 0 and subdir[-1] != '/':
             subdir += '/'
         subdir += self.get_date_and_time_as_string()
         subdir += '_' + self.read('name') + '_' + str(self.id)
-        subdir = os.path.realpath(subdir)
+        subdir = os.path.abspath(os.path.realpath(subdir))
         if os.path.exists(subdir):
             subdir += "__no2"
         while (os.path.exists(subdir)):
@@ -244,23 +245,27 @@ class SimDB:
             self.write('status', 'finished')
 
     def __read_from_command_line_arguments(self, db_id):
-        path_sim_db = None
+        path_proj_root = None
         if db_id == None:
             parser = argparse.ArgumentParser()
             # yapf: disable
             parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
-            parser.add_argument('--path_sim_db', '-p', type=str, default=None, help="Path to sim_db directory.")
+            parser.add_argument('--path_proj_root', '-p', type=str, default=None, help="Path to the root directory of the project.")
             # yapf: enable
             args, unknowns = parser.parse_known_args()
             db_id = args.id
-            path_sim_db = args.path_sim_db
-        if (path_sim_db == None):
-            path_sim_db = helpers.get_sim_db_dir_path()
+            if args.path_proj_root != None:
+                path_proj_root = os.path.abspath(args.path_proj_root)
+        if (path_proj_root == None):
+            path_proj_root = os.path.dirname(helpers.get_dot_sim_db_dir_path())
+        else:
+            if path_proj_root[-1] == '/':
+                path_proj_root = path_proj_root[:-1]
         if (db_id == None):
             ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
                     + "If not passed as function parameters, then '--id ID' " \
                     + "must be passed to program as command line arguments.")
-        return (db_id, path_sim_db)
+        return (db_id, path_proj_root)
 
     def __check_type(self, db_cursor, check_type_is, column, value=None):
         column_names, column_types = helpers.get_db_column_names_and_types(
@@ -389,7 +394,7 @@ class SimDB:
                 return value_string
 
     def __is_a_git_project(self):
-        directory = self.sim_db_dir
+        directory = self.path_proj_root
         if directory[-1] == '/':
             directory = directory[:-1]
         while '/' in directory:

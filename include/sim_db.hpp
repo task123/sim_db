@@ -28,12 +28,13 @@ public:
 
     /// Connect to the **sim_db** database.
     //
-    /// @param path_sim_db Path to the *sim_db/* directory.
+    /// @param path_proj_root Path to the root directory of the project, where
+    /// *.sim_db/* is located.
     /// @param id ID number of the simulation paramters in the **sim_db**
     /// database.
     /// @param store_metadata Whether or not to store metadata automatically to
     /// the database. (Recommended)
-    Connection(std::string path_sim_db, int id, bool store_metadata = true);
+    Connection(std::string path_proj_root, int id, bool store_metadata = true);
 
     /// Read parameter from database.
     //
@@ -54,9 +55,8 @@ public:
     /// This new subdirectory is intended for storing results from the
     /// simulation.
     /// @param path_directory Path to where the new directory is created. If it
-    /// starts with 'sim_db/' or 'root/', that part will be replaced with the
-    /// full path to 'sim_db/' or 'sim_db/..' (assumed project root directory)
-    /// respectfully.
+    /// starts with 'root/', that part will be replaced with the full path to
+    /// the root directory of the project.
     /// @return Path to new subdirectory.
     std::string make_unique_subdir(std::string path_directory);
 
@@ -68,8 +68,9 @@ public:
     /// Return ID number of simulation in the database that is connected.
     int get_id();
 
-    /// Return path to the *sim_db* directory.
-    std::string get_path();
+    /// Return path to root directory of the project, where *.sim_db/* is
+    /// located.
+    std::string get_path_proj_root();
 
     ~Connection();
 
@@ -79,15 +80,17 @@ private:
 
 /// Add empty simulation to database and return its 'ID'.
 //
-/// @param path_sim_db Path to the *sim_db/* directory.
+/// @param path_proj_root Path to the root directory of the project, where
+/// *.sim_db/* is located.
 /// @return Integer ID of the added simulation.
-int add_empty_sim(std::string path_sim_db);
+int add_empty_sim(std::string path_proj_root);
 
 /// Delete simulation from database with ID number \p id.
 //
-/// @param path_sim_db Path to the *sim_db/* directory.
+/// @param path_proj_root Path to the root directory of the project, where
+/// *.sim_db/* is located.
 /// @param id ID number of the simulation paramters in the **sim_db** database.
-void delete_sim(std::string path_sim_db, int id);
+void delete_sim(std::string path_proj_root, int id);
 
 template <typename T>
 class TemplateSpecializationHelper {};

@@ -11,12 +11,12 @@
 
 typedef struct SimDB SimDB;
 
-/// Initialize SimDB with command line argument --id ID.
+/// Initialize SimDB with command line arguments --id ID --path_proj_root PATH.
 //
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
 SimDB* sim_db_ctor(int argc, char** argv);
 
-/// Initialize SimDB with command line argument --id ID.
+/// Initialize SimDB with command line arguments --id ID --path_proj_root PATH.
 //
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
 SimDB* sim_db_ctor_no_metadata(int argc, char** argv);
@@ -25,11 +25,12 @@ SimDB* sim_db_ctor_no_metadata(int argc, char** argv);
 //
 /// Metadata is also added to database. (sha1 is only added if in a git
 /// project.) {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
-/// @param path_sim_db Path to *sim_db/* directory.
+/// @param path_proj_root Path to root directory of the project, where
+/// *.sim_db/* is located.
 /// @param id ID number of the simulation paramters in the **sim_db** database.
 /// @param store_metadata Whether or not to store metadata automatically to the
 /// database. (Recommended)
-SimDB* sim_db_ctor_with_id(const char* path_sim_db, int id,
+SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
                            bool store_metadata);
 
 /// Read parameter from the database.
@@ -199,9 +200,8 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
 /// @param path_to_result_dir Path to where the new directory is created. If it
-/// starts with 'sim_db/' or 'root/', that part will be replaced with the full
-/// path to 'sim_db/' or 'sim_db/..' (assumed project root directory)
-/// respectfully.
+/// starts with 'root/', that part will be replaced with the full
+/// path to the root directory of the project.
 /// @return Path to new subdirectory.
 char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_result_dir);
 
@@ -231,11 +231,11 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
 /// sim_db_ctor_with_id()}.
 int sim_db_get_id(SimDB* self);
 
-/// Return path to the *sim_db* directory.
+/// Return path to root directory of the project, where *.sim_db/* is located.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
-char* sim_db_get_path(SimDB* self);
+char* sim_db_get_path_proj_root(SimDB* self);
 
 /// Clean up SimDB.
 //
@@ -247,15 +247,17 @@ void sim_db_dtor(SimDB* self);
 
 /// Add empty simulation to database and return its 'ID'.
 //
-/// @param path_sim_db Path to *sim_db/* directory.
+/// @param path_proj_root Path to root directory of the project, where
+/// *.sim_db/* is located.
 /// @return Integer ID of the added simulation.
-int add_empty_sim(const char* path_sim_db);
+int add_empty_sim(const char* path_proj_root);
 
 /// Delete simulation from database with ID number \p id.
 //
-/// @param path_sim_db Path to *sim_db/* directory.
+/// @param path_proj_root Path to root directory of the project, where
+/// *.sim_db/* is located.
 /// @param id ID number of the simulation paramters in the **sim_db**
 /// database.
-void delete_sim(const char* path_sim_db, int id);
+void delete_sim(const char* path_proj_root, int id);
 
 #endif

@@ -9,14 +9,14 @@ CXXFLAGS = $(CXXFLAGS_RELEASE)
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all commands libsimdb libsimdbcpp clean clean_except_third_party
+.PHONY: all command_line_tool libsimdb libsimdbcpp clean clean_except_third_party
 
 all:
-	$(MAKE) commands
+	$(MAKE) command_line_tool
 	$(MAKE) libs
 
-commands:
-	python src/generate_commands.py
+command_line_tool:
+	python src/make_command_line_tool.py
 
 libs:
 	$(MAKE) libsimdbc

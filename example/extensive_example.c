@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     char* name_subdir =
-            sim_db_make_unique_subdir(sim_db, "sim_db/example/results");
+            sim_db_make_unique_subdir(sim_db, "root/example/results");
 
     // Write some results to a file in the newly create subdirectory.
     FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
@@ -62,21 +62,22 @@ int main(int argc, char** argv) {
     }
     fclose(result_file);
 
-    // Get the path to sim_db and the 'ID' of the connected simulation.
-    char* path_sim_db = sim_db_get_path(sim_db);
+    // Get the 'ID' of the connected simulation and the path to the project's
+    // root directoy.
     int id = sim_db_get_id(sim_db);
+    char* path_proj_root = sim_db_get_path_proj_root(sim_db);
 
     // Write final metadata to database and free memory allocated by sim_db.
     sim_db_dtor(sim_db);
 
     // Add an empty simulation to the database.
-    id = add_empty_sim(path_sim_db);
+    id = add_empty_sim(path_proj_root);
 
     // Open this empty simulation and write to it.
-    SimDB* sim_db_2 = sim_db_ctor_with_id(path_sim_db, id, false);
+    SimDB* sim_db_2 = sim_db_ctor_with_id(path_proj_root, id, false);
     sim_db_write_int(sim_db_2, "param1_extensive", 7);
     sim_db_dtor(sim_db_2);
 
     // Delete this simulation.
-    delete_sim(path_sim_db, id);
+    delete_sim(path_proj_root, id);
 }

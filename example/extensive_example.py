@@ -44,12 +44,12 @@ sim_database.write("example_result_8", param8, type_of_value="bool array")
 
 # Make unique subdirectory for storing results and write its name to database.
 results = np.array(param6)
-name_results_dir = sim_database.make_unique_subdir("sim_db/example/results")
+name_results_dir = sim_database.make_unique_subdir("root/example/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
-# Get the path to sim_db and the 'ID' of the connected simulation.
+# Get the 'ID' of the connected simulation and the path to the root directory.
 db_id = sim_database.get_id()
-path_sim_db = sim_database.get_path()
+path_proj_root = sim_database.get_path_proj_root()
 
 # Write final metadata to database.
 sim_database.end()
