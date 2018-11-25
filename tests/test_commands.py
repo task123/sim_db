@@ -19,6 +19,21 @@ def setup_module(module):
     for entry in os.listdir(tests.helpers.get_test_dir() + '/results'):
         if os.path.isdir(tests.helpers.get_test_dir() + '/results/' + entry):
             shutil.rmtree(tests.helpers.get_test_dir() + '/results/' + entry)
+    if os.path.isdir(tests.helpers.get_test_dir() + '/.sim_db'):
+        shutil.rmtree(tests.helpers.get_test_dir() + '/.sim_db')
+
+
+def test_init(capsys):
+    command_line_tool([
+            "init",
+            "--path", "{0}".format(tests.helpers.get_test_dir())
+    ])
+    with capsys.disabled():
+        print("\nTest init...")
+
+    assert os.path.isdir(tests.helpers.get_test_dir() + '/.sim_db')
+    assert os.path.isfile(tests.helpers.get_test_dir() + '/.sim_db/settings.txt')
+    shutil.rmtree(tests.helpers.get_test_dir() + '/.sim_db')
 
 
 def test_add_sim_print_sim_and_delete_sim(capsys):
@@ -555,6 +570,57 @@ def test_duplicate_and_run(capsys):
     tests.helpers.assert_output_python_program(output_program, new_id)
     tests.helpers.assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
                                             True)
+
+def test_settings(capsys):
+    command_line_tool([
+            "init", 
+            "--path", "{0}".format(tests.helpers.get_test_dir())
+    ])
+    output_program, err = capsys.readouterr()
+    cwd = os.getcwd()
+    os.chdir(tests.helpers.get_test_dir())
+    command_line_tool([
+            "settings",
+            "print", 
+            "--setting", "parameter_files"
+    ]) 
+    output_setting_print_original, err = capsys.readouterr()
+    command_line_tool([
+            "settings",
+            "add", 
+            "--setting", "parameter_files",
+            "--line", "test_settings.txt"
+    ]) 
+    command_line_tool([
+            "settings",
+            "print", 
+            "--setting", "parameter_files"
+    ])
+    output_setting_print_after_add, err = capsys.readouterr()
+    command_line_tool([
+            "settings",
+            "remove", 
+            "--setting", "parameter_files",
+            "--line", "test_settings.txt"
+    ]) 
+    command_line_tool([
+            "settings",
+            "print", 
+            "--setting", "parameter_files"
+    ])
+    output_setting_print_after_remove, err = capsys.readouterr()
+
+    with capsys.disabled():
+        print("\nTest settings...")
+        print(output_setting_print_after_remove.strip())
+
+    os.chdir(cwd)
+    shutil.rmtree(tests.helpers.get_test_dir() + '/.sim_db')
+
+    assert output_setting_print_original.strip() == 'sim_params.txt'
+    assert output_setting_print_after_add.split('\n')[0].strip() == 'test_settings.txt'
+    assert output_setting_print_after_add.split('\n')[1].strip() == 'sim_params.txt'
+    assert output_setting_print_after_remove.strip() == 'sim_params.txt'
     
 
 def test_delete_results_dir(capsys):

@@ -123,16 +123,17 @@ class Settings:
             path_settings = get_dot_sim_db_dir_path() + '/settings.txt'
         settings_file = open(path_settings, 'r')
         settings_content = ''
-        is_found = False
+        is_header_found = False
         is_comment = False
         is_removed = False
         for line in settings_file.readlines():
             line = line.strip()
-            if (is_found and len(line) >= 1 and line[:2] == '##'):
-                is_found = False
+            if (is_header_found and len(line) >= 1 and line[:2] == '##'):
+                is_header_found = False
             if (len(line) > 0 and line[0] == '('):
                 is_comment = True
-            if (is_found and not is_removed and not is_comment):
+            if (is_header_found and not is_removed and not is_comment 
+                    and line.strip() == setting):
                 is_removed = True
             else:
                 settings_content += line + "\n"
@@ -140,11 +141,13 @@ class Settings:
                 is_comment = False
             if (len(line) >= len(setting_header)
                         and line[:len(setting_header)] == setting_header):
-                is_found = True
+                is_header_found = True
         settings_file.close()
         settings_file = open(path_settings, 'w')
         settings_file.writelines(settings_content)
         settings_file.close()
+
+        return is_removed
 
 
 def get_dot_sim_db_dir_path():

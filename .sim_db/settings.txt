@@ -3,7 +3,6 @@
 
 ## Parameter filenames
 (If no parameter file is passed to 'add_sim', the first match here is used.)
-
 sim_params.txt
 
 ## Personalized print configurations
@@ -12,13 +11,13 @@ sim_params.txt
 
 default: --columns_no_print time_submitted time_started used_walltime job_id cpu_info git_hash commit_message git_diff_stat git_diff sha1_executables
 name: --columns id name
-description: --columns id name description 
+description: --columns id name description
 status: --columns id name status job_id
 time: --columns id name status time_submitted time_started used_walltime job_id
 git: --columns id name git_hash commit_message git_diff_stat sha1_executables
 cpu: -v --columns id name used_walltime cpu_info
 
-## Prefix for 'run_command' for multithreaded/core simulations 
+## Prefix for 'run_command' for multithreaded/core simulations
 (Added to the start of 'run_command' when run or submitted with >1 tasks.)
 (' # ' is replaced with ' N ', where 'N' is the number of tasks.)
 
@@ -36,7 +35,7 @@ SLURM
 (Probably have to be slightly lower than the actual memory on a node.)
 64
 
-### Account 
+### Account
 (user account batch system)
 
 ### Email for notifications

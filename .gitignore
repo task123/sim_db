@@ -1,7 +1,5 @@
 # .sim_db directory
 .sim_db/sim.db
-!.sim_db/.keep
-.sim_db/settings.txt
 
 # Command Line Tool
 command_line_tool/sim_db
