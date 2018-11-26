@@ -20,10 +20,11 @@ import sys
 from collections import OrderedDict
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="combine_dbs"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="combine_dbs"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Combine two databases into a new one.', 
+        description='Combine two databases into a new one.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('path_db_1', type=str, help="<Required> Path to 'sim_db' database 1.")
     parser.add_argument('path_db_2', type=str, help="<Required> Path to 'sim_db' database 2.")
@@ -33,8 +34,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def combine_dbs(name_command_line_tool="sim_db", name_command="combine_dbs", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def combine_dbs(name_command_line_tool="sim_db",
+                name_command="combine_dbs",
+                argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     db_1 = helpers.connect_sim_db(args.path_db_1)
     db_1_cursor = db_1.cursor()

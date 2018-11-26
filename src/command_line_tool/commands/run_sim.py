@@ -17,10 +17,11 @@ import subprocess
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="run_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="run_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Run simulation with ID in database.', 
+        description='Run simulation with ID in database.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, default=None, help="'ID' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
@@ -29,9 +30,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def run_sim(name_command_line_tool="sim_db", name_command="run_sim", argv=None):
+def run_sim(name_command_line_tool="sim_db", name_command="run_sim",
+            argv=None):
     """Run simulation with parameters with ID passed or the highest ID."""
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

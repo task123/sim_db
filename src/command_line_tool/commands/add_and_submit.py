@@ -27,11 +27,11 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", 
+def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_and_submit"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add simulation and submit it.', 
+        description='Add simulation and submit it.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('--max_walltime', type=str, default=None, help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
@@ -48,8 +48,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
     return parser
 
 
-def add_and_submit(name_command_line_tool="sim_db", name_command="add_and_submit", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def add_and_submit(name_command_line_tool="sim_db",
+                   name_command="add_and_submit",
+                   argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     if args.filename == None:
         added_id = add_sim.add_sim()

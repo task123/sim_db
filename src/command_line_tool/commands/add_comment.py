@@ -17,10 +17,11 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_comment"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="add_comment"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add comment to simulation in database.', 
+        description='Add comment to simulation in database.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation to add the comment.")
     parser.add_argument('--comment', '-c', type=str, default=None, help="Comment to add.")
@@ -31,8 +32,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def add_comment(name_command_line_tool="sim_db", name_command="add_comment", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def add_comment(name_command_line_tool="sim_db",
+                name_command="add_comment",
+                argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     if (args.comment == None and args.filename == None):
         print("ERROR: Either '--comment'/'-c' or '--filename'/'-f' need to be provided."
               )

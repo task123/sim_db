@@ -20,10 +20,11 @@ import subprocess
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="run_serial_sims"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="run_serial_sims"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Run multiple simulations in series. If no ID's or conditions are given all the new simulations are run.", 
+        description="Run multiple simulations in series. If no ID's or conditions are given all the new simulations are run.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="'IDs' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('--where', '-w', type=str, nargs='+', default=[], help="Conditions of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
@@ -32,9 +33,12 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def run_serial_sims(name_command_line_tool="sim_db", name_command="run_serial_sims", argv=None):
+def run_serial_sims(name_command_line_tool="sim_db",
+                    name_command="run_serial_sims",
+                    argv=None):
     """Run multiple simulations in series."""
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

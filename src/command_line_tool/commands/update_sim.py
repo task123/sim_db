@@ -20,10 +20,11 @@ import sys
 import os.path
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="update_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="update_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Update content in sim.db.', 
+        description='Update content in sim.db.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
     parser.add_argument('--where', '-w', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
@@ -35,8 +36,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def update_sim(name_command_line_tool="sim_db", name_command="update_sim", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def update_sim(name_command_line_tool="sim_db",
+               name_command="update_sim",
+               argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     if args.id == None and args.where == "id > -1":
         print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be " \
               + "passed to the program.")

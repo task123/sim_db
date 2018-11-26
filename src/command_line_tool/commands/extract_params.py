@@ -23,10 +23,11 @@ no_extract_columns = {
 }
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="extract_params"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="extract_params"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Extract parameter file from sim.db.', 
+        description='Extract parameter file from sim.db.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
@@ -55,8 +56,11 @@ def get_param_type_as_string(col_type, value):
         raise ValueError()
 
 
-def extract_params(name_command_line_tool="sim_db", name_command="extract_params", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def extract_params(name_command_line_tool="sim_db",
+                   name_command="extract_params",
+                   argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     is_printing_parameters = True
     if args.default_file:

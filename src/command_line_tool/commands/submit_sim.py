@@ -21,10 +21,11 @@ import os
 import math
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="submit_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="submit_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Submit job', 
+        description='Submit job',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, default=None, nargs='+', help="ID of simulations to submit.")
     parser.add_argument('--max_walltime', type=str, default=None, nargs='+', help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
@@ -185,8 +186,11 @@ def make_job_script(db_cursor, i, args, id_submit):
     return job_script_name
 
 
-def submit_sim(name_command_line_tool="sim_db", name_command="submit_sim", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def submit_sim(name_command_line_tool="sim_db",
+               name_command="submit_sim",
+               argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     ids = args.id
 
     db = helpers.connect_sim_db()
@@ -202,8 +206,9 @@ def submit_sim(name_command_line_tool="sim_db", name_command="submit_sim", argv=
         answer = None
         while (not args.no_confirmation and answer != 'y' and answer != 'Y'
                and answer != 'yes' and answer != 'Yes'):
-            answer = helpers.user_input("Would you like to submit simulations "
-                "with the following ID's: {0}? (y/n) ".format(ids))
+            answer = helpers.user_input(
+                    "Would you like to submit simulations "
+                    "with the following ID's: {0}? (y/n) ".format(ids))
             if (answer == 'n' or answer == 'N' or answer == 'no'
                         or answer == 'No'):
                 db.commit()

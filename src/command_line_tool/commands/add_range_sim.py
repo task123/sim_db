@@ -32,10 +32,11 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_range_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="add_range_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add a range of simulations to the database.', 
+        description='Add a range of simulations to the database.',
         prog="{0} {1} ".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added as the first in the range.")
     parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, default=[], help="<Required> Names of the column for which the range varies. The cartisian products of the varing columns are added to the database. The column type MUST be a integer or a float.")
@@ -48,8 +49,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def add_range_sim(name_command_line_tool="sim_db", name_command="add_range_sim", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def add_range_sim(name_command_line_tool="sim_db",
+                  name_command="add_range_sim",
+                  argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     # Check command line arguments
     n_cols = len(args.columns)
@@ -126,7 +130,8 @@ def add_range_sim(name_command_line_tool="sim_db", name_command="add_range_sim",
         if args.filename == None:
             ids_added.append(add_sim.add_sim())
         else:
-            ids_added.append(add_sim.add_sim(argv=['--filename', args.filename]))
+            ids_added.append(
+                    add_sim.add_sim(argv=['--filename', args.filename]))
         update_params = ['--id', str(ids_added[-1]), '--columns']
         update_params.extend(args.columns)
         update_params.append('--values')

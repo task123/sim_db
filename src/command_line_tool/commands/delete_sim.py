@@ -21,10 +21,11 @@ import sys
 import os.path
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="delete_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="delete_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Delete simulations from sim.db.', 
+        description='Delete simulations from sim.db.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of runs to delete.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which entries should be deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
@@ -34,11 +35,14 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def delete_sim(name_command_line_tool="sim_db", name_command="delete_sim", argv=None):
+def delete_sim(name_command_line_tool="sim_db",
+               name_command="delete_sim",
+               argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     answer = 'n'
     if len(args.id) == 0 and args.where == None:
@@ -64,7 +68,8 @@ def delete_sim(name_command_line_tool="sim_db", name_command="delete_sim", argv=
                 delete_results_dir_params = ['--id']
             for delete_id in args.id:
                 delete_results_dir_params.append(str(delete_id))
-            delete_results_dir.delete_results_dir(argv=delete_results_dir_params)
+            delete_results_dir.delete_results_dir(
+                    argv=delete_results_dir_params)
         for delete_id in args.id:
             db_cursor.execute(
                     "DELETE FROM runs WHERE id = {0}".format(delete_id))

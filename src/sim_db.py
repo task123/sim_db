@@ -170,8 +170,10 @@ class SimDB:
                     argv=["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
-        update_sim.update_sim(argv=["--id", str(db_id), "--columns", column,
-                    "--value", value_string])
+        update_sim.update_sim(argv=[
+                "--id",
+                str(db_id), "--columns", column, "--value", value_string
+        ])
 
     def get_id(self):
         """Return 'ID' of the connected simulation."""
@@ -407,6 +409,7 @@ class SimDB:
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""
         return time.strftime("%Y-%b-%d_%H-%M-%S")
 
+
 def add_empty_sim():
     """Add an empty entry into the database and return its 'ID'."""
     db = helpers.connect_sim_db()
@@ -426,8 +429,9 @@ def add_empty_sim():
 
     return db_id
 
+
 def delete_sim(db_id):
-    """Delete simulation from database with 'ID' db_id.""" 
+    """Delete simulation from database with 'ID' db_id."""
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
     db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(db_id))

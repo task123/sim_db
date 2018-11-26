@@ -16,10 +16,11 @@ import sys
 import os
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="print_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="print_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.', 
+        description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', help="List of ID's.")
     parser.add_argument('--id_no_print', type=int, nargs='+', help="List of ID's not to print.")
@@ -88,8 +89,9 @@ def select_command(db_cursor, args, column_names):
         for i in args.id:
             restrictions = args.where + " AND id = {0}".format(i)
             try:
-                db_cursor.execute("SELECT {0} FROM runs WHERE {1} ORDER BY {2};"
-                                  .format(columns, restrictions, args.sort_by))
+                db_cursor.execute(
+                        "SELECT {0} FROM runs WHERE {1} ORDER BY {2};".format(
+                                columns, restrictions, args.sort_by))
             except sqlite3.OperationalError as e:
                 if str(e) == "no such table: runs":
                     print("There do NOT exists a database yet.\n"
@@ -99,11 +101,11 @@ def select_command(db_cursor, args, column_names):
                     raise e
             output = db_cursor.fetchall()
             if len(output) == 0:
-                if (len(restrictions) > 12 
-                        and restrictions[0:12] == 'id > -1 AND '):
+                if (len(restrictions) > 12
+                            and restrictions[0:12] == 'id > -1 AND '):
                     restrictions = restrictions[12:]
                 print("There exists no entries in the database with: {0}"
-                        .format(restrictions))
+                      .format(restrictions))
                 exit(1)
             selected_output.append(output[0])
 
@@ -289,11 +291,16 @@ def replace_element_in_list(the_list, element, replacement):
     return the_list
 
 
-def print_sim(name_command_line_tool="sim_db", name_command="print_sim", argv=None):
+def print_sim(name_command_line_tool="sim_db",
+              name_command="print_sim",
+              argv=None):
     if argv == None:
-        args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(['-p', 'default'])
+        args = command_line_arguments_parser(name_command_line_tool,
+                                             name_command).parse_args(
+                                                     ['-p', 'default'])
     else:
-        args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+        args = command_line_arguments_parser(name_command_line_tool,
+                                             name_command).parse_args(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)

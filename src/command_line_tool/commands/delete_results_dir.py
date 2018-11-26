@@ -22,10 +22,11 @@ import errno
 import shutil
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="delete_results_dir"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="delete_results_dir"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Delete results in 'results_dir' of specified simulations.", 
+        description="Delete results in 'results_dir' of specified simulations.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of simulation which 'results_dir' to deleted.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which simulation's 'results_dir' to deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
@@ -36,11 +37,14 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
     return parser
 
 
-def delete_results_dir(name_command_line_tool="sim_db", name_command="delete_results_dir", argv=None):
+def delete_results_dir(name_command_line_tool="sim_db",
+                       name_command="delete_results_dir",
+                       argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     if (len(args.id) == 0 and args.where == None
                 and args.not_in_db_but_in_dir == None):
         print("No 'results_dir' was deleted. --id 'ID' or --where 'CONDITION' "
@@ -109,7 +113,7 @@ def delete_results_dir(name_command_line_tool="sim_db", name_command="delete_res
                 except Exception as e:
                     if e.errno == errno.ENOENT:
                         print("Results directory NOT found: {0}"
-                                .format(results_dir))
+                              .format(results_dir))
                     else:
                         raise e
         else:

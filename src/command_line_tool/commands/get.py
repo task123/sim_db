@@ -13,7 +13,8 @@ import sys
 import os
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="get"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="get"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Get value from 'column' of simulation specified or last entry if not specified.",
@@ -27,14 +28,15 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
 
 
 def get(name_command_line_tool="sim_db", name_command="get", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
     if args.id != None:
-        db_cursor.execute("SELECT {0} FROM runs WHERE id={1}"
-                .format(args.column, args.id))
+        db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
+                args.column, args.id))
         value = db_cursor.fetchone()[0]
     else:
         db_cursor.execute("SELECT {0} FROM runs".format(args.column))

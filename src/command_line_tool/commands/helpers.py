@@ -132,8 +132,8 @@ class Settings:
                 is_header_found = False
             if (len(line) > 0 and line[0] == '('):
                 is_comment = True
-            if (is_header_found and not is_removed and not is_comment 
-                    and line.strip() == setting):
+            if (is_header_found and not is_removed and not is_comment
+                        and line.strip() == setting):
                 is_removed = True
             else:
                 settings_content += line + "\n"
@@ -199,10 +199,10 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
             prefix_run_command += prefix + ' '
         run_command = prefix_run_command + run_command
 
-    proj_root_dir = os.path.abspath(os.path.join(get_dot_sim_db_dir_path(), 
-                                                 os.pardir))
-    run_command = run_command.replace(' root/', 
-                                ' ' + proj_root_dir.replace(' ', '\ ') + '/')
+    proj_root_dir = os.path.abspath(
+            os.path.join(get_dot_sim_db_dir_path(), os.pardir))
+    run_command = run_command.replace(
+            ' root/', ' ' + proj_root_dir.replace(' ', '\ ') + '/')
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_proj_root "{0}"'.format(proj_root_dir)

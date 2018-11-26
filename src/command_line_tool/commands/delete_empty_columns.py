@@ -16,18 +16,22 @@ import sys
 from collections import OrderedDict
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="delete_empty_columns"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="delete_empty_columns"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Delete all empty columns in the sim.db, except the default ones.', 
+        description='Delete all empty columns in the sim.db, except the default ones.',
         prog="{0} {1}".format(name_command_line_tool, name_command))
     # yapf: enable
 
     return parser
 
 
-def delete_empty_columns(name_command_line_tool="sim_db", name_command="delete_empty_columns", argv=None):
-    command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def delete_empty_columns(name_command_line_tool="sim_db",
+                         name_command="delete_empty_columns",
+                         argv=None):
+    command_line_arguments_parser(name_command_line_tool,
+                                  name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()

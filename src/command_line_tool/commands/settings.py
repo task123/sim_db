@@ -16,10 +16,11 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="settings"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="settings"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Print and change settings. The settings can also be changed be editing the '.sim_db/settings.txt' file.", 
+        description="Print and change settings. The settings can also be changed be editing the '.sim_db/settings.txt' file.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('command', type=str, help="'print', 'add' or 'remove'")
     # yapf: enable
@@ -50,7 +51,8 @@ def parser_for_add(name_command_line_tool="sim_db", name_command="settings"):
     return parser
 
 
-def parser_for_remove(name_command_line_tool="sim_db", name_command="settings"):
+def parser_for_remove(name_command_line_tool="sim_db",
+                      name_command="settings"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Remove a line from the settings.",
@@ -62,13 +64,18 @@ def parser_for_remove(name_command_line_tool="sim_db", name_command="settings"):
     return parser
 
 
-def settings(name_command_line_tool="sim_db", name_command="settings", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv[0:1])
+def settings(name_command_line_tool="sim_db",
+             name_command="settings",
+             argv=None):
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv[0:1])
     command = args.command
     if command == 'print':
-        args = parser_for_print(name_command_line_tool, name_command).parse_args(argv[1:])
+        args = parser_for_print(name_command_line_tool,
+                                name_command).parse_args(argv[1:])
         if args.setting == None:
-            settings_file = open(helpers.get_dot_sim_db_dir_path() + '/settings.txt', 'r')
+            settings_file = open(
+                    helpers.get_dot_sim_db_dir_path() + '/settings.txt', 'r')
             for line in settings_file.readlines():
                 print(line)
             settings_file.close()
@@ -83,7 +90,8 @@ def settings(name_command_line_tool="sim_db", name_command="settings", argv=None
             for line in settings.read(args.setting):
                 print(line)
     elif command == 'add':
-        args = parser_for_add(name_command_line_tool, name_command).parse_args(argv[1:])
+        args = parser_for_add(name_command_line_tool,
+                              name_command).parse_args(argv[1:])
         settings = helpers.Settings()
         if args.setting not in settings.settings_dict:
             print("{0} is NOT a valid setting.".format(args.setting))
@@ -93,7 +101,8 @@ def settings(name_command_line_tool="sim_db", name_command="settings", argv=None
             exit(1)
         settings.add(args.setting, args.line)
     elif command == 'remove':
-        args = parser_for_remove(name_command_line_tool, name_command).parse_args(argv[1:])
+        args = parser_for_remove(name_command_line_tool,
+                                 name_command).parse_args(argv[1:])
         settings = helpers.Settings()
         if args.setting not in settings.settings_dict:
             print("{0} is NOT a valid setting.".format(args.setting))
@@ -104,8 +113,8 @@ def settings(name_command_line_tool="sim_db", name_command="settings", argv=None
         is_removed = settings.remove(args.setting, args.line)
         if not is_removed:
             print("'{0}' was NOT found under the '{1}' settings.\nIt was "
-                  "therefor NOT removed from the settings."
-                  .format(args.line, args.setting))
+                  "therefor NOT removed from the settings.".format(
+                          args.line, args.setting))
     else:
         print("'{0}' is not a valid command. 'print', 'add' and 'remove' are "
               "the valid commands.".format(command))

@@ -18,17 +18,19 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="list_print_configs"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="list_print_configs"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Print a list of all the personalized print configurations.", 
+        description="Print a list of all the personalized print configurations.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     # yapf: enable
 
     return parser
 
 
-def list_print_configs(name_command_line_tool="sim_db", name_command="list_print_configs"):
+def list_print_configs(name_command_line_tool="sim_db",
+                       name_command="list_print_configs"):
     command_line_arguments_parser(name_command_line_tool, name_command)
     settings = helpers.Settings()
     print_configs = settings.read('print_config')

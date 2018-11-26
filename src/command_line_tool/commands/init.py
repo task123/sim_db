@@ -18,10 +18,11 @@ import sys
 import shutil
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="init"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="init"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Initialise 'sim_db' and must be called before using 'sim_db'. Will create a '.sim_db/' directory.", 
+        description="Initialise 'sim_db' and must be called before using 'sim_db'. Will create a '.sim_db/' directory.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--path', type=str, default=None, help="Path to the top directory of project. If not passed as an argument, the current working directory is assumed to be the top directory.")
     # yapf: enable
@@ -30,16 +31,19 @@ def command_line_arguments_parser(name_command_line_tool="sim_db", name_command=
 
 
 def init(name_command_line_tool="sim_db", name_command="init", argv=None):
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     if args.path == None:
         args.path = os.getcwd()
     elif args.path[-1] == '/':
         args.path = args.path[:-1]
     os.mkdir(args.path + '/.sim_db')
     commands_dir = os.path.dirname(os.path.abspath(__file__))
-    path_default_settings = os.path.abspath(os.path.join(commands_dir, 
-            os.path.join(os.pardir, os.path.join(os.pardir, os.pardir))) 
-            + '/default_settings.txt')
+    path_default_settings = os.path.abspath(
+            os.path.
+            join(commands_dir,
+                 os.path.join(os.pardir, os.path.join(os.pardir, os.pardir))) +
+            '/default_settings.txt')
     shutil.copyfile(path_default_settings, args.path + '/.sim_db/settings.txt')
 
 

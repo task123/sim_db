@@ -12,18 +12,22 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="list_commands"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="list_commands"):
     # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Print a list of all the sim_db commands.", 
+        description="Print a list of all the sim_db commands.",
         prog="{0} {1}".format(name_command_line_tool, name_command))
     # yapf: enable
 
     return parser
 
 
-def list_commands(name_command_line_tool="sim_db", name_command="list_commands", argv=None):
-    command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+def list_commands(name_command_line_tool="sim_db",
+                  name_command="list_commands",
+                  argv=None):
+    command_line_arguments_parser(name_command_line_tool,
+                                  name_command).parse_args(argv)
     commands_dir = os.path.dirname(os.path.abspath(__file__))
     programs = fnmatch.filter(os.listdir(commands_dir), "*.py")
     programs.remove('helpers.py')
@@ -37,7 +41,7 @@ def list_commands(name_command_line_tool="sim_db", name_command="list_commands",
         if (len(script_name) > 4 and script_name[-4:] == '_sim'):
             script_name = script_name[:-4] + ' / ' + script_name
         if (len(script_name) > 5 and script_name[-5:] == '_sims'):
-            script_name = script_name[:-5] + ' / ' + script_name       
+            script_name = script_name[:-5] + ' / ' + script_name
         print(script_name)
 
 

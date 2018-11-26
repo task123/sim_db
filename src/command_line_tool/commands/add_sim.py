@@ -28,7 +28,8 @@ import os
 import subprocess
 
 
-def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_sim"):
+def command_line_arguments_parser(name_command_line_tool="sim_db",
+                                  name_command="add_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add simulation to database.',
@@ -222,12 +223,10 @@ def add_included_parameter_files(sim_params_file_lines):
     i = get_line_number_of_first_included_parameter_file(sim_params_file_lines)
     while i != None:
         filename = sim_params_file_lines[i].split(':', 1)[1].strip()
-        if (len(filename.split('/')) > 1
-                    and filename.split('/')[0] == 'root'):
+        if (len(filename.split('/')) > 1 and filename.split('/')[0] == 'root'):
             proj_root_dir = os.path.abspath(
                     os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir))
-            filename = (proj_root_dir + '/' + filename.split(
-                    '/', 1)[1])
+            filename = (proj_root_dir + '/' + filename.split('/', 1)[1])
         try:
             included_sim_params_file = open(filename, 'r')
         except:
@@ -247,7 +246,8 @@ def add_included_parameter_files(sim_params_file_lines):
 def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
     db = helpers.connect_sim_db()
 
-    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
     sim_params_filename = args.filename
     if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
                 and sim_params_filename.split('/')[0] == 'root'):
@@ -291,8 +291,7 @@ def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
             param_name, param_type, value = split_parameter_line(line, i)
 
             if param_name == 'run_command':
-                value = make_path_relative_to_root(value,
-                                                     sim_params_filename)
+                value = make_path_relative_to_root(value, sim_params_filename)
 
             try:
                 row_index = column_names.index(param_name)
