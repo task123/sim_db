@@ -53,8 +53,8 @@ def add_path_to_bash_file(where_to_add_path):
  
     # Add path
     answer = helpers.user_input("\nWould you like to add "
-        "'sim_db/command_line_tool' to your PATH and 'sim_db_cd_results' function in "
-        "{0}? (y/n)\n(Recommended and needed to run command line tool.)\n"
+        "'sim_db/command_line_tool' to your PATH in {0}? (y/n)\n"
+        "(Recommended and needed to run command line tool.)\n"
         .format(where_to_add_path))
     if answer == 'y' or answer == 'Y' or answer == 'yes' or answer == 'Yes':
         if line_number_last_sim_db_path == -1:
@@ -62,12 +62,6 @@ def add_path_to_bash_file(where_to_add_path):
             bash_file.write("\n# Add sim_db command line tool to PATH\n")
             bash_file.write("export PATH=$PATH:{0}\n"
                 .format(sim_db_dir + "/command_line_tool"))
-            bash_file.write("\n# Add a 'sim_db' command (as 'cd' called from "
-                "a script don't work)\n")
-            bash_file.write("function sim_db_cd_results(){\n")
-            bash_file.write('    cd "$(python {0}'.format(sim_db_dir)
-                + '/src/command_line_tool/commands/cd_results.py $@)"\n') 
-            bash_file.write("}\n")
             bash_file.close()
             print("\nRemember to source the newly added path:")
             print("$ source {0}".format(where_to_add_path))
