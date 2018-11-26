@@ -20,16 +20,11 @@ import sys
 import os.path
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["update_sim.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="update_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Update content in sim.db.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, default=None, help="ID of run to update.")
     parser.add_argument('--where', '-w', type=str, default="id > -1", help="Condition for which entries should be updated. Must be a valid SQL (sqlite3) command when added after WHERE in a UPDATE command.")
     parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, help="<Required> Name of column to update in runs.")
@@ -37,11 +32,11 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--db_path', type=str, default=None, help="Full path to the database used.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def update_sim(argv=None):
-    args = command_line_arguments_parser(argv)
+def update_sim(name_command_line_tool="sim_db", name_command="update_sim", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     if args.id == None and args.where == "id > -1":
         print("Nothing was updated. --id 'ID' or --where 'CONDITION' must be " \
               + "passed to the program.")
@@ -69,4 +64,4 @@ def update_sim(argv=None):
 
 
 if __name__ == '__main__':
-    update_sim()
+    update_sim("", sys.argv[0], sys.argv[1:])

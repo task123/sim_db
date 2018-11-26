@@ -117,7 +117,7 @@ def main():
     cd_results_script = open(cd_results_script_name, 'w')
     cd_results_script.write('#!/bin/sh\n')
     cd_results_script.write('cd "$(python {0}/src/command_line_tool/'
-            'command_line_tool.py get results_dir $@)"\n'
+            'command_line_tool.py sim_db get results_dir $@)"\n'
             .format(sim_db_dir.replace(" ", "\ ")))
     cd_results_script.write('source {0}\n'.format(where_to_add_path))
     cd_results_script.write('exec bash\n')

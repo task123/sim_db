@@ -14,33 +14,27 @@ if __name__ == '__main__':
     import add_root_dir_to_path
 
 import src.command_line_tool.commands.helpers as helpers
-import src.command_line_tool.commands.add_sim as add_sim
 import sqlite3
 import argparse
 import sys
 from collections import OrderedDict
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["combine_dbs.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="combine_dbs"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Combine two databases into a new one.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('path_db_1', type=str, help="<Required> Path to 'sim_db' database 1.")
     parser.add_argument('path_db_2', type=str, help="<Required> Path to 'sim_db' database 2.")
     parser.add_argument('name_new_db', type=str, help="<Required> Name of the new database.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def combine_dbs(argv=None):
-    args = command_line_arguments_parser(argv)
+def combine_dbs(name_command_line_tool="sim_db", name_command="combine_dbs", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     db_1 = helpers.connect_sim_db(args.path_db_1)
     db_1_cursor = db_1.cursor()
@@ -104,4 +98,4 @@ def combine_dbs(argv=None):
 
 
 if __name__ == '__main__':
-    combine_dbs()
+    combine_dbs("", sys.argv[0], sys.argv[1:])

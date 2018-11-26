@@ -5,7 +5,6 @@
 
 import src.command_line_tool.commands.helpers as helpers
 import src.command_line_tool.commands.update_sim as update_sim
-import src.command_line_tool.commands.add_sim as add_sim
 import src.command_line_tool.commands.add_column as add_column
 import sqlite3
 import argparse
@@ -168,10 +167,10 @@ class SimDB:
             if type_of_value == str:
                 type_of_value = 'string'
             add_column.add_column(
-                    ["--column", column, "--type", type_of_value])
+                    argv=["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
-        update_sim.update_sim(["--id", str(db_id), "--columns", column,
+        update_sim.update_sim(argv=["--id", str(db_id), "--columns", column,
                     "--value", value_string])
 
     def get_id(self):
@@ -193,8 +192,9 @@ class SimDB:
         store results in.
 
         :param path_directory: Path to directory of which to make a 
-        subdirectory. If 'path_directory' starts with 'root/', that part will 
-        be replaced by the full path of the root directory of the project.
+            subdirectory. If 'path_directory' starts with 'root/', that part 
+            will be replaced by the full path of the root directory of the 
+            project.
         :type path_directory: str
         :returns: Full path to new subdirectory.
         :rtype: str

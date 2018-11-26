@@ -17,31 +17,26 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["add_column.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_column"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add column to database.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--column', '-c', type=str, required=True, help="<Required> Name of the new column.")
     parser.add_argument('--type', '-t', type=str, required=True, help="<Required> Type of the column. 'INTEGER', 'REAL', 'TEXT', 'int', 'float', 'string', 'bool' and 'int/float/string/bool array' are the valid choices.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def add_column(argv=None):
+def add_column(name_command_line_tool="sim_db", name_command="add_column", argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
     column_names, column_types = helpers.get_db_column_names_and_types(
             db_cursor)
 
-    args = command_line_arguments_parser(argv)
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     if args.column not in column_names:
         if args.type == 'int' or args.type == int:
             db_cursor.execute("ALTER TABLE runs ADD COLUMN \
@@ -59,4 +54,4 @@ def add_column(argv=None):
 
 
 if __name__ == '__main__':
-    add_column()
+    add_column("", sys.argv[0], sys.argv[1:])

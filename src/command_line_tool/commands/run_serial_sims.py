@@ -20,26 +20,21 @@ import subprocess
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["run_serial_sims.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="run_serial_sims"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Run multiple simulations in series. If no ID's or conditions are given all the new simulations are run.", 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="'IDs' of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     parser.add_argument('--where', '-w', type=str, nargs='+', default=[], help="Conditions of the simulation parameters in the 'sim.db' database that should be used in the simulation.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def run_serial_sims(argv=None):
+def run_serial_sims(name_command_line_tool="sim_db", name_command="run_serial_sims", argv=None):
     """Run multiple simulations in series."""
-    args = command_line_arguments_parser(argv)
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
@@ -68,12 +63,12 @@ def run_serial_sims(argv=None):
         db.commit()
         db_cursor.close()
         db.close()
-        update_sim.update_sim([
+        update_sim.update_sim(argv=[
                 "--id",
                 str(id_sim), "--columns", "cpu_info", "--values",
                 helpers.get_cpu_and_mem_info()
         ])
-        update_sim.update_sim([
+        update_sim.update_sim(argv=[
                 "--id",
                 str(id_sim), "--columns", "status", "--values", "running"
         ])
@@ -92,11 +87,11 @@ def run_serial_sims(argv=None):
             else:
                 for line in iter(process.stdout.readline, b''):
                     sys.stdout.write(line.decode('UTF-8'))
-        update_sim.update_sim([
+        update_sim.update_sim(argv=[
                 "--id",
                 str(id_sim), "--columns", "status", "--values", "finished"
         ])
 
 
 if __name__ == '__main__':
-    run_serial_sims()
+    run_serial_sims("", sys.argv[0], sys.argv[1:])

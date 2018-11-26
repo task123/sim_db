@@ -23,7 +23,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run -f params_minimal_python_example.txt
+    $ sim_db add_and_run -f params_minimal_python_example.txt
 
 Extensive example using Python
 ==============================
@@ -47,7 +47,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run -f params_extensive_python_example.txt
+    $ sdb add_and_run -f params_extensive_python_example.txt
 
 Python API referance
 ====================

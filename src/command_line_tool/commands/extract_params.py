@@ -23,16 +23,11 @@ no_extract_columns = {
 }
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["extract_params.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="extract_params"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Extract parameter file from sim.db.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
     parser.add_argument('--default_file', '-d', action='store_true', help="Write parameters to the first of the 'Parameter filenames' in settings.txt. Ask for confirmation if file exists already.")
@@ -40,7 +35,7 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
 def get_param_type_as_string(col_type, value):
@@ -60,8 +55,8 @@ def get_param_type_as_string(col_type, value):
         raise ValueError()
 
 
-def extract_params(argv=None):
-    args = command_line_arguments_parser(argv)
+def extract_params(name_command_line_tool="sim_db", name_command="extract_params", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     is_printing_parameters = True
     if args.default_file:
@@ -123,4 +118,4 @@ def extract_params(argv=None):
 
 
 if __name__ == '__main__':
-    extract_params()
+    extract_params("", sys.argv[0], sys.argv[1:])

@@ -6,7 +6,7 @@ A text file with a particular format is used to pass parameters to the simulatio
 
 .. code-block:: console
 
-    $ add_and_run -f sim_param_file.txt
+    $ sim_db add_and_run -f sim_param_file.txt
 
 The format
 ==========
@@ -50,4 +50,4 @@ The filename of the text file with the parameters can be anything (to describe w
 Commands realated to parameters
 ===============================
 
-The parameters in a parameter file can be added to the database with the ```add_sim``` command or added and run with ```add_and_run```. The file can then be edited to add new simulations, but a parameter can also be edited or added to an already added simulation with the ```update_sim``` command. One can also generate a new parameter file from a simulation in the database with the ```extract_params``` commands, which can be a quick way of running simulations similar to that one. Finally it is very useful to get familiar with the ```print_sim``` command to print the parameters and other things from simulations in the database.
+The parameters in a parameter file can be added to the database with the `add` command or added and run with `add_and_run`. The file can then be edited to add new simulations, but a parameter can also be edited or added to an already added simulation with the `update` command. One can also generate a new parameter file from a simulation in the database with the `extract_params` commands, which can be a quick way of running simulations similar to that one. Finally it is very useful to get familiar with the `print` command to print the parameters and other things from simulations in the database.

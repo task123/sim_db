@@ -22,30 +22,25 @@ import errno
 import shutil
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["delete_results_dir.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="delete_results_dir"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Delete results in 'results_dir' of specified simulations.", 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of simulation which 'results_dir' to deleted.")
     parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which simulation's 'results_dir' to deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
     parser.add_argument('--no_checks', action='store_true', help="No questions are asked about wheather you really want to delete the 'results_dir' of specified simulation.")
     parser.add_argument('--not_in_db_but_in_dir', type=str, default=None, help="Delete every folder in the specified directory that is not a 'results_dir' in the 'sim_db', so use with care. Both relative and absolute paths can be used.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def delete_results_dir(argv=None):
+def delete_results_dir(name_command_line_tool="sim_db", name_command="delete_results_dir", argv=None):
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
 
-    args = command_line_arguments_parser(argv)
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     if (len(args.id) == 0 and args.where == None
                 and args.not_in_db_but_in_dir == None):
         print("No 'results_dir' was deleted. --id 'ID' or --where 'CONDITION' "
@@ -124,4 +119,4 @@ def delete_results_dir(argv=None):
 
 
 if __name__ == '__main__':
-    delete_results_dir()
+    delete_results_dir("", sys.argv[0], sys.argv[1:])

@@ -12,29 +12,24 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["list_commands.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="list_commands"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Print a list of all the sim_db commands.", 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def list_commands(argv=None):
-    command_line_arguments_parser(argv)
+def list_commands(name_command_line_tool="sim_db", name_command="list_commands", argv=None):
+    command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     commands_dir = os.path.dirname(os.path.abspath(__file__))
     programs = fnmatch.filter(os.listdir(commands_dir), "*.py")
     programs.remove('helpers.py')
     programs.remove('__init__.py')
     programs.remove('add_root_dir_to_path.py')
-    programs.append('cd_res_dir / cd_results_dir')
+    programs.append('cd_res / cd_results')
     programs.sort()
     print("All commands: ('command -h' will explain command and use.)\n")
     for program in programs:
@@ -47,4 +42,4 @@ def list_commands(argv=None):
 
 
 if __name__ == '__main__':
-    list_commands()
+    list_commands("", sys.argv[0], sys.argv[1:])

@@ -32,16 +32,11 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["print.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_range_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add a range of simulations to the database.', 
-        prog="{0} {1} ".format(argv[0], argv[1]))
+        prog="{0} {1} ".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added as the first in the range.")
     parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, default=[], help="<Required> Names of the column for which the range varies. The cartisian products of the varing columns are added to the database. The column type MUST be a integer or a float.")
     parser.add_argument('--lin_steps', type=float, nargs='+', default=[], help="Linear step distance. NEXT_STEP = PREV_STEP + LIN_STEP. If columns have both linear and exponential steps, both will be used. NEXT_STEP = LIN_STEP + PREV_STEP * EXP_STEP")
@@ -50,11 +45,11 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--n_steps', type=int, nargs='+', default=[], help="Number of steps in the range. That means one step gives to simulations added. If both 'end_steps' and 'n_steps' are used, both endpoint need to be reached.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def add_range_sim(argv=None):
-    args = command_line_arguments_parser(argv)
+def add_range_sim(name_command_line_tool="sim_db", name_command="add_range_sim", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     # Check command line arguments
     n_cols = len(args.columns)
@@ -76,7 +71,7 @@ def add_range_sim(argv=None):
     if args.filename == None:
         ids_added.append(add_sim.add_sim())
     else:
-        ids_added.append(add_sim.add_sim(['--filename', args.filename]))
+        ids_added.append(add_sim.add_sim(argv=['--filename', args.filename]))
 
     # Get start value of each column that varies.
     db = helpers.connect_sim_db()
@@ -131,13 +126,13 @@ def add_range_sim(argv=None):
         if args.filename == None:
             ids_added.append(add_sim.add_sim())
         else:
-            ids_added.append(add_sim.add_sim(['--filename', args.filename]))
+            ids_added.append(add_sim.add_sim(argv=['--filename', args.filename]))
         update_params = ['--id', str(ids_added[-1]), '--columns']
         update_params.extend(args.columns)
         update_params.append('--values')
         for j in range(n_cols):
             update_params.append(str(cartisian_product[j][i]))
-        update_sim.update_sim(update_params)
+        update_sim.update_sim(argv=update_params)
 
     return ids_added
 
@@ -158,6 +153,6 @@ def add_new_column_in_cartisian_product(car_prod_table, new_col, col_no):
 
 
 if __name__ == '__main__':
-    ids_added = add_range_sim()
+    ids_added = add_range_sim("", sys.argv[0], sys.argv[1:])
     print("Added simulations with following ID's:")
     print(ids_added)

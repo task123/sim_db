@@ -23,7 +23,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run -f params_minimal_cpp_example.txt
+    $ sim_db add_and_run -f params_minimal_cpp_example.txt
 
 Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/example/* (given that the static C library are compiled):
 
@@ -53,7 +53,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run -f params_extensive_cpp_example.txt
+    $ sdb add_and_run -f params_extensive_cpp_example.txt
 
 Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/example/* (given that the static C library are compiled):
 
@@ -74,7 +74,7 @@ C++ API referance
 .. doxygenfunction:: sim_db::Connection::make_unique_subdir
 .. doxygenfunction:: sim_db::Connection::update_sha1_executables
 .. doxygenfunction:: sim_db::Connection::get_id
-.. doxygenfunction:: sim_db::Connection::get_path
+.. doxygenfunction:: sim_db::Connection::get_path_proj_root
 .. doxygenfunction:: sim_db::add_empty_sim
 .. doxygenfunction:: sim_db::delete_sim
 

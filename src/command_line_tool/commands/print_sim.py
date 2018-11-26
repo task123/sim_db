@@ -16,16 +16,11 @@ import sys
 import os
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["print_sim.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="print_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, nargs='+', help="List of ID's.")
     parser.add_argument('--id_no_print', type=int, nargs='+', help="List of ID's not to print.")
     parser.add_argument('-n', type=int, help="Number of row printed from the bottom up.")
@@ -44,7 +39,7 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--diff', '-d', action='store_true', help="Remove columns with the same value for all the simulations. This leaves only the parameters that are different between the simulations.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
 def get_personalized_print_config(key_string):
@@ -294,11 +289,11 @@ def replace_element_in_list(the_list, element, replacement):
     return the_list
 
 
-def print_sim(argv=None):
-    if argv == None and len(sys.argv) == 1:
-        args = command_line_arguments_parser(['-p', 'default'])
+def print_sim(name_command_line_tool="sim_db", name_command="print_sim", argv=None):
+    if argv == None:
+        args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(['-p', 'default'])
     else:
-        args = command_line_arguments_parser(argv)
+        args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
@@ -356,4 +351,4 @@ def print_sim(argv=None):
 
 
 if __name__ == '__main__':
-    print_sim()
+    print_sim("", sys.argv[0], sys.argv[1:])

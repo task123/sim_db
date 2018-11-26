@@ -18,24 +18,19 @@ import sys
 import shutil
 
 
-def command_line_arguments_parser(argv=None):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["init.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="init"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Initialise 'sim_db' and must be called before using 'sim_db'. Will create a '.sim_db/' directory.", 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--path', type=str, default=None, help="Path to the top directory of project. If not passed as an argument, the current working directory is assumed to be the top directory.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def init(argv=None):
-    args = command_line_arguments_parser(argv)
+def init(name_command_line_tool="sim_db", name_command="init", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     if args.path == None:
         args.path = os.getcwd()
     elif args.path[-1] == '/':
@@ -49,4 +44,4 @@ def init(argv=None):
 
 
 if __name__ == '__main__':
-    init()
+    init("", sys.argv[0], sys.argv[1:])

@@ -22,30 +22,25 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["duplicate_and_run.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="duplicate_and_run"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Duplicate simulation in database and run it. All parameters (including possible results) of specified simulation is duplicated with the exception of 'id' and 'status', which is kept unique and set to 'new' respectfully.", 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> 'ID' of the simulation parameters in the 'sim.db' database that should be duplicated.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def duplicate_and_run(argv=None):
-    args = command_line_arguments_parser(argv)
+def duplicate_and_run(name_command_line_tool="sim_db", name_command="duplicate_and_run", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
-    new_id = duplicate_sim.duplicate_sim(['--id', str(args.id)])
+    new_id = duplicate_sim.duplicate_sim(argv=['--id', str(args.id)])
 
     if args.n == None:
-        run_sim.run_sim(['--id', str(new_id)])
+        run_sim.run_sim(argv=['--id', str(new_id)])
     else:
         run_sim.run_sim(['--id', str(new_id), '-n', str(args.n)])
 
@@ -53,4 +48,4 @@ def duplicate_and_run(argv=None):
 
 
 if __name__ == '__main__':
-    duplicate_and_run()
+    duplicate_and_run("", sys.argv[0], sys.argv[1:])

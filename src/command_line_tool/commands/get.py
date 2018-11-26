@@ -13,26 +13,21 @@ import sys
 import os
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["get.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="get"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Get value from 'column' of simulation specified or last entry if not specified.",
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('column', type=str, help="Column in database from where to get the value.")
     parser.add_argument('--id', '-i', type=int, help="'ID' of the simulation in the 'sim.db' database.")
     parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def get(argv=None):
-    args = command_line_arguments_parser(argv)
+def get(name_command_line_tool="sim_db", name_command="get", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
@@ -54,7 +49,7 @@ def get(argv=None):
     db.close()
 
     if value == None:
-        print("Specified simulation does not have a value in the {0} column."
+        print("Specified simulation does not have a value in the '{0}' column."
               .format(args.column))
         exit()
 
@@ -63,4 +58,4 @@ def get(argv=None):
 
 
 if __name__ == '__main__':
-    print(get())
+    print(get("", sys.argv[0], sys.argv[1:]))

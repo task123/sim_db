@@ -27,41 +27,33 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["add_and_run.py", ""] + argv
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["add_and_run.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_and_run"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add simulation and submit it.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file to add and run.")
     parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def add_and_run(argv=None):
-    args = command_line_arguments_parser(argv)
+def add_and_run(name_command_line_tool="sim_db", name_command="add_and_run", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     if args.filename == None:
         added_id = add_sim.add_sim()
     else:
-        added_id = add_sim.add_sim(['--filename', args.filename])
+        added_id = add_sim.add_sim(argv=['--filename', args.filename])
 
     if args.n == None:
-        run_sim.run_sim(['--id', str(added_id)])
+        run_sim.run_sim(argv=['--id', str(added_id)])
     else:
-        run_sim.run_sim(['--id', str(added_id), '-n', str(args.n)])
+        run_sim.run_sim(argv=['--id', str(added_id), '-n', str(args.n)])
 
     return added_id
 
 
 if __name__ == '__main__':
-    add_and_run()
+    add_and_run("", sys.argv[0], sys.argv[1:])

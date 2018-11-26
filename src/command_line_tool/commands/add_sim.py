@@ -28,23 +28,15 @@ import os
 import subprocess
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["print.py", ""] + argv
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["add_sim.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="add_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add simulation to database.',
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
 def split_parameter_line(line, i):
@@ -252,10 +244,10 @@ def add_included_parameter_files(sim_params_file_lines):
     return sim_params_file_lines
 
 
-def add_sim(argv=None):
+def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
     db = helpers.connect_sim_db()
 
-    args = command_line_arguments_parser(argv)
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     sim_params_filename = args.filename
     if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
                 and sim_params_filename.split('/')[0] == 'root'):
@@ -327,5 +319,5 @@ def add_sim(argv=None):
 
 
 if __name__ == '__main__':
-    last_id = add_sim()
+    last_id = add_sim("", sys.argv[0], sys.argv[1:])
     print("ID of last added: {0}".format(last_id))

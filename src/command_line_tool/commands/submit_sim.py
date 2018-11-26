@@ -21,16 +21,11 @@ import os
 import math
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["submit_sim.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="submit_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Submit job', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, default=None, nargs='+', help="ID of simulations to submit.")
     parser.add_argument('--max_walltime', type=str, default=None, nargs='+', help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
     parser.add_argument('--n_tasks', type=int, default=None, nargs='+', help="Number of tasks to run the simulation with. A warning is given if it is not a multiple of the number of logical cores on a node.")
@@ -43,7 +38,7 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
 def make_job_script(db_cursor, i, args, id_submit):
@@ -190,8 +185,8 @@ def make_job_script(db_cursor, i, args, id_submit):
     return job_script_name
 
 
-def submit_sim(argv=None):
-    args = command_line_arguments_parser(argv)
+def submit_sim(name_command_line_tool="sim_db", name_command="submit_sim", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
     ids = args.id
 
     db = helpers.connect_sim_db()
@@ -207,8 +202,8 @@ def submit_sim(argv=None):
         answer = None
         while (not args.no_confirmation and answer != 'y' and answer != 'Y'
                and answer != 'yes' and answer != 'Yes'):
-            answer = raw_input("Would you like to submit simulations with " \
-                             + "the following ID's: {0}? (y/n) ".format(ids))
+            answer = helpers.user_input("Would you like to submit simulations "
+                "with the following ID's: {0}? (y/n) ".format(ids))
             if (answer == 'n' or answer == 'N' or answer == 'no'
                         or answer == 'No'):
                 db.commit()
@@ -250,4 +245,4 @@ def submit_sim(argv=None):
 
 
 if __name__ == '__main__':
-    submit_sim()
+    submit_sim("", sys.argv[0], sys.argv[1:])

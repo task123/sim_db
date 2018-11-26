@@ -16,23 +16,18 @@ import sys
 from collections import OrderedDict
 
 
-def command_line_arguments_parser(argv=None):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["delete_empty_columns.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="delete_empty_columns"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Delete all empty columns in the sim.db, except the default ones.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def delete_empty_columns(argv=None):
-    command_line_arguments_parser(argv)
+def delete_empty_columns(name_command_line_tool="sim_db", name_command="delete_empty_columns", argv=None):
+    command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
@@ -79,4 +74,4 @@ def delete_empty_columns(argv=None):
 
 
 if __name__ == '__main__':
-    delete_empty_columns()
+    delete_empty_columns("", sys.argv[0], sys.argv[1:])

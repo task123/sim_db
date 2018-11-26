@@ -22,22 +22,17 @@ if __name__ == '__main__':
     import add_root_dir_to_path
 
 import src.command_line_tool.commands.add_sim as add_sim
-import src.command_line_tool.commands.run_sim as run_sim
 import src.command_line_tool.commands.submit_sim as submit_sim
 import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["add_and_submit.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", 
+                                  name_command="add_and_submit"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description='Add simulation and submit it.', 
-        prog="{0} {1}".format(argv[0], argv[1]))
+        prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
     parser.add_argument('--max_walltime', type=str, default=None, help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
     parser.add_argument('--n_tasks', type=int, default=None, help="Number of tasks to run the simulation with. A warning is given if it is not a multiple of the number of logical cores on a node.")
@@ -50,16 +45,16 @@ def command_line_arguments_parser(argv):
     parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
 
-def add_and_submit(argv=None):
-    args = command_line_arguments_parser(argv)
+def add_and_submit(name_command_line_tool="sim_db", name_command="add_and_submit", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     if args.filename == None:
         added_id = add_sim.add_sim()
     else:
-        added_id = add_sim.add_sim(['--filename', args.filename])
+        added_id = add_sim.add_sim(argv=['--filename', args.filename])
 
     submit_parameters = ["--id", str(added_id)]
     if args.max_walltime != None:
@@ -85,10 +80,10 @@ def add_and_submit(argv=None):
     if args.do_not_submit_job_script:
         submit_parameters.append("--do_not_submit_job_script")
 
-    name_job_script, job_id = submit_sim.submit_sim(submit_parameters)
+    name_job_script, job_id = submit_sim.submit_sim(argv=submit_parameters)
 
     return (added_id, name_job_script, job_id)
 
 
 if __name__ == '__main__':
-    add_and_submit()
+    add_and_submit("", sys.argv[0], sys.argv[1:])

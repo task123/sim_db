@@ -21,27 +21,37 @@ Go into the sim_db directory and run make:
     $ cd sim_db
     $ make
 
-Answer yes when asked to add `sim_db/commands` to your PATH as well as a `cd_results` function to `~/.bashrc` or `~/.bash_profile` and remember to source it.
+Answer yes when asked to add `sim_db/command_line_tool` to your PATH in `~/.bashrc` or `~/.bash_profile` and remember to source it.
 
 All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
 
 .. code-block:: console
 
-    $ list_sim_db_commands
+    $ sim_db list_commands
 
 It should list all the **sim_db** commands. How to use any of them can be found either by running the with the `--help` or `-h` flag or reading the documentation of the :ref:`commands <Commands>`. Most of the commands need to have some sets of simulation parameters added to the database to work, so read the examples below to see how to do that.
 
 (The full set of tests can be run with ``$ pytest`` or ``$ python -m pytest`` provided `pytest` is installed.)
 
-Notice that it says `Include in your project` and not `Install`. **sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum, so it does not itself need to be installed just included. All the commands are just calls to python scripts, so they can all be called as :code:`$ python path_to_sim_db_dir/src/commands/'name_command'`.
+Change directory to your projects root directory and initiate **sim_db** with the command:
+
+.. code-block:: console
+
+    $ sim_db init
+
+The command will add a *.sim_db/* directory.
+
+Notice that it says `Include in your project` and not `Install`. **sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum, so it does not itself need to be installed just included. All the command_line_tool is a python scripts, so it can be called with :code:`$ python path_to_sim_db_dir/src/command_line_tool/commands_line_tool.py`.
 
 How it is used - an brief overview
 ==================================
 **sim_db** is used as follows:
+
+* Run `$ sim_db init` in project's root directoy.
  
 * All simulation parameters is placed in a text file with formatting described in :ref:`here<Parameter files>`.
 
-* The parameters are added to **sim_db's** database and the simulation is run with the :code:`$ add_and_run` command, or with some of the other :ref:`commands <Commands>`.
+* The parameters are added to **sim_db's** database and the simulation is run with the :code:`$ sim_db add_and_run` command, or with some of the other :ref:`commands <Commands>`.
 
 * In the simulation code the parameters are read from the database with the functions/methods documented :ref:`here for Python <sim_db for Python>`, :ref:`here for C++ <sim_db for C++>` and :ref:`here for C<sim_db for C>`.
 
@@ -64,13 +74,15 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ add_and_run --filename sim_db/example/params_minimal_python_example.txt
+    $ sim_db add_and_run --filename sim_db/example/params_minimal_python_example.txt
 
 Which can also be done from within the *example/* directory with:
 
 .. code-block:: console
 
-    $ add_and_run -f params_minimal_python_example.txt
+    $ sdb add_and_run -f params_minimal_python_example.txt
+
+where `sdb` is just a shorter name for `sim_db` and `-f` a shorter version of the `--filename` flag.
 
 Minimal examples for C++ and C can also be found in the same directory.
 
@@ -83,7 +95,7 @@ A parameter file called params_extensive_cpp_example.txt is found in the *sim_db
 .. literalinclude:: ../../example/params_extensive_cpp_example.txt
    :language: none
 
-Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, ``delete_sim`` and ``delete_empty_columns`` must be used before making a new column with correct type.)
+Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, the ``delete_sim`` and ``delete_empty_columns`` commands must be used before making a new column with correct type.)
 
 The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
 
@@ -102,9 +114,9 @@ Adding the simulation parameters to the **sim_db** database and running the simu
 
 .. code-block:: console
 
-    $ add_and_run -f sim_db/example/params_extensive_cpp_example.txt
+    $ sim_db add_and_run -f sim_db/example/params_extensive_cpp_example.txt
 
-If the filename passed to either the ``add_sim`` or ``add_and_run`` commands starts with either *sim_db/* or *root/* that part will be substituted with the full path to *sim_db/* or *sim_db/../* (assumed to be the projects root directory) respectivly. This way the same path to a parameter file can be passed from anywhere within the project.
+If the filename passed to either the ``add_sim`` or ``add_and_run`` commands starts with  *root/* that part will be substituted with the full path to the projects root directory (where *.sim_db/* is located). This way the same path to a parameter file can be passed from anywhere within the project.
 
 It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. (The *name* parameter is needed for the *make_unique_subdir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
 
@@ -114,53 +126,55 @@ Notice that when it is run, it first call ``make`` to compile the code if needed
 
     $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11 -lm -lpthread -ldl
 
-If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in settings.txt and add and run the first match. The command is usually divided into adding the simulations parameters to the database with:
+If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in *.sim_db/settings.txt* and add and run the first match. The command is often divided into adding the simulations parameters to the database with:
 
 .. code-block:: console
 
-    $ add_sim
+    $ sdb add
 
 and running the simulation:
 
 .. code-block:: console
 
-    $ run_sim
+    $ sdb run
 
-When passed without any flags ``run_sim`` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
-
-.. code-block:: console
-
-    $ run_sim --id 'ID'
-
-where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using ``add_sim``, but to check the '`ID`' of the last couple of siulations added one can run:
+When passed without any flags ``run`` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
 
 .. code-block:: console
 
-    $ print_sim -n 2 -c id name
+    $ sdb run --id 'ID'
 
-`print_sim` have lots of flags to control and limit what is printed. The ``-n 2`` flag prints the last two entries. ``-c id name`` limit the output to just the column named `id` and `name`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as:
-
-.. code-block:: console
-
-    $ print_sim -p 'name_of_personalized_config' 
-
-When running ``$ run_sim --id 'ID'``, the flags ``--id 'ID' -p 'path_to_sim_db`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the the executable prodused by ``make`` or the compile command stated above. Can be run directoy as:
+where '`ID`' is the a unique number given to each set of simulation parameters added to the database. The '`ID`' is printed when using ``add``, but to check the '`ID`' of the last couple of siulations added one can run:
 
 .. code-block:: console
 
-    $ ./extensive_cpp_example --id 'ID' -p ".."
+    $ sdb print -n 2 -c id name
+
+`print` have lots of flags to control and limit what is printed. The ``-n 2`` flag prints the last two entries. ``-c id name`` limit the output to just the column named `id` and `name`. ``-v -i 'ID'`` are two other useful flags that prints the columns in the database as rows for the set of parameters that have id 'ID'. To avoid typing out lots of flags and column names/parameter names for each time one would like to print something, one can set `Personlized print configurations` in `settings.txt`. `Personlized print configurations` are a set of print_sim flags that are given a name and can be set as default or called as:
+
+.. code-block:: console
+
+    $ sdb print -p 'name_of_personalized_config' 
+
+When running ``$ sdb run --id 'ID'``, the flags ``--id 'ID' --path_proj_root 'PATH_TO_PROJECT_ROOT_DIR`` is added to the `run_command` before it is run, so that the program know where the database is and which 'ID' to read from. So, the executable prodused by ``make`` or the compile command stated above can be run in the *sim_db/examples/* directoy as:
+
+.. code-block:: console
+
+    $ ./extensive_cpp_example --id 'ID' --path_proj_root ".."
+
+The *sim_db/* directory is there the project root directory, and where *.sim_db/* is located.
 
 The example stored some results in a unique subdirectory, which is the recommended way to store large results. To change the directory to that subdirectory, so one can check out the results, just run:
 
 .. code-block:: console
 
-    $ cd_results --id 'ID' 
+    $ sdb cd_results --id 'ID' 
 
 To run this example or any other simulation on a cluster or a super computer with a job scheduler, just fill out the `Settings for job scheduler` in `settings.txt` and run:
 
 .. code-block:: console
 
-    $ submit_sim --id 'ID' --max_walltime 00:00:10 --n_tasks 1 
+    $ sdb submit --id 'ID' --max_walltime 00:00:10 --n_tasks 1 
 
 The command will create a job script and submit it to the job scheduler. **sim_db** supports job scheduler SLURM and PBS, but it should be quite easy to add more. `n_tasks` is here the number of logical CPUs you want to run on, and can together with `max_walltime` also be set in the parameter file.
 
@@ -168,13 +182,13 @@ It does not make any sense to run such a small single threaded example on a supe
 
 .. code-block:: console
 
-    $ submit_sim --id 'ID' --max_walltime 10:30:00 --n_nodes 2
+    $ sdb submit --id 'ID' --max_walltime 10:30:00 --n_nodes 2
 
-If a number of simulations are added all including the paramters `max_walltime` and `n_tasks`, one can simply run:
+If a number of simulations are added all including the parameters `max_walltime` and `n_tasks`, one can simply run:
 
 .. code-block:: console
 
-    $ submit_sim
+    $ sdb submit
 
 , which will run all simulations that have not been run yet after a confimation question.
 

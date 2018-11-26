@@ -20,23 +20,18 @@ import argparse
 import sys
 
 
-def command_line_arguments_parser(argv):
-    if argv == None:
-        argv = sys.argv[1:]
-    elif (argv[0] != 'sim_db' and argv[0] != 'sdb' 
-            and argv[0] != 'command_line_tool.py'):
-        argv = ["print.py", ""] + argv
+def command_line_arguments_parser(name_command_line_tool="sim_db", name_command="duplicate_sim"):
     # yapf: disable
     parser = argparse.ArgumentParser(
         description="Duplicate simulation in database. All parameters (including possible results) of specified simulation is duplicated with the exception of 'id' and 'status', which is kept unique and set to 'new' respectfully.", 
-        prog="{0} {1} ".format(argv[0], argv[1]))
+        prog="{0} {1} ".format(name_command_line_tool, name_command))
     parser.add_argument('--id', '-i', type=int, required=True, help="<Required> 'ID' of the simulation parameters in the 'sim.db' database that should be duplicated.")
     # yapf: enable
 
-    return parser.parse_args(argv[2:])
+    return parser
 
-def duplicate_sim(argv=None):
-    args = command_line_arguments_parser(argv)
+def duplicate_sim(name_command_line_tool="sim_db", name_command="duplicate_sim", argv=None):
+    args = command_line_arguments_parser(name_command_line_tool, name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
@@ -56,5 +51,5 @@ def duplicate_sim(argv=None):
     return db_id
 
 if __name__ == '__main__':
-    db_id = duplicate_sim()
+    db_id = duplicate_sim("", sys.argv[0], sys.argv[1:])
     print("ID of new simulation: {0}".format(db_id))
