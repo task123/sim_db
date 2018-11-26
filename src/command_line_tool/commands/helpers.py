@@ -151,11 +151,12 @@ class Settings:
 
 
 def get_dot_sim_db_dir_path():
-    """Return absolute path to '.sim_db/' directory or "" if unsuccessful.
+    """Return absolute path to '.sim_db/' directory or exits if unsuccessful.
 
     Search current and all parent directories for the '.sim_db/' directory,
     and returns the absoluth path to the '.sim_db/' directory. Path does NOT 
-    end with '/'."""
+    end with '/'.
+    """
 
     sim_db_path = ""
     dir_path = os.getcwd()
@@ -163,7 +164,10 @@ def get_dot_sim_db_dir_path():
         if os.path.isdir(dir_path + "/.sim_db"):
             return dir_path + "/.sim_db"
         dir_path = dir_path[0:dir_path.rfind("/")]
-    return ""
+    
+    print("Could NOT find '.sim_db/' is this or any parent directories.")
+    print("Run '$ sim_db init' in the project's root directory.")
+    exit(1)
 
 
 def connect_sim_db(full_path_sim_db=None):
