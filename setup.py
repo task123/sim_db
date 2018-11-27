@@ -1,8 +1,8 @@
-from setuptools import setup
+import setuptools
 
 import breathe
 
-setup(
+setuptool.setup(
     name='sim_db',
     version='0.1.0',
     scripts=['sim_db', 'sdb', 'sim_db_cd_results.sh'],
