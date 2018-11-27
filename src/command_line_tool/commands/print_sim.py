@@ -301,7 +301,6 @@ def print_sim(name_command_line_tool="sim_db",
     else:
         args = command_line_arguments_parser(name_command_line_tool,
                                              name_command).parse_args(argv)
-
     if args.p != None:
         print_config = get_personalized_print_config(args.p)
         if print_config == None:
@@ -311,7 +310,9 @@ def print_sim(name_command_line_tool="sim_db",
         p_arg_keys = [
                 key.strip('-') for key in print_config.split() if key[0] == '-'
         ]
-        p_args = command_line_arguments_parser(print_config.split())
+        p_args = command_line_arguments_parser(name_command_line_tool,
+                                               name_command).parse_args(
+                                                       print_config.split())
 
         p_arg_keys = replace_element_in_list(p_arg_keys, 'v', 'vertically')
         p_arg_keys = replace_element_in_list(p_arg_keys, 'i', 'id')
