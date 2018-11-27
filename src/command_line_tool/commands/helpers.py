@@ -60,7 +60,7 @@ class Settings:
     def read(self, key_settings_dict, path_settings=None):
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_dot_sim_db_dir_path() + '/settings.txt'
+            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_found = []
         is_comment = False
@@ -87,7 +87,7 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_dot_sim_db_dir_path() + '/settings.txt'
+            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_found = False
@@ -120,7 +120,7 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = get_dot_sim_db_dir_path() + '/settings.txt'
+            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_header_found = False
@@ -161,9 +161,9 @@ def get_dot_sim_db_dir_path():
     sim_db_path = ""
     dir_path = os.getcwd()
     while len(dir_path) > 0:
-        if os.path.isdir(dir_path + "/.sim_db"):
-            return dir_path + "/.sim_db"
-        dir_path = dir_path[0:dir_path.rfind("/")]
+        if os.path.isdir(os.path.join(dir_path, ".sim_db")):
+            return os.path.join(dir_path, ".sim_db")
+        dir_path = os.path.dirname(dir_path)
     
     print("Could NOT find '.sim_db/' is this or any parent directories.")
     print("Run '$ sim_db init' in the project's root directory.")
@@ -172,7 +172,7 @@ def get_dot_sim_db_dir_path():
 
 def connect_sim_db(full_path_sim_db=None):
     if (full_path_sim_db == None):
-        full_path_sim_db = get_dot_sim_db_dir_path() + '/sim.db'
+        full_path_sim_db = os.path.join(get_dot_sim_db_dir_path(), 'sim.db')
     return sqlite3.connect(full_path_sim_db)
 
 
@@ -205,8 +205,12 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
 
     proj_root_dir = os.path.abspath(
             os.path.join(get_dot_sim_db_dir_path(), os.pardir))
+    if os.sep == '/':
+        space_escaped = '\ '
+    else:
+        space_escaped = ' '
     run_command = run_command.replace(
-            ' root/', ' ' + proj_root_dir.replace(' ', '\ ') + '/')
+            ' root/', ' ' + proj_root_dir.replace(' ', space_escaped) + os.sep)
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_proj_root "{0}"'.format(proj_root_dir)
@@ -244,7 +248,7 @@ def get_cpu_and_mem_info():
         if out != None:
             cpu_info += "coherency_line_size: " + out.decode('UTF-8') + '\n'
 
-        proc = subprocess.Popen(["free -g -t"], stdout=subprocess.PIPE, \
+        proc = subprocess.Popen(["free -g -t"], stdout=subprocess.PIPE,
                                 stderr=open(os.devnull, 'w'), shell=True)
         (out, err) = proc.communicate()
         if out != None:
@@ -254,7 +258,7 @@ def get_cpu_and_mem_info():
         return cpu_info
 
     elif platform == 'darwin':
-        proc = subprocess.Popen(["sysctl -a"], stdout=subprocess.PIPE, \
+        proc = subprocess.Popen(["sysctl -a"], stdout=subprocess.PIPE,
                          stderr=open(os.devnull, 'w'), shell=True)
         (out, err) = proc.communicate()
         cpu_info = ""

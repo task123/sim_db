@@ -183,18 +183,18 @@ def insert_value(db_cursor, param_name, last_row_id, value):
 
 def make_path_relative_to_root(run_command, sim_params_filename):
     """Make all paths starting with './' relative to projects root directory."""
-    sim_params_filename = os.getcwd() + '/' + sim_params_filename
-    sim_params_dir = sim_params_filename.split('/')[:-1]
-    dot_sim_db_dir = helpers.get_dot_sim_db_dir_path().split('/')
+    sim_params_filename = os.path.join(os.getcwd(), sim_params_filename)
+    split_sim_params_dir = os.path.split(os.path.dirname(sim_params_filename))
+    split_dot_sim_db_dir = os.path.split(helpers.get_dot_sim_db_dir_path())
     i = 0
-    while (i < len(sim_params_dir) and i < len(dot_sim_db_dir)
-           and sim_params_dir[i] == dot_sim_db_dir[i]):
+    while (i < len(split_sim_params_dir) and i < len(split_dot_sim_db_dir)
+           and split_sim_params_dir[i] == split_dot_sim_db_dir[i]):
         i += 1
     rel_path = ""
-    for j in range(len(dot_sim_db_dir) - i - 1):
-        rel_path += "../"
-    for dir_name in sim_params_dir[i:]:
-        rel_path += dir_name + "/"
+    for j in range(len(split_dot_sim_db_dir) - i - 1):
+        rel_path = os.path.join(rel_path, os.pardir)
+    for dir_name in split_sim_params_dir[i:]:
+        rel_path += dir_name + os.sep
 
     run_command = run_command.replace(' ./', ' root/' + rel_path)
     return run_command
@@ -223,10 +223,10 @@ def add_included_parameter_files(sim_params_file_lines):
     i = get_line_number_of_first_included_parameter_file(sim_params_file_lines)
     while i != None:
         filename = sim_params_file_lines[i].split(':', 1)[1].strip()
-        if (len(filename.split('/')) > 1 and filename.split('/')[0] == 'root'):
+        if (len(filename) > 5 and filename[0:5] == 'root/'):
             proj_root_dir = os.path.abspath(
                     os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir))
-            filename = (proj_root_dir + '/' + filename.split('/', 1)[1])
+            filename = os.path.join(proj_root_dir, filename[5:])
         try:
             included_sim_params_file = open(filename, 'r')
         except:
@@ -249,10 +249,11 @@ def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
     args = command_line_arguments_parser(name_command_line_tool,
                                          name_command).parse_args(argv)
     sim_params_filename = args.filename
-    if (sim_params_filename != None and len(sim_params_filename.split('/')) > 1
-                and sim_params_filename.split('/')[0] == 'root'):
-        sim_params_filename = (helpers.get_dot_sim_db_dir_path() + '/../' +
-                               sim_params_filename.split('/', 1)[1])
+    if (sim_params_filename != None and len(sim_params_filename) > 5
+                and sim_params_filename[0:5] == 'root/'):
+        sim_params_filename = os.path.join(
+                os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir),
+                sim_params_filename[5:])
     if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_matching_settings()
         if sim_params_filename == None:

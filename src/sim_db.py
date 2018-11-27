@@ -42,7 +42,10 @@ class SimDB:
             self.write('time_started', self.get_date_and_time_as_string())
 
         if self.store_metadata and self.__is_a_git_project():
-            path_proj_root = self.path_proj_root.replace(' ', '\ ')
+            if os.sep == '/':
+                path_proj_root = self.path_proj_root.replace(' ', '\ ')
+            else:
+                path_proj_root = self.path_proj_root
             proc = subprocess.Popen(
                     ["cd {0}; git rev-parse HEAD".format(path_proj_root)],
                     stdout=subprocess.PIPE,
@@ -170,6 +173,7 @@ class SimDB:
                     argv=["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
+        value_string = self.__escape_quote_with_two_quotes(value_string)
         update_sim.update_sim(argv=[
                 "--id",
                 str(db_id), "--columns", column, "--value", value_string
@@ -202,12 +206,10 @@ class SimDB:
         :rtype: str
         """
         if (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
-            subdir = self.path_proj_root + '/' + path_directory[5:]
-        else:
-            subdir = path_directory
-        if len(subdir) > 0 and subdir[-1] != '/':
-            subdir += '/'
-        subdir += self.get_date_and_time_as_string()
+            path_directory = os.path.join(self.path_proj_root,
+                                          path_directory[5:])
+        subdir = os.path.join(path_directory,
+                              self.get_date_and_time_as_string())
         subdir += '_' + self.read('name') + '_' + str(self.id)
         subdir = os.path.abspath(os.path.realpath(subdir))
         if os.path.exists(subdir):
@@ -250,10 +252,20 @@ class SimDB:
         path_proj_root = None
         if db_id == None:
             parser = argparse.ArgumentParser()
-            # yapf: disable
-            parser.add_argument('--id', '-i', type=int, default=None, required=True, help="<Required> ID of parameters in the database used to run the simulation.")
-            parser.add_argument('--path_proj_root', '-p', type=str, default=None, help="Path to the root directory of the project.")
-            # yapf: enable
+            parser.add_argument(
+                    '--id',
+                    '-i',
+                    type=int,
+                    default=None,
+                    required=True,
+                    help=("<Required> ID of parameters in the database used "
+                          "to run the simulation."))
+            parser.add_argument(
+                    '--path_proj_root',
+                    '-p',
+                    type=str,
+                    default=None,
+                    help="Path to the root directory of the project.")
             args, unknowns = parser.parse_known_args()
             db_id = args.id
             if args.path_proj_root != None:
@@ -264,9 +276,9 @@ class SimDB:
             if path_proj_root[-1] == '/':
                 path_proj_root = path_proj_root[:-1]
         if (db_id == None):
-            ValueError("'db_id' is NOT provided to SimDB(db_id=None). " \
-                    + "If not passed as function parameters, then '--id ID' " \
-                    + "must be passed to program as command line arguments.")
+            ValueError("'db_id' is NOT provided to SimDB(db_id=None). If not "
+                       "passed as function parameters, then '--id ID' must be "
+                       "passed to program as command line arguments.")
         return (db_id, path_proj_root)
 
     def __check_type(self, db_cursor, check_type_is, column, value=None):
@@ -389,21 +401,30 @@ class SimDB:
                 elif type_of_value == 'bool array':
                     value_string = "bool[]"
                 else:
-                    raise ValueError("The type_of_value must be set to 'int " \
-                            "array', 'float array', 'string array' or 'bool " \
-                            "array' when a empty list is passed to " \
-                            "SimDB.write().")
+                    raise ValueError(
+                            "The type_of_value must be set to 'int array', "
+                            "'float array', 'string array' or 'bool array' "
+                            "when a empty list is passed to SimDB.write().")
                 return value_string
 
     def __is_a_git_project(self):
         directory = self.path_proj_root
-        if directory[-1] == '/':
-            directory = directory[:-1]
-        while '/' in directory:
-            directory = directory.rsplit('/')[0]
-            if os.path.exists(directory + "/.git"):
+        prev_dir = ""
+        while directory != prev_dir:
+            if os.path.exists(os.path.join(directory, ".git")):
                 return True
+            prev_dir = directory
+            directory = os.path.dirname(directory)
         return False
+
+    def __escape_quote_with_two_quotes(self, string):
+        escaped_string = ""
+        for letter in string:
+            if letter == "'":
+                escaped_string += "''"
+            else:
+                escaped_string += letter
+        return escaped_string
 
     def get_date_and_time_as_string(self):
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""

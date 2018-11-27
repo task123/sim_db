@@ -130,7 +130,8 @@ def command_line_tool(name_command_line_tool="sim_db",
                                         os.path.dirname(
                                                 os.path.dirname(__file__))),
                                 'command_line_tool'), 'sim_db_cd_results.sh'))
-        path_sim_db_cd_results = path_sim_db_cd_results.replace(" ", "\ ")
+        if os.sep == '/':
+            path_sim_db_cd_results = path_sim_db_cd_results.replace(" ", "\ ")
         arguments_cd_res_dir = ""
         for arg in argv[1:]:
             arguments_cd_res_dir = arguments_cd_res_dir + " " + arg

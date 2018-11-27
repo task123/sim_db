@@ -4,12 +4,14 @@ Command Line Tool
 
 The command line tool is called ``sim_db``, but can also be called with ``sdb``. It has a syntax simular to ``git``, where commands are passed to ``sim_db`` followed by the arguments to the command: ``$ sim_db <command> [<args>]``. 
 
-All the available commands can be listed with the ``list_commands`` (run as ``$ sim_db list_commands``), and what they do and which arguments they take is found be passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. 
+All the available commands can be listed with the ``list_commands`` (run as ``$ sim_db list_commands``), and what they do and which arguments they take is found by passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. 
+
+Commands ending in *_sim* can also be used without this ending, so ``add`` is the same commend as ``add_sim``.
 
 All the commands can be called from anywhere is your project after the ``init`` command is called in your projects root directory. The only exception is inside the ``sim_db/`` directory if that is included.
 
-sim_db / sdb
-============
+sim_db
+======
 
 .. argparse::
    :ref: src.command_line_tool.command_line_tool.command_line_arguments_parser
@@ -37,8 +39,8 @@ add_comment
 .. argparse::
    :ref: add_comment.command_line_arguments_parser
 
-add_range_sim
--------------
+add_range
+---------
 .. argparse::
    :ref: add_range_sim.command_line_arguments_parser
 

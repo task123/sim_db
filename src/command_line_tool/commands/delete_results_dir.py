@@ -83,10 +83,10 @@ def delete_results_dir(name_command_line_tool="sim_db",
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[2:]
             if args.not_in_db_but_in_dir[-1] == '/':
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[:-1]
-            args.not_in_db_but_in_dir = (
-                    os.getcwd() + "/" + args.not_in_db_but_in_dir)
+            args.not_in_db_but_in_dir = os.path.join(
+                    os.getcwd(), args.not_in_db_but_in_dir)
         for path in os.listdir(args.not_in_db_but_in_dir):
-            path = args.not_in_db_but_in_dir + "/" + path
+            path = os.path.join(args.not_in_db_but_in_dir, path)
             if os.path.isdir(path) and (path not in results_dirs):
                 print("\nDo you really want to delete:")
                 print(path)
@@ -98,7 +98,7 @@ def delete_results_dir(name_command_line_tool="sim_db",
                     print(path)
                     print("was NOT deleted.")
     elif len(results_dirs) > 0:
-        answer = 'n'
+        answer = 'no'
         if not args.no_checks:
             print("Do you really want to delete the following directories and "
                   "everything in them:")
@@ -116,9 +116,9 @@ def delete_results_dir(name_command_line_tool="sim_db",
                               .format(results_dir))
                     else:
                         raise e
-        else:
+        elif not args.no_checks:
             print("No results deleted.")
-    else:
+    elif not args.no_checks:
         print("No 'results_dir' to delete.")
 
 

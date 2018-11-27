@@ -143,7 +143,7 @@ bool is_a_git_project(char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
     return false;
 }
 
-char* sim_db_escape_single_quote_with_two_quotes(const char* string) {
+char* sim_db_escape_quote_with_two_quotes(const char* string) {
     char* escaped_string =
             (char*) malloc(2 * (strlen(string) + 1) * sizeof(char));
     int j = 0;
@@ -264,8 +264,7 @@ SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
         sprintf(command, "cd %s && git log -n --format=%%B HEAD",
                 path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
-            char* escaped_string =
-                    sim_db_escape_single_quote_with_two_quotes(output);
+            char* escaped_string = sim_db_escape_quote_with_two_quotes(output);
             sim_db_update(sim_db, "commit_message", output);
             free(escaped_string);
         }
@@ -273,8 +272,7 @@ SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
         sprintf(command, "cd %s && git diff HEAD --stat",
                 path_proj_root_backslashed);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
-            char* escaped_string =
-                    sim_db_escape_single_quote_with_two_quotes(output);
+            char* escaped_string = sim_db_escape_quote_with_two_quotes(output);
             sim_db_update(sim_db, "git_diff_stat", escaped_string);
             free(escaped_string);
         }
@@ -292,12 +290,12 @@ SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
                 strcat(output_with_warning, output);
                 strcat(output_with_warning, warning);
                 char* escaped_string =
-                        sim_db_escape_single_quote_with_two_quotes(output);
+                        sim_db_escape_quote_with_two_quotes(output);
                 sim_db_update(sim_db, "git_diff", escaped_string);
                 free(escaped_string);
             } else {
                 char* escaped_string =
-                        sim_db_escape_single_quote_with_two_quotes(output);
+                        sim_db_escape_quote_with_two_quotes(output);
                 sim_db_update(sim_db, "git_diff", escaped_string);
                 free(escaped_string);
             }
@@ -668,7 +666,7 @@ void sim_db_write_double(SimDB* self, const char* column, double value) {
 
 void sim_db_write_string(SimDB* self, const char* column, const char* value) {
     sim_db_add_column_if_not_exists(self, column, "TEXT");
-    char* escaped_string = sim_db_escape_single_quote_with_two_quotes(value);
+    char* escaped_string = sim_db_escape_quote_with_two_quotes(value);
     sim_db_update(self, column, escaped_string);
     free(escaped_string);
 }
