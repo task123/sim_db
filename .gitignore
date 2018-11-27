@@ -1,11 +1,6 @@
 # .sim_db directory
 .sim_db/sim.db
 
-# Command Line Tool
-command_line_tool/sim_db
-command_line_tool/sdb
-command_line_tool/sim_db_cd_results.sh
-
 # Static libraries
 lib/libsimdbc.a
 lib/libsimdbcpp.a

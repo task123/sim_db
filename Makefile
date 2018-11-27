@@ -12,11 +12,11 @@ export CC CXX CFLAGS CXXFLAGS
 .PHONY: all command_line_tool libsimdb libsimdbcpp clean clean_except_third_party
 
 all:
-	$(MAKE) command_line_tool
+	$(MAKE) add_to_path
 	$(MAKE) libs
 
-command_line_tool:
-	python src/make_command_line_tool.py
+add_to_path:
+	python src/add_command_line_tool_to_path.py
 
 libs:
 	$(MAKE) libsimdbc
