@@ -2,10 +2,10 @@ import setuptools
 
 import breathe
 
-setuptool.setup(
+setuptools.setup(
     name='sim_db',
     version='0.1.0',
-    scripts=['sim_db', 'sdb', 'sim_db_cd_results.sh'],
+    scripts=['command_line_tool/sim_db', 'command_line_tool/sdb', 'command_line_tool/sim_db_cd_results.sh'],
     author='Hakon Austlid Tasken',
     author_email='hakon.tasken@gmail.com',
     description='A database for simulation parameters.',
