@@ -1,0 +1,7 @@
+name (string): minimal_cpp_example
+
+run_command (string): make -s -C root/examples minimal_cpp_example_updated; root/examples/minimal_cpp_example
+
+param1 (string): "Minimal C++ example is running."
+
+param2 (int): 42

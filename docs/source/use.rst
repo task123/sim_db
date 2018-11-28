@@ -59,14 +59,14 @@ That is the brief overview. Reading the examples below and the links above will 
 
 Minimal example using Python
 ============================
-A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. The file contains the following:
+A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. The file contains the following:
 
-.. literalinclude:: ../../example/params_minimal_python_example.txt
+.. literalinclude:: ../../examples/params_minimal_python_example.txt
    :language: none
 
 A python script called `minimal_example.py` and is found in the same directory:
 
-.. literalinclude:: ../../example/minimal_example.py
+.. literalinclude:: ../../examples/minimal_example.py
    :language: python
    :lines: 16-29
 
@@ -74,9 +74,9 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 .. code-block:: console
 
-    $ sim_db add_and_run --filename sim_db/example/params_minimal_python_example.txt
+    $ sim_db add_and_run --filename sim_db/examples/params_minimal_python_example.txt
 
-Which can also be done from within the *example/* directory with:
+Which can also be done from within the *sim_db/examples/* directory with:
 
 .. code-block:: console
 
@@ -90,23 +90,23 @@ Extensive example using C++
 ==============================
 This example is as the name suggerst much more extensive. It is not as straightforward as the minimal example, but it will demostrate a lot more and will also include explainations of more details.
 
-A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/example/* directory in the `source code<https://github.com/task123/sim_db/tree/master/example>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. This parameter file contains all the possible types available in addition to some comments:
 
-.. literalinclude:: ../../example/params_extensive_cpp_example.txt
+.. literalinclude:: ../../examples/params_extensive_cpp_example.txt
    :language: none
 
 Notice that the parameters names are different from the :ref:`minimal example<Minimal example using Python>`. This is because `param1` and `param2` are differnt types in this example and the type of a parameter can not change in the database. (In practice this is a very good thing. However, if one add the wrong type to the database the first time, the ``delete_sim`` and ``delete_empty_columns`` commands must be used before making a new column with correct type.)
 
 The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file, found in the same directory:
 
-.. literalinclude:: ../../example/extra_params_example.txt
+.. literalinclude:: ../../examples/extra_params_example.txt
    :language: none
 
 This syntax for can be used to simplify the parameter files for projects with many parameters. One can for instance have different parameter files for different kindes of parameters, such as printing parameters. The same parameter name, with the same type, can be added to multiple lines in the parameter files, but all the previous parameter values will be overwritting by the last one. This way one can have a default paramter file, include that in any other parameter file and just change the necesarry parameters. Consider including the other parameter file before the parameters to the sure that they are not modified in the other parameter files, and be careful with the order of included parameter files.
 
 `extensive_example.cpp` is also found in the same directory:
 
-.. literalinclude:: ../../example/extensive_example.cpp
+.. literalinclude:: ../../examples/extensive_example.cpp
    :language: c++
    :lines: 16-70
 
@@ -114,13 +114,13 @@ Adding the simulation parameters to the **sim_db** database and running the simu
 
 .. code-block:: console
 
-    $ sim_db add_and_run -f sim_db/example/params_extensive_cpp_example.txt
+    $ sim_db add_and_run -f sim_db/examples/params_extensive_cpp_example.txt
 
 If the filename passed to either the ``add_sim`` or ``add_and_run`` commands starts with  *root/* that part will be substituted with the full path to the projects root directory (where *.sim_db/* is located). This way the same path to a parameter file can be passed from anywhere within the project.
 
 It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. (The *name* parameter is needed for the *make_unique_subdir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
 
-Notice that when it is run, it first call ``make`` to compile the code if needed. What ``make`` does is equvalient to the following command called from *sim_db/example/* (given that the static C++ library are compiled):
+Notice that when it is run, it first call ``make`` to compile the code if needed. What ``make`` does is equvalient to the following command called from *sim_db/examples/* (given that the static C++ library are compiled):
 
 .. code-block:: console
 

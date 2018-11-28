@@ -40,16 +40,16 @@ clean:
 	rm -fr dist
 	rm -fr sim_db.egg-info
 	$(MAKE) -C lib clean
-	$(MAKE) -C test clean
-	$(MAKE) -C example clean
+	$(MAKE) -C tests clean
+	$(MAKE) -C examples clean
 
 clean_except_third_party:
 	rm -fr build
 	rm -fr dist
 	rm -fr sim_db.egg-info
 	$(MAKE) -C lib clean_except_third_party
-	$(MAKE) -C test clean_except_third_party
-	$(MAKE) -C example clean_except_third_party
+	$(MAKE) -C tests clean_except_third_party
+	$(MAKE) -C examples clean_except_third_party
 
 clean_etp:
 	$(MAKE) clean_except_third_party

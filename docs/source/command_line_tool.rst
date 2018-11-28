@@ -14,7 +14,7 @@ sim_db
 ======
 
 .. argparse::
-   :ref: src.command_line_tool.command_line_tool.command_line_arguments_parser
+   :ref: command_line_tool.command_line_arguments_parser
 
 Commands
 ========
@@ -52,7 +52,7 @@ add_sim
 cd_results
 ----------
 .. argparse::
-   :ref: src.command_line_tool.command_line_tool.cd_results_command_line_arguments_parser
+   :ref: command_line_tool.cd_results_command_line_arguments_parser
 
 combine_dbs
 -----------

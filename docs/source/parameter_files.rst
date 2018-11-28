@@ -34,12 +34,12 @@ Example
 
 Example of a parameter file that uses all the different parameter types:
 
-.. literalinclude:: ../../example/params_extensive_c_example.txt
+.. literalinclude:: ../../examples/params_extensive_c_example.txt
    :language: none
 
 The line in the parameter file starting with *include_parameter_file:* will be substituted with the contain of the specified *extra_params_example.txt* file:
 
-.. literalinclude:: ../../example/extra_params_example.txt
+.. literalinclude:: ../../examples/extra_params_example.txt
    :language: none
 
 Filename

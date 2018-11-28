@@ -1,7 +1,0 @@
-name (string): minimal_c_example
-
-run_command (string): make -s -C root/example minimal_c_example_updated; root/example/minimal_c_example
-
-param1 (string): "Minimal C example is running."
-
-param2 (int): 42

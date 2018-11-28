@@ -8,22 +8,22 @@ lib/libsimdbcpp.a
 # Executable test and example programs
 tests/c_program
 tests/cpp_program
-example/minimal_c_example
-example/minimal_cpp_example
-example/extensive_c_example
-example/extensive_cpp_example
+examples/minimal_c_example
+examples/minimal_cpp_example
+examples/extensive_c_example
+examples/extensive_cpp_example
 
 # Test and example results not deleted
 tests/results/*
 !tests/results/.keep
-example/results/*
-!example/results/.keep
+examples/results/*
+!examples/results/.keep
 
 # Directories in doc/
-doc/build/
-doc/html/
-doc/latex/
-doc/xml/
+docs/build/
+docs/html/
+docs/latex/
+docs/xml/
 
 # Distribution files
 build/*

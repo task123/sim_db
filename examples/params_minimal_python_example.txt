@@ -1,6 +1,6 @@
 name (string): minimal_python_example
 
-run_command (string): python root/example/minimal_example.py
+run_command (string): python root/examples/minimal_example.py
 
 param1 (string): "Minimal Python example is running."
 
