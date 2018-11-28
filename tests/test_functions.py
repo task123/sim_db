@@ -7,11 +7,9 @@ external code for to interact with the database.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-if __name__ == '__main__':
-    import add_root_dir_to_path
-
-import tests.helpers
-from src.command_line_tool.command_line_tool import command_line_tool
+import add_package_root_to_path
+import common_test_helpers
+from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import os
 import time
 import subprocess
@@ -30,7 +28,7 @@ def __run_python_functions(capsys, store_metadata):
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
-            "{0}/sim_params_python_program.txt".format(tests.helpers.get_test_dir())
+            "{0}/sim_params_python_program.txt".format(common_test_helpers.get_test_dir())
     ], print_ids_added=False)
     if not store_metadata:
         run_command = __add_no_metadata_flag_to_run_command(capsys, db_id)
@@ -59,8 +57,8 @@ def __run_python_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    tests.helpers.assert_output_python_program(output_program, db_id)
-    tests.helpers.assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
+    common_test_helpers.assert_output_python_program(output_program, db_id)
+    common_test_helpers.assert_output_print_sim_after_run_sim(output_print_sim, store_metadata)
 
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):
@@ -89,7 +87,7 @@ def __c_functions(capsys, store_metadata):
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
-            "{0}/sim_params_c_program.txt".format(tests.helpers.get_test_dir())
+            "{0}/sim_params_c_program.txt".format(common_test_helpers.get_test_dir())
     ], print_ids_added=False)
     if not store_metadata:
         __add_no_metadata_flag_to_run_command(capsys, db_id)
@@ -119,7 +117,7 @@ def __c_functions(capsys, store_metadata):
                 print(err_program)
                 print(err_print_sim)
     ___output_c_and_cpp_program(output_program, db_id)
-    tests.helpers.assert_output_print_sim_after_run_sim(output_print_sim, 
+    common_test_helpers.assert_output_print_sim_after_run_sim(output_print_sim, 
                                                         store_metadata)
 
 
@@ -135,7 +133,7 @@ def __cpp_functions(capsys, store_metadata):
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
-            "{0}/sim_params_cpp_program.txt".format(tests.helpers.get_test_dir())
+            "{0}/sim_params_cpp_program.txt".format(common_test_helpers.get_test_dir())
     ], print_ids_added=False)
     if not store_metadata:
         __add_no_metadata_flag_to_run_command(capsys, db_id)
@@ -165,7 +163,7 @@ def __cpp_functions(capsys, store_metadata):
                 print(err_program)
                 print(err_print_sim)
     ___output_c_and_cpp_program(output_program, db_id)
-    tests.helpers.assert_output_print_sim_after_run_sim(output_print_sim, 
+    common_test_helpers.assert_output_print_sim_after_run_sim(output_print_sim, 
                                                         store_metadata)
 
 
@@ -197,6 +195,3 @@ def ___output_c_and_cpp_program(output_program, db_id):
     printed_lines[35] == printed_lines[34]
     printed_lines[36] == str(db_id + 1)
     printed_lines[37] == "7"
-
-
-

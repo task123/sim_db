@@ -9,8 +9,8 @@ Finally add empty simulation, write to it and read from it and then delete it.
 # Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-import add_root_dir_to_path
-import src.sim_db as sim_db
+import add_package_root_to_path
+import sim_db.sim_db_lib as sim_db_lib
 import argparse
 import os.path
 import sys
@@ -21,7 +21,7 @@ if 'no_metadata' in sys.argv:
 else:
     store_metadata = True
 
-sim_database = sim_db.SimDB(store_metadata=store_metadata)
+sim_database = sim_db_lib.SimDB(store_metadata=store_metadata)
 
 param1 = sim_database.read("test_param1")
 print(param1)
@@ -86,10 +86,10 @@ if store_metadata:
 
 sim_database.end()
 
-db_id = sim_db.add_empty_sim()
+db_id = sim_db_lib.add_empty_sim()
 print(db_id)
 
-sim_database = sim_db.SimDB(db_id = db_id, store_metadata=False)
+sim_database = sim_db_lib.SimDB(db_id = db_id, store_metadata=False)
 
 sim_database.write("test_param1", 7, type_of_value="int")
 param1 = sim_database.read("test_param1")
@@ -97,4 +97,4 @@ print(param1)
 
 sim_database.end()
 
-sim_db.delete_sim(db_id)
+sim_db_lib.delete_sim(db_id)

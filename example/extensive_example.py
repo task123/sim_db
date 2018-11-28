@@ -10,11 +10,10 @@ Usage: 'add_and_run --filename sim_params_example_python_program.txt'
 
 import numpy as np
 import sys, os
-# Include the 'sim_db/src/' directory to path.
-sys.path.append(os.path.join(os.path.dirname(__file__), 
-                os.path.join(os.pardir, os.pardir)))
+# Include the 'sim_db/' directory to path.
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-import sim_db # 'sim_db/src/' have been include in the path.
+import sim_db # 'sim_db/' have been include in the path.
 
 # Open database and write some initial metadata to database.
 sim_database = sim_db.SimDB()

@@ -16,7 +16,7 @@ all:
 	$(MAKE) libs
 
 add_to_path:
-	python src/add_command_line_tool_to_path.py
+	python sim_db/src_command_line_tool/add_command_line_tool_to_path.py
 
 libs:
 	$(MAKE) libsimdbc

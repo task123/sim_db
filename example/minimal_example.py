@@ -8,10 +8,9 @@ Usage: 'add_and_run --filename sim_params_minimal_python_example.txt'
 # Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
-# Include the 'sim_db/src/' directory to path.
+# Include the 'sim_db/' directory to path.
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), 
-                os.path.join(os.pardir, os.pardir)))
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 import sim_db # 'sim_db/src/' have been include in the path.
 
