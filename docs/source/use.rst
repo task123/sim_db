@@ -8,7 +8,7 @@ How it is used - an brief overview
 ==================================
 **sim_db** is used as follows:
 
-* Run `$ sim_db init` in project's root directoy.
+* Run :`$ sim_db init`` in project's root directoy.
  
 * All simulation parameters is placed in a text file with formatting described in :ref:`here<Parameter files>`.
 
@@ -20,7 +20,7 @@ That is the brief overview. Reading the examples below and the links above will 
 
 Minimal example using Python
 ============================
-A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. The file contains the following:
+A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
 .. literalinclude:: ../../examples/params_minimal_python_example.txt
    :language: none
@@ -43,7 +43,7 @@ Which can also be done from within the *sim_db/examples/* directory with:
 
     $ sdb add_and_run -f params_minimal_python_example.txt
 
-where `sdb` is just a shorter name for `sim_db` and `-f` a shorter version of the `--filename` flag.
+where ``sdb`` is just a shorter name for ``sim_db`` and ``-f`` a shorter version of the ``--filename`` flag.
 
 Minimal examples for C++ and C can also be found in the same directory.
 
@@ -51,7 +51,7 @@ Extensive example using C++
 ==============================
 This example is as the name suggerst much more extensive. It is not as straightforward as the minimal example, but it will demostrate a lot more and will also include explainations of more details.
 
-A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:
 
 .. literalinclude:: ../../examples/params_extensive_cpp_example.txt
    :language: none
@@ -99,7 +99,7 @@ and running the simulation:
 
     $ sdb run
 
-When passed without any flags ``run`` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the `--id` flag: 
+When passed without any flags ``run`` will run the last simulation added, that have not yet been started. To run a spesific simulation different from the last one, add the ``--id`` flag: 
 
 .. code-block:: console
 
@@ -153,7 +153,7 @@ If a number of simulations are added all including the parameters `max_walltime`
 
 , which will run all simulations that have not been run yet after a confimation question.
 
-Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github<https://github.com/task123/sim_db/tree/master/example>`.
+Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github <https://github.com/task123/sim_db/tree/master/example>`.
 
 .. _dependencies:
 

@@ -8,7 +8,7 @@ sim_db for Python
 
 Minimal example using Python
 ============================
-A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. The file contains the following:
+A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
 .. literalinclude:: ../../examples/params_minimal_python_example.txt
    :language: none
@@ -27,7 +27,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 Extensive example using Python
 ==============================
-A parameter file called params_extensive_python_example.txt is found in the *sim_db/examples/* directory in the `source code<https://github.com/task123/sim_db/tree/master/examples>`. This parameter file contains all the possible types available in addition to some comments:
+A parameter file called params_extensive_python_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:
 
 .. literalinclude:: ../../examples/params_extensive_python_example.txt
    :language: none
