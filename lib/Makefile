@@ -12,17 +12,17 @@ all:
 	$(MAKE) libsimdbc.a
 	$(MAKE) libsimdbcpp.a
 
-libsimdbc.a: ../src/sim_db.o ../third_party/sqlite3/sqlite3.o
+libsimdbc.a: ../src_c_and_cpp/sim_db.o ../third_party/sqlite3/sqlite3.o
 	ar -rc libsimdbc.a $^ 
 
-libsimdbcpp.a: ../src/sim_db_cpp.o ../src/sim_db.o ../third_party/sqlite3/sqlite3.o
+libsimdbcpp.a: ../src_c_and_cpp/sim_db_cpp.o ../src_c_and_cpp/sim_db.o ../third_party/sqlite3/sqlite3.o
 	ar -rc libsimdbcpp.a $^
 
-../src/sim_db.o: ../src/sim_db.c ../include/sim_db.h
-	$(CC) $(CFLAGS) -c -o $@ ../src/sim_db.c
+../src_c_and_cpp/sim_db.o: ../src_c_and_cpp/sim_db.c ../include/sim_db.h
+	$(CC) $(CFLAGS) -c -o $@ ../src_c_and_cpp/sim_db.c
 
-../src/sim_db_cpp.o: ../src/sim_db.cpp ../include/sim_db.hpp ../include/sim_db.h
-	$(CXX) $(CXXFLAGS) -c -o $@ ../src/sim_db.cpp
+../src_c_and_cpp/sim_db_cpp.o: ../src_c_and_cpp/sim_db.cpp ../include/sim_db.hpp ../include/sim_db.h
+	$(CXX) $(CXXFLAGS) -c -o $@ ../src_c_and_cpp/sim_db.cpp
 
 ../third_party/sqlite3/sqlite3.o:
 	$(MAKE) -C ../third_party/sqlite3/ sqlite3.o
@@ -34,8 +34,8 @@ clean:
 clean_except_third_party:
 	rm -f libsimdbc.a
 	rm -f libsimdbcpp.a
-	rm -f ../src/sim_db.o
-	rm -f ../src/sim_db_cpp.o
+	rm -f ../src_c_and_cpp/sim_db.o
+	rm -f ../src_c_and_cpp/sim_db_cpp.o
 
 clean_etp:
 	$(MAKE) clean_except_third_party
