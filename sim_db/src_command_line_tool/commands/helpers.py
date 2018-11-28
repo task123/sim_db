@@ -164,7 +164,7 @@ def get_dot_sim_db_dir_path():
         prev_path_dir = path_dir
         path_dir = os.path.dirname(path_dir)
     
-    print("Could NOT find '.sim_db/' is this or any parent directories.")
+    print("Could NOT find '.sim_db/' in this or any parent directories.")
     print("Run '$ init' in the project's root directory.")
     exit(1)
 

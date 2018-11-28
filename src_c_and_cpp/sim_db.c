@@ -128,6 +128,7 @@ int sim_db_run_shell_command(const char* command, char* output,
 bool is_a_git_project(char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
     char path_in_project[PATH_MAX + 1];
     strcpy(path_in_project, path_dot_sim_db_parent_dir);
+    strcat(path_in_project, "/");
     char git_file[20] = "/.git/index";
     for (int i = strlen(path_in_project) - 1; i >= 0; i--) {
         if (path_in_project[i] == '/') {
@@ -177,12 +178,41 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
             break;
         }
     }
-    if (!is_id_found || !is_path_proj_root_found) {
+    if (!is_id_found) {
         fprintf(stderr,
-                "ERROR: '--id ID' or '-i ID' and '--path_proj_root "
-                "PATH_TO_PROJECT_ROOT_DIR' or '-p PATH_TO_PROJECT_ROOT_DIR' "
-                "MUST be passed as command line arguments.\n");
+                "ERROR: '--id ID' or '-i ID' MUST be passed as command line "
+                "arguments.\n");
         exit(1);
+    }
+    if (!is_path_proj_root_found) {
+        if (getcwd(path_proj_root, sizeof(char) * (PATH_MAX + 1)) != NULL) {
+            strcat(path_proj_root, "/");
+            char settings[30] = "/.sim_db/settings.txt";
+            for (int i = strlen(path_proj_root) - 1; i >= 0; i--) {
+                if (path_proj_root[i] == '/') {
+                    path_proj_root[i] = '\0';
+                    strcat(path_proj_root, settings);
+                    FILE* fp = fopen(path_proj_root, "r");
+                    path_proj_root[i] = '\0';
+                    if (fp != NULL) {
+                        fclose(fp);
+                        break;
+                    }
+                }
+            }
+            if (strlen(path_proj_root) <= 1) {
+                fprintf(stderr,
+                        "ERROR: Could NOT find '.sim_db/settings.txt' in "
+                        "this "
+                        "or "
+                        "any parents directories.\nRun '$ init' in the "
+                        "project's "
+                        "root directory.\n");
+                exit(1);
+            }
+        } else {
+            fprintf(stderr, "ERROR: getcwd() did NOT work.");
+        }
     }
 
     SimDB* sim_db = sim_db_ctor_with_id(path_proj_root, id, store_metadata);
@@ -903,10 +933,12 @@ void sim_db_dtor(SimDB* self) {
 
 const char* get_create_table_query() {
     return "CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, "
-           "status TEXT, name TEXT, description TEXT, run_command TEXT, "
+           "status TEXT, name TEXT, description TEXT, run_command "
+           "TEXT, "
            "comment TEXT, results_dir TEXT, add_to_job_script TEXT, "
            "max_walltime TEXT, n_tasks INTEGER, job_id INTEGER, "
-           "time_submitted TEXT, time_started TEXT, used_walltime TEXT, "
+           "time_submitted TEXT, time_started TEXT, used_walltime "
+           "TEXT, "
            "cpu_info TEXT, git_hash TEXT, commit_message TEXT, "
            "git_diff_stat TEXT, git_diff TEXT, sha1_executables TEXT)";
 }
