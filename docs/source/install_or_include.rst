@@ -12,7 +12,7 @@ Install
 Command line tool and python package
 ------------------------------------
 
-**sim_db** can be can most easily be installed with pip as:
+**sim_db** can be can most easily be installed with `pip`:
 
 .. code-block:: console
 
