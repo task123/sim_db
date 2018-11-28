@@ -4,45 +4,6 @@
 Use
 ===
 
-Include in your project
-=======================
-It is recommended to add **sim_db** as a git submodule in the top level directory of your project by running:
-
-.. code-block:: console
-
-    $ git submodule add https://github.com/task123/sim_db
-
-(Otherwise it can taken from `github<https://github.com/task123/sim_db>` and just copied into your project in a directory called '`sim_db`'.)
-
-Go into the sim_db directory and run make:
-
-.. code-block:: console
-
-    $ cd sim_db
-    $ make
-
-Answer yes when asked to add `sim_db/command_line_tool` to your PATH in `~/.bashrc` or `~/.bash_profile` and remember to source it.
-
-All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
-
-.. code-block:: console
-
-    $ sim_db list_commands
-
-It should list all the **sim_db** commands. How to use any of them can be found either by running the with the `--help` or `-h` flag or reading the documentation of the :ref:`commands <Commands>`. Most of the commands need to have some sets of simulation parameters added to the database to work, so read the examples below to see how to do that.
-
-(The full set of tests can be run with ``$ pytest`` or ``$ python -m pytest`` provided `pytest` is installed.)
-
-Change directory to your projects root directory and initiate **sim_db** with the command:
-
-.. code-block:: console
-
-    $ sim_db init
-
-The command will add a *.sim_db/* directory.
-
-Notice that it says `Include in your project` and not `Install`. **sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum, so it does not itself need to be installed just included. All the command_line_tool is a python scripts, so it can be called with :code:`$ python path_to_sim_db_dir/src/command_line_tool/commands_line_tool.py`.
-
 How it is used - an brief overview
 ==================================
 **sim_db** is used as follows:
@@ -68,7 +29,7 @@ A python script called `minimal_example.py` and is found in the same directory:
 
 .. literalinclude:: ../../examples/minimal_example.py
    :language: python
-   :lines: 16-29
+   :lines: 15-28
 
 Add the those simulations parameters to the **sim_db** database and run the simulation with:
 

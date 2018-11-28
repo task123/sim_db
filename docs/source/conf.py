@@ -16,6 +16,7 @@ import subprocess
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../../include'))
 sys.path.insert(0, os.path.abspath('../../src'))
 sys.path.insert(0, os.path.abspath('../../sim_db'))
 sys.path.insert(0, os.path.abspath('../../sim_db/src_command_line_tool'))

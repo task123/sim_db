@@ -77,4 +77,3 @@ C++ API referance
 .. doxygenfunction:: sim_db::Connection::get_path_proj_root
 .. doxygenfunction:: sim_db::add_empty_sim
 .. doxygenfunction:: sim_db::delete_sim
-

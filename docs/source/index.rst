@@ -14,6 +14,7 @@ Welcome to sim_db's documentation!
    :maxdepth: 2
 
    purpose_and_features
+   install_or_include
    use
    parameter_files
    command_line_tool
