@@ -5,7 +5,7 @@ import breathe
 setuptools.setup(
     name='sim_db',
     version='0.1.0',
-    scripts=['command_line_tool/sim_db', 'command_line_tool/sdb', 'command_line_tool/sim_db_cd_results.sh'],
+    scripts=['sim_db/sim_db', 'sim_db/sdb', 'sim_db/sim_db_cd.sh'],
     author='Hakon Austlid Tasken',
     author_email='hakon.tasken@gmail.com',
     description='A database for simulation parameters.',
@@ -14,8 +14,10 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
      "Programming Language :: Python",
+     "Programming Language :: Python :: 2",
+     "Programming Language :: Python :: 3",
+     "Programming Language :: Python",
      "License :: OSI Approved :: MIT License",
-     "Operating System :: OS Independent",
     ],
     include_package_data=True,
 )

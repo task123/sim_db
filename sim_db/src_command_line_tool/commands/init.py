@@ -40,12 +40,7 @@ def init(name_command_line_tool="sim_db", name_command="init", argv=None):
     os.mkdir(os.path.join(args.path, '.sim_db'))
     path_default_settings = os.path.abspath(
             os.path.join(
-                    os.path.dirname(
-                            os.path.dirname(
-                                    os.path.dirname(
-                                            os.path.dirname(
-                                                    os.path.abspath(
-                                                            __file__))))),
+                    os.path.dirname(os.path.abspath(__file__)),
                     'default_settings.txt'))
     shutil.copyfile(
             path_default_settings,

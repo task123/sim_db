@@ -157,9 +157,11 @@ def get_dot_sim_db_dir_path():
     """
 
     path_dir = os.getcwd()
-    while len(path_dir) > 0:
+    prev_path_dir = ""
+    while path_dir != prev_path_dir:
         if os.path.isdir(os.path.join(path_dir, ".sim_db")):
             return os.path.join(path_dir, ".sim_db")
+        prev_path_dir = path_dir
         path_dir = os.path.dirname(path_dir)
     
     print("Could NOT find '.sim_db/' is this or any parent directories.")

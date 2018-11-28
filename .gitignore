@@ -25,6 +25,11 @@ doc/html/
 doc/latex/
 doc/xml/
 
+# Distribution files
+build/*
+dist/*
+sim_db.egg-info/*
+
 # Object files
 *.o
 
