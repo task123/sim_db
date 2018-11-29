@@ -20,12 +20,18 @@ import shutil
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="init"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Initialise ' and must be called before using '. Will create a '.' directory.",
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--path', type=str, default=None, help="Path to the top directory of project. If not passed as an argument, the current working directory is assumed to be the top directory.")
-    # yapf: enable
+            description=("Initialise ' and must be called before using '. "
+                         "Will create a '.' directory."),
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--path',
+            type=str,
+            default=None,
+            help=
+            ("Path to the top directory of project. If not passed as an "
+             "argument, the current working directory is assumed to be the top "
+             "directory."))
 
     return parser
 

@@ -34,17 +34,61 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_range_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add a range of simulations to the database.',
-        prog="{0} {1} ".format(name_command_line_tool, name_command))
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added as the first in the range.")
-    parser.add_argument('--columns', '-c', type=str, nargs='+', required=True, default=[], help="<Required> Names of the column for which the range varies. The cartisian products of the varing columns are added to the database. The column type MUST be a integer or a float.")
-    parser.add_argument('--lin_steps', type=float, nargs='+', default=[], help="Linear step distance. NEXT_STEP = PREV_STEP + LIN_STEP. If columns have both linear and exponential steps, both will be used. NEXT_STEP = LIN_STEP + PREV_STEP * EXP_STEP")
-    parser.add_argument('--exp_steps', type=float, nargs='+', default=[], help="Exponential step distance. NEXT_STEP = PREV_STEP * EXP_STEP. If columns have both linear and exponential steps, both will be used. NEXT_STEP = LIN_STEP + PREV_STEP * EXP_STEP")
-    parser.add_argument('--end_steps', type=float, nargs='+', default=[], help="End step of range. The range includes the end, but not anything past it. If both 'end_steps' and 'n_steps' are used, both endpoint need to be reached.")
-    parser.add_argument('--n_steps', type=int, nargs='+', default=[], help="Number of steps in the range. That means one step gives to simulations added. If both 'end_steps' and 'n_steps' are used, both endpoint need to be reached.")
-    # yapf: enable
+            description='Add a range of simulations to the database.',
+            prog="{0} {1} ".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--filename',
+            '-f',
+            type=str,
+            default=None,
+            help="Name of parameter file added as the first in the range.")
+    parser.add_argument(
+            '--columns',
+            '-c',
+            type=str,
+            nargs='+',
+            required=True,
+            default=[],
+            help=
+            ("<Required> Names of the column for which the range varies. "
+             "The cartisian products of the varing columns are added to the "
+             "database. The column type MUST be a integer or a float."))
+    parser.add_argument(
+            '--lin_steps',
+            type=float,
+            nargs='+',
+            default=[],
+            help=("Linear step distance. NEXT_STEP = PREV_STEP + LIN_STEP. If "
+                  "columns have both linear and exponential steps, both will be "
+                  "used. NEXT_STEP = LIN_STEP + PREV_STEP * EXP_STEP"))
+    parser.add_argument(
+            '--exp_steps',
+            type=float,
+            nargs='+',
+            default=[],
+            help=
+            ("Exponential step distance. NEXT_STEP = PREV_STEP * EXP_STEP. "
+             "If columns have both linear and exponential steps, both will be "
+             "used. NEXT_STEP = LIN_STEP + PREV_STEP * EXP_STEP"))
+    parser.add_argument(
+            '--end_steps',
+            type=float,
+            nargs='+',
+            default=[],
+            help=
+            ("End step of range. The range includes the end, but not "
+             "anything past it. If both 'end_steps' and 'n_steps' are used, "
+             "both endpoint need to be reached."))
+    parser.add_argument(
+            '--n_steps',
+            type=int,
+            nargs='+',
+            default=[],
+            help=
+            ("Number of steps in the range. That means one step gives to "
+             "simulations added. If both 'end_steps' and 'n_steps' are used, "
+             "both endpoint need to be reached."))
 
     return parser
 

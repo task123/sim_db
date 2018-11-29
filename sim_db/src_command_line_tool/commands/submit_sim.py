@@ -23,21 +23,66 @@ import math
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="submit_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Submit job',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, default=None, nargs='+', help="ID of simulations to submit.")
-    parser.add_argument('--max_walltime', type=str, default=None, nargs='+', help="Maximum walltime the simulation can use, given in 'hh:mm:ss' format.")
-    parser.add_argument('--n_tasks', type=int, default=None, nargs='+', help="Number of tasks to run the simulation with. A warning is given if it is not a multiple of the number of logical cores on a node.")
-    parser.add_argument('--n_nodes', type=int, default=None, nargs='+', help="Number of nodes to run the simulation on.")
-    parser.add_argument('--additional_lines', type=str, default=[], nargs='+', help="Additional lines added to the job script.")
-    parser.add_argument('--notify_all', action='store_true', help="Set notification for when simulation begins and ends or if it fails.")
-    parser.add_argument('--notify_fail', action='store_true', help="Set notification for if simulation fails.")
-    parser.add_argument('--notify_end', action='store_true', help="Set notification for when simulation ends or if it fails.")
-    parser.add_argument('--no_confirmation', action='store_true', help="Does not ask for confirmation about submitting all simulations with status 'new'")
-    parser.add_argument('--do_not_submit_job_script', action='store_true', help="Makes the job script, but does not submit it.")
-    # yapf: enable
+            description='Submit job',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            default=None,
+            nargs='+',
+            help="ID of simulations to submit.")
+    parser.add_argument(
+            '--max_walltime',
+            type=str,
+            default=None,
+            nargs='+',
+            help=("Maximum walltime the simulation can use, given in "
+                  "'hh:mm:ss' format."))
+    parser.add_argument(
+            '--n_tasks',
+            type=int,
+            default=None,
+            nargs='+',
+            help=
+            ("Number of tasks to run the simulation with. A warning is "
+             "given if it is not a multiple of the number of logical cores on "
+             "a node."))
+    parser.add_argument(
+            '--n_nodes',
+            type=int,
+            default=None,
+            nargs='+',
+            help="Number of nodes to run the simulation on.")
+    parser.add_argument(
+            '--additional_lines',
+            type=str,
+            default=[],
+            nargs='+',
+            help="Additional lines added to the job script.")
+    parser.add_argument(
+            '--notify_all',
+            action='store_true',
+            help=("Set notification for when simulation begins and ends or if "
+                  "it fails."))
+    parser.add_argument(
+            '--notify_fail',
+            action='store_true',
+            help="Set notification for if simulation fails.")
+    parser.add_argument(
+            '--notify_end',
+            action='store_true',
+            help="Set notification for when simulation ends or if it fails.")
+    parser.add_argument(
+            '--no_confirmation',
+            action='store_true',
+            help=("Does not ask for confirmation about submitting all "
+                  "simulations with status 'new'"))
+    parser.add_argument(
+            '--do_not_submit_job_script',
+            action='store_true',
+            help="Makes the job script, but does not submit it.")
 
     return parser
 

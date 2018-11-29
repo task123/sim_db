@@ -22,14 +22,17 @@ from collections import OrderedDict
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="combine_dbs"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Combine two databases into a new one.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('path_db_1', type=str, help="<Required> Path to ' database 1.")
-    parser.add_argument('path_db_2', type=str, help="<Required> Path to ' database 2.")
-    parser.add_argument('name_new_db', type=str, help="<Required> Name of the new database.")
-    # yapf: enable
+            description='Combine two databases into a new one.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            'path_db_1', type=str, help="<Required> Path to ' database 1.")
+    parser.add_argument(
+            'path_db_2', type=str, help="<Required> Path to ' database 2.")
+    parser.add_argument(
+            'name_new_db',
+            type=str,
+            help="<Required> Name of the new database.")
 
     return parser
 

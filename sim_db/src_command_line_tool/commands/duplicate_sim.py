@@ -22,12 +22,20 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="duplicate_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Duplicate simulation in database. All parameters (including possible results) of specified simulation is duplicated with the exception of 'id' and 'status', which is kept unique and set to 'new' respectfully.",
-        prog="{0} {1} ".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, required=True, help="<Required> 'ID' of the simulation parameters in the 'sim.db' database that should be duplicated.")
-    # yapf: enable
+            description=
+            ("Duplicate simulation in database. All parameters "
+             "(including possible results) of specified simulation is "
+             "duplicated with the exception of 'id' and 'status', which is "
+             "kept unique and set to 'new' respectfully."),
+            prog="{0} {1} ".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            required=True,
+            help=("<Required> 'ID' of the simulation parameters in the "
+                  "'sim.db' database that should be duplicated."))
 
     return parser
 

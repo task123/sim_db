@@ -18,27 +18,99 @@ import os
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="print_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Print content in sim.db. If no arguments are provided "-p default" is passed automatically.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, nargs='+', help="List of ID's.")
-    parser.add_argument('--id_no_print', type=int, nargs='+', help="List of ID's not to print.")
-    parser.add_argument('-n', type=int, help="Number of row printed from the bottom up.")
-    parser.add_argument('--columns', '-c', type=str, nargs='+', default=None, help="Name of the columns to print. All non empty columns are printed by default.")
-    parser.add_argument('--columns_no_print', type=str, nargs='+', default=None, help="Name of the columns not to print.")
-    parser.add_argument('--col_by_num', type=int, nargs='+', default=None, help="Number of the columns to print. All non empty columns are printed by default.")
-    parser.add_argument('--where', '-w', default='id > -1', help="Add constraints to which columns to print. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
-    parser.add_argument('--sort_by', default='id', help="What to sort the output by. Must be a valid SQL (sqlite3) command when added after ORDER BY in a SELECT search. Defalut is id.")
-    parser.add_argument('--column_names', action='store_true', help="Print name and type of all columns.")
-    parser.add_argument('--all_columns', action='store_true', help="Print all columns. Otherwise only non empty columns are printed.")
-    parser.add_argument('--no_headers', action='store_true', help="Print without any headers.")
-    parser.add_argument('--max_width', type=int, default=None, help="Upper limit for the width of each column. Default is no limit.")
-    parser.add_argument('--first_line', action='store_true', help="Print only the first line of any entry.")
-    parser.add_argument('--vertically', '-v', action='store_true', help="Print columns vertically.")
-    parser.add_argument('-p', type=str, default=None, help="Personal print configuration. Apply the print configuration in 'settings.txt' corresponding to the provided key string.")
-    parser.add_argument('--diff', '-d', action='store_true', help="Remove columns with the same value for all the simulations. This leaves only the parameters that are different between the simulations.")
-    # yapf: enable
+            description=('Print content in sim.db. If no arguments are '
+                         'provided "-p default" is passed automatically.'),
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id', '-i', type=int, nargs='+', help="List of ID's.")
+    parser.add_argument(
+            '--id_no_print',
+            type=int,
+            nargs='+',
+            help="List of ID's not to print.")
+    parser.add_argument(
+            '-n', type=int, help="Number of row printed from the bottom up.")
+    parser.add_argument(
+            '--columns',
+            '-c',
+            type=str,
+            nargs='+',
+            default=None,
+            help=("Name of the columns to print. All non empty columns are "
+                  "printed by default."))
+    parser.add_argument(
+            '--columns_no_print',
+            type=str,
+            nargs='+',
+            default=None,
+            help="Name of the columns not to print.")
+    parser.add_argument(
+            '--col_by_num',
+            type=int,
+            nargs='+',
+            default=None,
+            help=("Number of the columns to print. All non empty columns are "
+                  "printed by default."))
+    parser.add_argument(
+            '--where',
+            '-w',
+            default='id > -1',
+            help=
+            ("Add constraints to which columns to print. Must be a valid "
+             "SQL (sqlite3) command when added after WHERE in a SELECT command."
+             ))
+    parser.add_argument(
+            '--sort_by',
+            default='id',
+            help=
+            ("What to sort the output by. Must be a valid SQL (sqlite3) "
+             "command when added after ORDER BY in a SELECT search. Defalut is "
+             "id."))
+    parser.add_argument(
+            '--column_names',
+            action='store_true',
+            help="Print name and type of all columns.")
+    parser.add_argument(
+            '--all_columns',
+            action='store_true',
+            help=("Print all columns. Otherwise only non empty columns are "
+                  "printed."))
+    parser.add_argument(
+            '--no_headers',
+            action='store_true',
+            help="Print without any headers.")
+    parser.add_argument(
+            '--max_width',
+            type=int,
+            default=None,
+            help=("Upper limit for the width of each column. Default is no "
+                  "limit."))
+    parser.add_argument(
+            '--first_line',
+            action='store_true',
+            help="Print only the first line of any entry.")
+    parser.add_argument(
+            '--vertically',
+            '-v',
+            action='store_true',
+            help="Print columns vertically.")
+    parser.add_argument(
+            '-p',
+            type=str,
+            default=None,
+            help=
+            ("Personal print configuration. Apply the print "
+             "configuration in 'settings.txt' corresponding to the provided "
+             "key string."))
+    parser.add_argument(
+            '--diff',
+            '-d',
+            action='store_true',
+            help=
+            ("Remove columns with the same value for all the "
+             "simulations. This leaves only the parameters that are different "
+             "between the simulations."))
 
     return parser
 

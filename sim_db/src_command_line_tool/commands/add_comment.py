@@ -19,15 +19,29 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_comment"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add comment to simulation in database.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation to add the comment.")
-    parser.add_argument('--comment', '-c', type=str, default=None, help="Comment to add.")
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Filename of a file which content are to be added as a comment. Only the last 3000 characters will be added.")
-    parser.add_argument('--append', '-a', action='store_true', help="Append comment or file to the current comment.")
-    # yapf: enable
+            description='Add comment to simulation in database.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            required=True,
+            help="<Required> ID of the simulation to add the comment.")
+    parser.add_argument(
+            '--comment', '-c', type=str, default=None, help="Comment to add.")
+    parser.add_argument(
+            '--filename',
+            '-f',
+            type=str,
+            default=None,
+            help=("Filename of a file which content are to be added as a "
+                  "comment. Only the last 3000 characters will be added."))
+    parser.add_argument(
+            '--append',
+            '-a',
+            action='store_true',
+            help="Append comment or file to the current comment.")
 
     return parser
 

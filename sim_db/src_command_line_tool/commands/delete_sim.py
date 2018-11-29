@@ -23,14 +23,30 @@ import os.path
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="delete_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Delete simulations from sim.db.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of runs to delete.")
-    parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which entries should be deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a DELETE command.")
-    parser.add_argument('--no_checks', action='store_true', help="No questions are asked about wheter you really want to delete simulation or the 'results_dir' of the simulation.")
-    # yapf: enable
+            description='Delete simulations from sim.db.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            nargs='+',
+            default=[],
+            help="ID's of runs to delete.")
+    parser.add_argument(
+            '--where',
+            '-w',
+            type=str,
+            default=None,
+            help=
+            ("Condition for which entries should be deleted. Must be a "
+             "valid SQL (sqlite3) command when added after WHERE in a DELETE "
+             "command."))
+    parser.add_argument(
+            '--no_checks',
+            action='store_true',
+            help=("No questions are asked about wheter you really want to "
+                  "delete simulation or the 'results_dir' of the simulation."))
 
     return parser
 

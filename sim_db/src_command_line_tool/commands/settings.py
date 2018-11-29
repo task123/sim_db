@@ -18,35 +18,47 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="settings"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Print and change settings. The settings can also be changed be editing the '.settings.txt' file.",
-        prog="{0} {1}".format(name_command_line_tool, name_command))
+            description=("Print and change settings. The settings can also "
+                         "be changed be editing the '.settings.txt' file."),
+            prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument('command', type=str, help="'print', 'add' or 'remove'")
-    # yapf: enable
 
     return parser
 
 
 def parser_for_print(name_command_line_tool="sim_db", name_command="settings"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Print the current settings.",
-        usage="{0} {1} print".format(name_command_line_tool, name_command))
-    parser.add_argument('--setting', '-s', type=str, default=None, help="Which setting to print. If no setting is specified, the entire setting file is printed.")
-    # yapf: enable
+            description="Print the current settings.",
+            usage="{0} {1} print".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--setting',
+            '-s',
+            type=str,
+            default=None,
+            help=
+            "Which setting to print. If no setting is specified, the entire setting file is printed."
+    )
 
     return parser
 
 
 def parser_for_add(name_command_line_tool="sim_db", name_command="settings"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Add a line to the settings.",
-        usage="{0} {1} add".format(name_command_line_tool, name_command))
-    parser.add_argument('--line', '-l', type=str, required=True, help="<Required> Line added to 'setting' in the settings.")
-    parser.add_argument('--setting', '-s', type=str, required=True, help="<Required> Which setting to add a line to.")
-    # yapf: enable
+            description="Add a line to the settings.",
+            usage="{0} {1} add".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--line',
+            '-l',
+            type=str,
+            required=True,
+            help="<Required> Line added to 'setting' in the settings.")
+    parser.add_argument(
+            '--setting',
+            '-s',
+            type=str,
+            required=True,
+            help="<Required> Which setting to add a line to.")
 
     return parser
 
@@ -75,7 +87,8 @@ def settings(name_command_line_tool="sim_db",
                                 name_command).parse_args(argv[1:])
         if args.setting == None:
             settings_file = open(
-                    os.path.join(helpers.get_dot_sim_db_dir_path(), 'settings.txt'), 'r')
+                    os.path.join(helpers.get_dot_sim_db_dir_path(),
+                                 'settings.txt'), 'r')
             for line in settings_file.readlines():
                 print(line)
             settings_file.close()

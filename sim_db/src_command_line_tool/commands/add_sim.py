@@ -30,12 +30,15 @@ import subprocess
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_sim"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add simulation to database.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file added and submitted.")
-    # yapf: enable
+            description='Add simulation to database.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--filename',
+            '-f',
+            type=str,
+            default=None,
+            help="Name of parameter file added and submitted.")
 
     return parser
 

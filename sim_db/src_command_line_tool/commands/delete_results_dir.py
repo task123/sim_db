@@ -24,15 +24,39 @@ import shutil
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="delete_results_dir"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Delete results in 'results_dir' of specified simulations.",
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, nargs='+', default=[], help="ID's of simulation which 'results_dir' to deleted.")
-    parser.add_argument('--where', '-w', type=str, default=None, help="Condition for which simulation's 'results_dir' to deleted. Must be a valid SQL (sqlite3) command when added after WHERE in a SELECT command.")
-    parser.add_argument('--no_checks', action='store_true', help="No questions are asked about wheather you really want to delete the 'results_dir' of specified simulation.")
-    parser.add_argument('--not_in_db_but_in_dir', type=str, default=None, help="Delete every folder in the specified directory that is not a 'results_dir' in the ', so use with care. Both relative and absolute paths can be used.")
-    # yapf: enable
+            description=
+            "Delete results in 'results_dir' of specified simulations.",
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            nargs='+',
+            default=[],
+            help="ID's of simulation which 'results_dir' to deleted.")
+    parser.add_argument(
+            '--where',
+            '-w',
+            type=str,
+            default=None,
+            help=
+            ("Condition for which simulation's 'results_dir' to deleted. "
+             "Must be a valid SQL (sqlite3) command when added after WHERE in "
+             "a SELECT command."))
+    parser.add_argument(
+            '--no_checks',
+            action='store_true',
+            help=("No questions are asked about wheather you really want to "
+                  "delete the 'results_dir' of specified simulation."))
+    parser.add_argument(
+            '--not_in_db_but_in_dir',
+            type=str,
+            default=None,
+            help=
+            ("Delete every folder in the specified directory that is not "
+             "a 'results_dir' in the ', so use with care. Both relative and "
+             "absolute paths can be used."))
 
     return parser
 
@@ -83,8 +107,8 @@ def delete_results_dir(name_command_line_tool="sim_db",
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[2:]
             if args.not_in_db_but_in_dir[-1] == '/':
                 args.not_in_db_but_in_dir = args.not_in_db_but_in_dir[:-1]
-            args.not_in_db_but_in_dir = os.path.join(
-                    os.getcwd(), args.not_in_db_but_in_dir)
+            args.not_in_db_but_in_dir = os.path.join(os.getcwd(),
+                                                     args.not_in_db_but_in_dir)
         for path in os.listdir(args.not_in_db_but_in_dir):
             path = os.path.join(args.not_in_db_but_in_dir, path)
             if os.path.isdir(path) and (path not in results_dirs):

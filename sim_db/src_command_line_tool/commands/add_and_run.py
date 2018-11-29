@@ -29,13 +29,20 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_and_run"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add simulation and submit it.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file to add and run.")
-    parser.add_argument('-n', type=int, default=None, help="Number of threads/core to run the simulation on.")
-    # yapf: enable
+            description='Add simulation and submit it.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--filename',
+            '-f',
+            type=str,
+            default=None,
+            help="Name of parameter file to add and run.")
+    parser.add_argument(
+            '-n',
+            type=int,
+            default=None,
+            help="Number of threads/core to run the simulation on.")
 
     return parser
 

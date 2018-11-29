@@ -25,16 +25,41 @@ no_extract_columns = {
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="extract_params"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Extract parameter file from sim.db.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, required=True, help="<Required> ID of the simulation which parameter one wish to extract.")
-    parser.add_argument('--filename', '-f', type=str, default=None, help="Name of parameter file generated.")
-    parser.add_argument('--default_file', '-d', action='store_true', help="Write parameters to the first of the 'Parameter filenames' in settings.txt. Ask for confirmation if file exists already.")
-    parser.add_argument('--also_empty', action='store_true', help="Also extract empty paramters. Default is to not extract empty parameters and default columns that are not input parameters.")
-    parser.add_argument('--all', action='store_true', help="Extract all parameters. Default is to not extract empty parameters and default columns that are not input parameters.")
-    # yapf: enable
+            description='Extract parameter file from sim.db.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            required=True,
+            help=("<Required> ID of the simulation which parameter one wish "
+                  "to extract."))
+    parser.add_argument(
+            '--filename',
+            '-f',
+            type=str,
+            default=None,
+            help="Name of parameter file generated.")
+    parser.add_argument(
+            '--default_file',
+            '-d',
+            action='store_true',
+            help=
+            ("Write parameters to the first of the 'Parameter filenames' "
+             "in settings.txt. Ask for confirmation if file exists already."))
+    parser.add_argument(
+            '--also_empty',
+            action='store_true',
+            help=("Also extract empty paramters. Default is to not extract "
+                  "empty parameters and default columns that are not input "
+                  "parameters."))
+    parser.add_argument(
+            '--all',
+            action='store_true',
+            help=
+            ("Extract all parameters. Default is to not extract empty "
+             "parameters and default columns that are not input parameters."))
 
     return parser
 

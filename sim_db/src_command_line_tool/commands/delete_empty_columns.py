@@ -18,11 +18,10 @@ from collections import OrderedDict
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="delete_empty_columns"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Delete all empty columns in the sim.db, except the default ones.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    # yapf: enable
+            description=
+            "Delete all empty columns in the sim.db, except the default ones.",
+            prog="{0} {1}".format(name_command_line_tool, name_command))
 
     return parser
 

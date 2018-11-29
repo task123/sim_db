@@ -15,14 +15,23 @@ import os
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="get"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Get value from 'column' of simulation specified or last entry if not specified.",
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('column', type=str, help="Column in database from where to get the value.")
-    parser.add_argument('--id', '-i', type=int, help="'ID' of the simulation in the 'sim.db' database.")
-    parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)")
-    # yapf: enable
+            description=("Get value from 'column' of simulation specified or "
+                         "last entry if not specified."),
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            'column',
+            type=str,
+            help="Column in database from where to get the value.")
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            help="'ID' of the simulation in the 'sim.db' database.")
+    parser.add_argument(
+            '-n',
+            type=int,
+            help="n'th last entry in the 'sim.db' database. (zero indexed)")
 
     return parser
 

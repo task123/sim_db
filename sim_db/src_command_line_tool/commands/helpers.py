@@ -58,7 +58,8 @@ class Settings:
     def read(self, key_settings_dict, path_settings=None):
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
+            path_settings = os.path.join(get_dot_sim_db_dir_path(),
+                                         'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_found = []
         is_comment = False
@@ -85,7 +86,8 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
+            path_settings = os.path.join(get_dot_sim_db_dir_path(),
+                                         'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_found = False
@@ -118,7 +120,8 @@ class Settings:
         setting = setting.strip()
         setting_header = self.settings_dict[key_settings_dict]
         if path_settings == None:
-            path_settings = os.path.join(get_dot_sim_db_dir_path(), 'settings.txt')
+            path_settings = os.path.join(get_dot_sim_db_dir_path(),
+                                         'settings.txt')
         settings_file = open(path_settings, 'r')
         settings_content = ''
         is_header_found = False
@@ -163,7 +166,7 @@ def get_dot_sim_db_dir_path():
             return os.path.join(path_dir, ".sim_db")
         prev_path_dir = path_dir
         path_dir = os.path.dirname(path_dir)
-    
+
     print("Could NOT find '.sim_db/' in this or any parent directories.")
     print("Run '$ init' in the project's root directory.")
     exit(1)
@@ -247,8 +250,11 @@ def get_cpu_and_mem_info():
         if out != None:
             cpu_info += "coherency_line_size: " + out.decode('UTF-8') + '\n'
 
-        proc = subprocess.Popen(["free -g -t"], stdout=subprocess.PIPE,
-                                stderr=open(os.devnull, 'w'), shell=True)
+        proc = subprocess.Popen(
+                ["free -g -t"],
+                stdout=subprocess.PIPE,
+                stderr=open(os.devnull, 'w'),
+                shell=True)
         (out, err) = proc.communicate()
         if out != None:
             memory = out.decode('UTF-8').splitlines()[1].split()[0:2]
@@ -257,8 +263,11 @@ def get_cpu_and_mem_info():
         return cpu_info
 
     elif platform == 'darwin':
-        proc = subprocess.Popen(["sysctl -a"], stdout=subprocess.PIPE,
-                         stderr=open(os.devnull, 'w'), shell=True)
+        proc = subprocess.Popen(
+                ["sysctl -a"],
+                stdout=subprocess.PIPE,
+                stderr=open(os.devnull, 'w'),
+                shell=True)
         (out, err) = proc.communicate()
         cpu_info = ""
         wanted_info = [

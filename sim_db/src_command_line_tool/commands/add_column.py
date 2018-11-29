@@ -19,13 +19,23 @@ import sys
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="add_column"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description='Add column to database.',
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--column', '-c', type=str, required=True, help="<Required> Name of the new column.")
-    parser.add_argument('--type', '-t', type=str, required=True, help="<Required> Type of the column. 'INTEGER', 'REAL', 'TEXT', 'int', 'float', 'string', 'bool' and 'int/float/string/bool array' are the valid choices.")
-    # yapf: enable
+            description='Add column to database.',
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--column',
+            '-c',
+            type=str,
+            required=True,
+            help="<Required> Name of the new column.")
+    parser.add_argument(
+            '--type',
+            '-t',
+            type=str,
+            required=True,
+            help=("<Required> Type of the column. 'INTEGER', 'REAL', 'TEXT', "
+                  "'int', 'float', 'string', 'bool' and 'int/float/string/bool "
+                  "array' are the valid choices."))
 
     return parser
 
