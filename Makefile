@@ -9,7 +9,7 @@ CXXFLAGS = $(CXXFLAGS_RELEASE)
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all command_line_tool libsimdb libsimdbcpp clean clean_except_third_party
+.PHONY: all install include add_to_path libs libsimdb libsimdbcpp clean clean_except_third_party clean_etp
 
 all:
 	$(MAKE) install
@@ -34,6 +34,9 @@ libsimdbc:
 
 libsimdbcpp:
 	$(MAKE) -C lib libsimdbcpp.a
+
+build_dist:
+	python setup.py sdist bdist_wheel
 
 clean:
 	rm -fr build

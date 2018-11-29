@@ -1,8 +1,9 @@
 import setuptools
+from sim_db import __version__
 
 setuptools.setup(
     name='sim_db',
-    version='0.1.0',
+    version=__version__,
     scripts=['sim_db/sim_db', 'sim_db/sdb', 'sim_db/sim_db_cd.sh'],
     author='Hakon Austlid Tasken',
     author_email='hakon.tasken@gmail.com',
