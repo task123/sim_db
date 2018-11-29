@@ -66,7 +66,7 @@ Include in your project
 =======================
 (Skip to this section of one have choosen to install **sim_db**.)
 
-**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum, so it does not itself **need** to be installed, just included. (The command_line_tool is just python scripts (except the ``cd_results`` command), so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/src_command_line_tool/commands_line_tool.py`. It is however much convenient to just add the command line tool to the path.)
+**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum. It therefore does not itself **need** to be installed, just included. (The command_line_tool is just python scripts (except the ``cd_results`` command), so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/src_command_line_tool/commands_line_tool.py`. It is however much more convenient to just add the command line tool to your *PATH*.)
 
 It is recommended to add **sim_db** as a git submodule in your project by (inside your project) running:
 
@@ -83,7 +83,7 @@ Then go into the *sim_db/* directory and run:
     $ cd sim_db
     $ make include
 
-Answer yes when asked to add *sim_db/command_line_tool* to your PATH in *~/.bashrc* or *~/.bash_profile* and remember to source it.
+Answer yes when asked to add *sim_db/command_line_tool* to your *PATH* in *~/.bashrc* or *~/.bash_profile* and remember to source it.
 
 All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
 
@@ -102,3 +102,13 @@ Change directory to your projects root directory and initiate **sim_db** with th
     $ sim_db init
 
 The command will add a *.sim_db/* directory.
+
+Since **sim_db** is just included, it will manually need to be added to the *PYTHONPATH* before using the python package. This can be done in your *~/.bashrc* or *~/.bash_profile*, but it can also be done from within your python code. For a python script in the same directory as *sim_db/* it can be done like this:
+
+.. code-block:: python
+
+    import sys, os.path
+    sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sim_db"))
+    import sim_db
+
+The python package should now behave as if it was installed. For files in subdirectories, just add more ``os.path.dirname`` calls round the path.
