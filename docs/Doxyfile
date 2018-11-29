@@ -791,7 +791,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "../include/" "../src_c_and_cpp"
+INPUT                  = "include" "src_c_and_cpp"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1944,7 +1944,7 @@ GENERATE_XML           = YES
 # The default directory is: xml.
 # This tag requires that the tag GENERATE_XML is set to YES.
 
-XML_OUTPUT             = xml
+XML_OUTPUT             = docs/xml
 
 # If the XML_PROGRAMLISTING tag is set to YES, doxygen will dump the program
 # listings (including syntax highlighting and cross-referencing information) to

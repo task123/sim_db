@@ -1,6 +1,13 @@
 import setuptools
 
 import breathe
+import subprocess
+import os
+
+# Generating Doxygen XML Files
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+if read_the_docs_build or True:
+    os.system('doxygen docs/Doxyfile')
 
 setuptools.setup(
     name='sim_db',
