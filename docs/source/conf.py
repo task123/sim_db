@@ -16,8 +16,6 @@ import subprocess
 import os
 import sys
 sim_db_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(sim_db_dir, 'include'))
-sys.path.insert(0, os.path.join(sim_db_dir, 'src_c_and_cpp'))
 sys.path.insert(0, os.path.join(sim_db_dir, 'sim_db'))
 sys.path.insert(0, os.path.join(sim_db_dir, 'sim_db/src_command_line_tool'))
 sys.path.insert(0, os.path.join(sim_db_dir, 'sim_db/src_command_line_tool/commands'))
@@ -27,7 +25,7 @@ sys.path.append('usr/local/bin')
 
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
-if read_the_docs_build:
+if read_the_docs_build or True:
     doxyfile = os.path.abspath(os.path.join(os.path.join(sim_db_dir, "docs"), 
             "Doxyfile").replace(" ", "\ "))
     subprocess.call('doxygen {0}'.format(doxyfile), shell=True)
@@ -44,7 +42,7 @@ version = ''
 release = '0.1.0'
 
 breathe_projects = { 
-    "sim_db": "../xml/", 
+    "sim_db": "{0}/docs/xml/".format(sim_db_dir), 
 }
 breathe_default_project = "sim_db"
 
