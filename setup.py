@@ -1,7 +1,5 @@
 import setuptools
 
-import breathe
-
 setuptools.setup(
     name='sim_db',
     version='0.1.0',
