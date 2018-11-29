@@ -4,12 +4,25 @@
 # Licenced under the MIT License.
 
 import os.path
+import pytest
 
-def get_cwd_and_cd_test_dir():
+
+def skip_if_outside_sim_db():
+    if is_outside_sim_db():
+        pytest.skip("Run from outside of sim_db/.")
+
+
+def is_outside_sim_db():
     cwd = os.getcwd()
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    return cwd
+    if os.path.basename(cwd) == "sim_db":
+        return False
+    elif (os.path.basename(cwd) == "tests" 
+            and os.path.basename(os.path.dirname(cwd)) == "sim_db"):
+        return False
+    else: 
+        return True
     
+
 def get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))
 

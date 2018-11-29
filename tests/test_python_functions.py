@@ -11,19 +11,17 @@ import add_package_root_to_path
 import common_test_helpers
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import time
-import os
+import pytest
 
 
 def test_python_functions(capsys):
-    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
+    common_test_helpers.skip_if_outside_sim_db()
     __run_python_functions(capsys, True)
-    os.chdir(cwd)
 
 
 def test_python_functions_without_storing_metadata(capsys):
-    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
+    common_test_helpers.skip_if_outside_sim_db()
     __run_python_functions(capsys, False)
-    os.chdir(cwd)
 
 
 def __run_python_functions(capsys, store_metadata):
