@@ -11,14 +11,19 @@ import add_package_root_to_path
 import common_test_helpers
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import time
+import os
 
 
 def test_c_functions(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     __c_functions(capsys, True)
+    os.chdir(cwd)
 
 
 def test_c_functions_without_storing_metadata(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     __c_functions(capsys, False)
+    os.chdir(cwd)
 
 
 def __c_functions(capsys, store_metadata):
@@ -60,11 +65,15 @@ def __c_functions(capsys, store_metadata):
 
 
 def test_cpp_functions(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     __cpp_functions(capsys, True)
+    os.chdir(cwd)
 
 
 def test_cpp_functions_without_storing_metadata(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     __cpp_functions(capsys, False)
+    os.chdir(cwd)
 
 
 def __cpp_functions(capsys, store_metadata):

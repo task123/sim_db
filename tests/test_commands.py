@@ -22,6 +22,7 @@ def setup_module(module):
 
 
 def test_init(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     command_line_tool("sim_db", [
             "init",
             "--path", "{0}".format(common_test_helpers.get_test_dir())
@@ -32,9 +33,11 @@ def test_init(capsys):
     assert os.path.isdir(common_test_helpers.get_test_dir() + '/.sim_db')
     assert os.path.isfile(common_test_helpers.get_test_dir() + '/.sim_db/settings.txt')
     shutil.rmtree(common_test_helpers.get_test_dir() + '/.sim_db')
+    os.chdir(cwd)
 
 
 def test_add_sim_print_sim_and_delete_sim(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
@@ -61,6 +64,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     assert (len(output_after_delete) == 0
             or output_after_delete.splitlines()[-1].strip() 
                 != "{0}".format(db_id))
+    os.chdir(cwd)
 
 
 def __assert_output_print_sim_after_add_sim(output_print_sim):
@@ -83,6 +87,7 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
 
 
 def test_add_and_run(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_and_run",
             "--filename",
@@ -113,9 +118,11 @@ def test_add_and_run(capsys):
     common_test_helpers.assert_output_python_program(output_program, db_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
                                             True)
+    os.chdir(cwd)
 
 
 def test_list_commands(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     command_line_tool("sim_db", ["list_commands"])
     output_list_commands, err = capsys.readouterr()
     with capsys.disabled():
@@ -145,9 +152,11 @@ def test_list_commands(capsys):
     assert output_lines[23] == "settings"
     assert output_lines[24] == "submit / submit_sim"
     assert output_lines[25] == "update / update_sim"
+    os.chdir(cwd)
 
 
 def test_add_column_and_delete_empty_columns(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     with capsys.disabled():
         print("\nTest add_column and delete_empty_columns...")
     command_line_tool("sim_db", "add_column --column new_column --type 'TEXT'".split())
@@ -160,9 +169,11 @@ def test_add_column_and_delete_empty_columns(capsys):
     column_names, column_types = helpers.get_db_column_names_and_types(
             db_cursor)
     assert "new_column" not in column_names
+    os.chdir(cwd)
 
 
 def test_extract_params(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
@@ -191,9 +202,11 @@ def test_extract_params(capsys):
             20]
     assert "test_param9 (int): 9" == lines_extract_params[22]
     assert "test_param10 (int): 11" == lines_extract_params[24]
+    os.chdir(cwd)
 
 
 def test_update_sim(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
@@ -212,9 +225,11 @@ def test_update_sim(capsys):
     with capsys.disabled():
         print("\nTest update_sim...")
     assert output_print_sim.strip() == "100"
+    os.chdir(cwd)
 
 
 def test_add_comment(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
@@ -235,9 +250,11 @@ def test_add_comment(capsys):
     with capsys.disabled():
         print("\nTest add_comment...")
     assert output_print_sim.strip() == "This is a test comment."
+    os.chdir(cwd)
 
 
 def test_get_and_cd_results(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_and_run",
             "--filename",
@@ -257,9 +274,11 @@ def test_get_and_cd_results(capsys):
             "--no_checks"
     ])
     assert not os.path.isdir(results_dir)
+    os.chdir(cwd)
 
 
 def test_submit_sim(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
             __read_job_scheduler_settings()
 
@@ -290,6 +309,7 @@ def test_submit_sim(capsys):
         os.remove(job_script_name)
         __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
                                   memory_per_node)
+    os.chdir(cwd)
 
 
 def __read_job_scheduler_settings():
@@ -329,6 +349,7 @@ def __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
 
 
 def test_add_and_submit(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     settings_no_set, job_scheduler, n_cpus_per_node, memory_per_node = \
             __read_job_scheduler_settings()
 
@@ -356,8 +377,10 @@ def test_add_and_submit(capsys):
         os.remove(job_script_name)
         __assert_lines_job_script(lines, job_scheduler, n_cpus_per_node,
                                   memory_per_node)
+    os.chdir(cwd)
 
 def test_combine_dbs(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     path_db_1 = common_test_helpers.get_test_dir() + "/sim1_test_comb.db"
     path_db_2 = common_test_helpers.get_test_dir() + "/sim2_test_comb.db"
     path_comb_db = common_test_helpers.get_test_dir() + "/new_comb_sim.db"
@@ -412,9 +435,11 @@ def test_combine_dbs(capsys):
         assert column_name in column_names_comb
     for (old_command, new_command) in zip(old_run_commands, new_run_commands):
         assert old_command == new_command
+    os.chdir(cwd)
 
 
 def test_add_range_sim(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_ids = command_line_tool("sim_db", [
             "add_range_sim",
             "--filename",
@@ -463,8 +488,10 @@ def test_add_range_sim(capsys):
     # Test that the added simulation parameters are deleted
     assert (len(output_after_delete) == 0
             or output_after_delete != "{0}".format(db_id))
+    os.chdir(cwd)
 
 def test_run_serial_sims(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     id_1 = command_line_tool("sim_db", ["add_sim", "--filename", 
         common_test_helpers.get_test_dir() + "/sim_params_python_program.txt"], print_ids_added=False)
     id_2 = command_line_tool("sim_db", ["add_sim", "--filename", 
@@ -494,9 +521,11 @@ def test_run_serial_sims(capsys):
     # Test that the added simulation parameters are deleted
     assert (len(output_after_delete) == 0
             or output_after_delete != "{0}".format(id_3))
+    os.chdir(cwd)
 
 
 def test_duplicate_sim(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", ["add_sim", "--filename", 
         common_test_helpers.get_test_dir() + "/sim_params_python_program.txt"], 
         print_ids_added=False)
@@ -529,9 +558,11 @@ def test_duplicate_sim(capsys):
     assert output_duplicated_sim.split('\n')[2].strip() == 'new'
     assert (output_original_sim.split('\n', 3)[3] 
             == output_duplicated_sim.split('\n', 3)[3])
+    os.chdir(cwd)
 
 
 def test_duplicate_and_run(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     db_id = command_line_tool("sim_db", [
             "add_sim",
             "--filename",
@@ -568,8 +599,10 @@ def test_duplicate_and_run(capsys):
     common_test_helpers.assert_output_python_program(output_program, new_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(output_print_sim_after_run_sim,
                                             True)
+    os.chdir(cwd)
 
 def test_settings(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     command_line_tool("sim_db", [
             "init", 
             "--path", "{0}".format(common_test_helpers.get_test_dir())
@@ -618,11 +651,15 @@ def test_settings(capsys):
     assert output_setting_print_after_add.split('\n')[0].strip() == 'sim_params.txt'
     assert output_setting_print_after_add.split('\n')[1].strip() == 'test_settings.txt'
     assert output_setting_print_after_remove.strip() == 'sim_params.txt'
+
+    os.chdir(cwd)
     
 
 def test_delete_results_dir(capsys):
+    cwd = common_test_helpers.get_cwd_and_cd_test_dir()
     with capsys.disabled():
         print("\nTest delete_results_dir...")
     for entry in os.listdir(common_test_helpers.get_test_dir() + '/results'):
         print(common_test_helpers.get_test_dir() + '/results/' + entry)
         assert not os.path.isdir(common_test_helpers.get_test_dir() + '/results/' + entry)
+    os.chdir(cwd)

@@ -5,7 +5,11 @@
 
 import os.path
 
-
+def get_cwd_and_cd_test_dir():
+    cwd = os.getcwd()
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    return cwd
+    
 def get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
