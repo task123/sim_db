@@ -12,6 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+import subprocess
 import os
 import sys
 sim_db_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,6 +21,11 @@ sys.path.insert(0, os.path.join(sim_db_dir, 'sim_db/src_command_line_tool'))
 sys.path.insert(0, os.path.join(sim_db_dir, 'sim_db/src_command_line_tool/commands'))
 sys.path.append('usr/local/bin')
 
+# Generating Doxygen XML files for ReadTheDocs build
+
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+if read_the_docs_build or True:
+    subprocess.call('cd ..; doxygen Doxyfile', shell=True)
 
 # -- Project information -----------------------------------------------------
 
