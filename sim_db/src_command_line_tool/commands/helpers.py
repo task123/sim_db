@@ -293,3 +293,12 @@ def user_input(message):
         return raw_input(message)
     else:
         return input(message)
+
+
+def if_unicode_convert_to_str(value):
+    """Return value. Convert to string only if python 2 and value is unicode."""
+    if version_info[0] < 3:
+        if type(value) == unicode:
+            return value.encode('ascii', 'backslashreplace')
+    else:
+        return value
