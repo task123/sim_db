@@ -15,7 +15,8 @@ Usage: 'python command_line_tool.py <command> <args>'
 if __name__ == '__main__':
     import sys
     import os.path
-    sys.path.append(
+    sys.path.insert(
+            0,
             os.path.abspath(
                     os.path.dirname(
                             os.path.dirname(os.path.dirname(__file__)))))
@@ -206,5 +207,5 @@ if __name__ == '__main__':
     else:
         name_command_line_tool = sys.argv[0]
         arguments= sys.argv[1:]
-    
+
     command_line_tool(name_command_line_tool, arguments)

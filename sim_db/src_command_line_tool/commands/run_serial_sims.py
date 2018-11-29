@@ -98,13 +98,15 @@ def run_serial_sims(name_command_line_tool="sim_db",
                     command,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    shell=True)
-            if sys.version_info[0] < 3:
-                for line in iter(process.stdout.readline, ''):
-                    sys.stdout.write(line.decode('UTF-8'))
-            else:
-                for line in iter(process.stdout.readline, b''):
-                    sys.stdout.write(line.decode('UTF-8'))
+                    shell=True, 
+                    universal_newline=True)
+            for line in iter(process.stdout.readline, ''):
+                sys.stdout.write(line)
+                sys.stdout.flush()
+            for line in iter(process.stderr.readline, ''):
+                sys.stdout.write(line)
+                sys.stdout.flush()
+
         update_sim.update_sim(argv=[
                 "--id",
                 str(id_sim), "--columns", "status", "--values", "finished"

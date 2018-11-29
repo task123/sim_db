@@ -52,7 +52,7 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(column="git_hash", value=out.decode('UTF-8'))
+            self.write(column="git_hash", value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     [
@@ -63,7 +63,9 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(column="commit_message", value=out.decode('UTF-8'))
+            self.write(
+                    column="commit_message",
+                    value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     ["cd {0}; git diff HEAD --stat".format(path_proj_root)],
@@ -71,7 +73,9 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(column="git_diff_stat", value=out.decode('UTF-8'))
+            self.write(
+                    column="git_diff_stat",
+                    value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     ["cd {0}; git diff HEAD".format(path_proj_root)],
@@ -79,7 +83,7 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            out = out.decode('UTF-8')
+            out = out.decode('ascii', 'replace')
             if len(out) > 3000:
                 warning = "WARNING: Diff limited to first 3000 characters.\n"
                 out = warning + '\n' + out[0:3000] + '\n\n' + warning
@@ -173,7 +177,8 @@ class SimDB:
                     argv=["--column", column, "--type", type_of_value])
 
         value_string = self.__convert_to_value_string(value, type_of_value)
-        value_string = self.__escape_quote_with_two_quotes(value_string)
+        if value_string != None:
+            value_string = self.__escape_quote_with_two_quotes(value_string)
         update_sim.update_sim(argv=[
                 "--id",
                 str(db_id), "--columns", column, "--value", value_string
