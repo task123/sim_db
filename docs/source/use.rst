@@ -69,7 +69,7 @@ This syntax for can be used to simplify the parameter files for projects with ma
 
 .. literalinclude:: ../../examples/extensive_example.cpp
    :language: c++
-   :lines: 16-70
+   :lines: 16-72
 
 Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example:
 
@@ -156,6 +156,10 @@ If a number of simulations are added all including the parameters `max_walltime`
 Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github <https://github.com/task123/sim_db/tree/master/example>`.
 
 .. _dependencies:
+
+Multithreading
+==============
+**sim_db** is thread safe with the notable exception of the ``make_unique_subdir`` functions that should only be called from a single thread.
 
 Dependencies
 ============

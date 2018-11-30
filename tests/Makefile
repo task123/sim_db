@@ -1,11 +1,11 @@
 CC = cc
 CXX = c++
-CFLAGS_DEBUG = -std=c99 -g -Wall -Wextra -Wfloat-equal
+CFLAGS_DEBUG = -std=c99 -Wall -Wextra -Wfloat-equal
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
-CXXFLAGS_DEBUG = -g -Wall -Wextra 
+CXXFLAGS_DEBUG = -Wall -Wextra 
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
-CFLAGS = $(CFLAGS_RELEASE)
-CXXFLAGS = $(CXXFLAGS_RELEASE)
+CFLAGS = $(CFLAGS_DEBUG)
+CXXFLAGS = $(CXXFLAGS_DEBUG)
 LDFLAGS = -lm -lpthread -ldl
 
 PATH_SIM_DB := $(if $(PATH_SIM_DB), $(PATH_SIM_DB), "..")

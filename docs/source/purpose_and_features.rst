@@ -31,7 +31,6 @@ Stores a lot of metadata automatically
 ++++++++++++++++++++++++++++++++++++++
 **sim_db** stores a lot of metadata that might be useful down the line or even right away. A full list of what is stored is given in the list explaining the :ref:`default columns <Default columns - metadata stored>` in the database. In total what parameters was used, what was the result / where was it stored, what code was used to produce the result (for git projects) including what binary (was it compiled with this code), why this simulation was run, how long did it take to run on how many logical cpus on which hardware should be stored to the database — all while being less work to use that too not use **sim_db** (that is at least the idea).
 
-
 Few dependencies
 ++++++++++++++++
 Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`this minimum <dependencies>`.
@@ -39,6 +38,10 @@ Few dependencies make your project easier to install and to get running, and **s
 Python, C and C++
 +++++++++++++++++
 **sim_db** exists for both Python, C and C++ and wrappers for languages that can call C functions are quite easy to add. It is also very useful that multiple programs of different languages can read the same parameters from the database. This does for example allows the plotting, visualization and after work can be seperated in a in a python program and the actual computational intensive simulation in a C++ program.
+
+Thread safe
++++++++++++
+**sim_db** is thread safe with the exceptiong of the ``make_unique_subdir`` functions that should only be called from a single thread.
 
 Build to run on both local machine and super computers/clusters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

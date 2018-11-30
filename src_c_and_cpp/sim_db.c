@@ -1,6 +1,8 @@
 // Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
+#define _XOPEN_SOURCE 500
+
 #include "../include/sim_db.h"
 #include <ctype.h>
 #include <limits.h>
@@ -13,10 +15,6 @@
 #include <time.h>
 #include <unistd.h>
 #include "../third_party/sqlite3/sqlite3.h"
-
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
 
 struct SimDB {
     sqlite3* db;
@@ -100,7 +98,10 @@ void sim_db_update(SimDB* self, const char* column, const char* value) {
     int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
     free(query);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT perform "
+                "the SQLite3 query: '%s'\n",
+                __func__, __LINE__, query);
         exit(1);
     }
 }
@@ -148,7 +149,7 @@ char* sim_db_escape_quote_with_two_quotes(const char* string) {
     char* escaped_string =
             (char*) malloc(2 * (strlen(string) + 1) * sizeof(char));
     int j = 0;
-    for (int i = 0; i < strlen(string) + 1; i++) {
+    for (int i = 0; i < (int) strlen(string) + 1; i++) {
         if (string[i] != '\'') {
             escaped_string[i + j] = string[i];
         } else {
@@ -172,7 +173,15 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
         if ((strcmp(argv[i], "--path_proj_root") == 0)
             || (strcmp(argv[i], "-p") == 0)) {
             is_path_proj_root_found = true;
-            strcpy(path_proj_root, argv[i + 1]);
+            if (strlen(argv[i + 1]) <= PATH_MAX) {
+                strcpy(path_proj_root, argv[i + 1]);
+            } else {
+                fprintf(stderr,
+                        "Error in function %s at line %d.\nERROR: "
+                        "'--path_proj_root' can NOT be longer than %d.\n",
+                        __func__, __LINE__, PATH_MAX);
+                exit(1);
+            }
         }
         if (is_id_found && is_path_proj_root_found) {
             break;
@@ -180,12 +189,13 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
     }
     if (!is_id_found) {
         fprintf(stderr,
-                "ERROR: '--id ID' or '-i ID' MUST be passed as command line "
-                "arguments.\n");
+                "Error in function %s at line %d.\nERROR: '--id ID' or '-i "
+                "ID' MUST be passed as command line arguments.\n",
+                __func__, __LINE__);
         exit(1);
     }
     if (!is_path_proj_root_found) {
-        if (getcwd(path_proj_root, sizeof(char) * (PATH_MAX + 1)) != NULL) {
+        if (getcwd(path_proj_root, sizeof(char) * (PATH_MAX + 1))) {
             strcat(path_proj_root, "/");
             char settings[30] = "/.sim_db/settings.txt";
             for (int i = strlen(path_proj_root) - 1; i >= 0; i--) {
@@ -202,16 +212,18 @@ SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
             }
             if (strlen(path_proj_root) <= 1) {
                 fprintf(stderr,
-                        "ERROR: Could NOT find '.sim_db/settings.txt' in "
-                        "this "
-                        "or "
-                        "any parents directories.\nRun '$ init' in the "
-                        "project's "
-                        "root directory.\n");
+                        "Error in function %s at line %d.\nERROR: Could "
+                        "NOT find '.sim_db/settings.txt' in this or any "
+                        "parents directories.\nRun '$ init' in the "
+                        "project's root directory.\n",
+                        __func__, __LINE__);
                 exit(1);
             }
         } else {
-            fprintf(stderr, "ERROR: getcwd() did NOT work.");
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: getcwd() did "
+                    "NOT work.",
+                    __func__, __LINE__);
         }
     }
 
@@ -244,9 +256,17 @@ SimDB* sim_db_ctor_no_metadata(int argc, char** argv) {
 SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
                            bool store_metadata) {
     char path_database[PATH_MAX + 1];
-    strcpy(path_database, path_proj_root);
+    int len_path_proj_root = strlen(path_proj_root);
+    if (len_path_proj_root <= PATH_MAX) {
+        strcpy(path_database, path_proj_root);
+    } else {
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: 'path_proj_root' "
+                "can NOT be longer than %d.\n",
+                __func__, __LINE__, PATH_MAX);
+        exit(1);
+    }
     sqlite3* db;
-    int len_path_proj_root = strlen(path_database);
     if (len_path_proj_root > 0
         && path_database[len_path_proj_root - 1] == '/') {
         path_database[len_path_proj_root - 1] = '\0';
@@ -254,8 +274,10 @@ SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
     strcat(path_database, "/.sim_db/sim.db");
     int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
-                sqlite3_errmsg(db));
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Can NOT open "
+                "database '%s': %s\n",
+                __func__, __LINE__, path_database, sqlite3_errmsg(db));
         exit(1);
     }
 
@@ -341,7 +363,10 @@ int sim_db_read_int(SimDB* self, const char* column) {
     sqlite3_stmt* stmt = NULL;
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: '%s'\n",
+                __func__, __LINE__, query);
         exit(1);
     }
     rc = sqlite3_step(stmt);
@@ -349,15 +374,18 @@ int sim_db_read_int(SimDB* self, const char* column) {
     if (rc == SQLITE_ROW) {
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_INTEGER) {
-            fprintf(stderr, "ERROR: Column %s is NOT an int.\n", column);
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: Column %s is "
+                    "NOT an int.\n",
+                    __func__, __LINE__, column);
             exit(1);
         }
         result = sqlite3_column_int(stmt, 0);
     } else {
         fprintf(stderr,
-                "Could NOT read column=%s with id=%d for "
-                "database.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: Could NOT read "
+                "column=%s with id=%d form database.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     sqlite3_finalize(stmt);
@@ -370,7 +398,10 @@ double sim_db_read_double(SimDB* self, const char* column) {
     sqlite3_stmt* stmt = NULL;
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: '%s'\n",
+                __func__, __LINE__, query);
         exit(1);
     }
     rc = sqlite3_step(stmt);
@@ -378,15 +409,18 @@ double sim_db_read_double(SimDB* self, const char* column) {
     if (rc == SQLITE_ROW) {
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_FLOAT) {
-            fprintf(stderr, "ERROR: Column %s is NOT a float.\n", column);
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: Column %s is "
+                    "NOT a float.\n",
+                    __func__, __LINE__, column);
             exit(1);
         }
         result = sqlite3_column_double(stmt, 0);
     } else {
         fprintf(stderr,
-                "Could NOT read column=%s with id=%d for "
-                "database.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: Could NOT read "
+                "column=%s with id=%d form database.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     sqlite3_finalize(stmt);
@@ -399,7 +433,10 @@ char* sim_db_read_string(SimDB* self, const char* column) {
     sqlite3_stmt* stmt = NULL;
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: '%s'\n",
+                __func__, __LINE__, query);
         exit(1);
     }
     rc = sqlite3_step(stmt);
@@ -407,15 +444,18 @@ char* sim_db_read_string(SimDB* self, const char* column) {
     if (rc == SQLITE_ROW) {
         int type = sqlite3_column_type(stmt, 0);
         if (type != SQLITE_TEXT) {
-            fprintf(stderr, "ERROR: Column %s is NOT a string.\n", column);
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: Column %s is "
+                    "NOT a string.\n",
+                    __func__, __LINE__, column);
             exit(1);
         }
         text = (char*) sqlite3_column_text(stmt, 0);
     } else {
         fprintf(stderr,
-                "Could NOT read column=%s with id=%d for "
-                "database.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: Could NOT read "
+                "column=%s with id=%d for database.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     char* string = (char*) malloc((strlen(text) + 1) * sizeof(char));
@@ -433,10 +473,9 @@ bool sim_db_read_bool(SimDB* self, const char* column) {
         return false;
     } else {
         fprintf(stderr,
-                "ERROR: The value under column %s with id %d is "
-                "NOT "
-                "'True' or 'False', but %s.\n",
-                column, self->id, bool_string);
+                "Error in function %s at line %d.\nERROR: The value under "
+                "column %s with id %d is NOT 'True' or 'False', but %s.\n",
+                __func__, __LINE__, column, self->id, bool_string);
         exit(1);
     }
 }
@@ -445,9 +484,9 @@ SimDBIntVec sim_db_read_int_vec(SimDB* self, const char* column) {
     char* int_arr_string = sim_db_read_string(self, column);
     if (strstr(int_arr_string, "int[") != int_arr_string) {
         fprintf(stderr,
-                "ERROR: The type under column=%s with id=%d is NOT "
-                "int array.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: The type under "
+                "column=%s with id=%d is NOT int array.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     SimDBIntVec int_vec;
@@ -483,9 +522,9 @@ SimDBDoubleVec sim_db_read_double_vec(SimDB* self, const char* column) {
     char* double_arr_string = sim_db_read_string(self, column);
     if (strstr(double_arr_string, "float[") != double_arr_string) {
         fprintf(stderr,
-                "ERROR: The type under column=%s with id=%d is NOT "
-                "double array.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: The type under "
+                "column=%s with id=%d is NOT double array.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     SimDBDoubleVec double_vec;
@@ -523,9 +562,9 @@ SimDBStringVec sim_db_read_string_vec(SimDB* self, const char* column) {
     char* str_arr_string = sim_db_read_string(self, column);
     if (strstr(str_arr_string, "string[") != str_arr_string) {
         fprintf(stderr,
-                "ERROR: The type under column=%s with id=%d is NOT "
-                "string array.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: The type under "
+                "column=%s with id=%d is NOT string array.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     SimDBStringVec string_vec;
@@ -569,9 +608,9 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
     char* bool_arr_str = sim_db_read_string(self, column);
     if (strstr(bool_arr_str, "bool[") != bool_arr_str) {
         fprintf(stderr,
-                "ERROR: The type under column=%s with id=%d is NOT "
-                "double array.\n",
-                column, self->id);
+                "Error in function %s at line %d.\nERROR: The type under "
+                "column=%s with id=%d is NOT double array.\n",
+                __func__, __LINE__, column, self->id);
         exit(1);
     }
     SimDBBoolVec bool_vec;
@@ -597,11 +636,10 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
                 bool_vec.array[n_bools] = false;
             } else {
                 fprintf(stderr,
-                        "ERROR: A value in the array  under column "
-                        "%s with id %d is NOT 'True' or 'False', "
-                        "but "
-                        "%s.\n",
-                        column, self->id, bool_str);
+                        "Error in function %s at line %d.\nERROR: A value "
+                        "in the array  under column %s with id %d is NOT "
+                        "'True' or 'False', but %s.\n",
+                        __func__, __LINE__, column, self->id, bool_str);
                 exit(1);
             }
             n_bools++;
@@ -623,7 +661,10 @@ SimDBStringVec sim_db_get_column_names(SimDB* self) {
     sqlite3_stmt* stmt = NULL;
     int rc = sqlite3_prepare_v2(self->db, query, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: '%s'\n",
+                __func__, __LINE__, query);
         exit(1);
     }
     rc = sqlite3_step(stmt);
@@ -646,7 +687,10 @@ SimDBStringVec sim_db_get_column_names(SimDB* self) {
         }
         column_names.size = i;
     } else {
-        fprintf(stderr, "Could NOT read from database\n");
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT read "
+                "from database\n",
+                __func__, __LINE__);
         exit(1);
     }
     sqlite3_finalize(stmt);
@@ -673,8 +717,10 @@ void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
         sprintf(query, "ALTER TABLE runs ADD COLUMN '%s' %s", column, type);
         int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
         if (rc != SQLITE_OK) {
-            fprintf(stderr, "Could NOT perform the SQLite3 query: '%s'\n",
-                    query);
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: Could NOT "
+                    "perform the SQLite3 query: '%s'\n",
+                    __func__, __LINE__, query);
             exit(1);
         }
     }
@@ -835,6 +881,14 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     sim_db_get_time_string(time_string);
     char* name = sim_db_read_string(self, "name");
     char* name_subdir = (char*) malloc((PATH_MAX + 1) * sizeof(char));
+    if (strlen(abs_path_to_results_dir) > PATH_MAX) {
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: "
+                "'abs_path_to_results_dir' can NOT be longer than %d "
+                "characters.\n",
+                __func__, __LINE__, PATH_MAX);
+        exit(1);
+    }
     if (abs_path_to_results_dir[strlen(abs_path_to_results_dir) - 1] == '/') {
         sprintf(name_subdir, "%s%s_%s_%d", abs_path_to_results_dir, time_string,
                 name, self->id);
@@ -853,8 +907,10 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
         }
     }
     if (mkdir(name_subdir, 0700)) {
-        fprintf(stderr, "ERROR: Could NOT create subdirectory %s\n",
-                name_subdir);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT create "
+                "subdirectory %s\n",
+                __func__, __LINE__, name_subdir);
         exit(1);
     }
     sim_db_add_pointer_to_free(self, name_subdir);
@@ -871,11 +927,32 @@ char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_results_dir) {
     if (strlen(path_to_results_dir) >= 5
         && strncmp(path_to_results_dir, "root/", 5) == 0) {
         path_to_results_dir += 5;
-        sprintf(path_res_dir, "%s/%s", self->path_proj_root,
-                path_to_results_dir);
+        if (strlen(path_to_results_dir) + strlen(path_to_results_dir)
+            <= PATH_MAX) {
+            strcpy(path_res_dir, self->path_proj_root);
+            strcat(path_res_dir, "/");
+            strcat(path_res_dir, path_to_results_dir);
+        } else {
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: "
+                    "'path_to_results_dir' can NOT be longer than %d "
+                    "characters.\n",
+                    __func__, __LINE__, PATH_MAX);
+            exit(1);
+        }
     } else {
-        sprintf(path_res_dir, "%s", path_to_results_dir);
+        if (strlen(path_to_results_dir) <= PATH_MAX) {
+            sprintf(path_res_dir, "%s", path_to_results_dir);
+        } else {
+            fprintf(stderr,
+                    "Error in function %s at line %d.\nERROR: "
+                    "'path_to_results_dir' can NOT be longer than %d "
+                    "characters.\n",
+                    __func__, __LINE__, PATH_MAX);
+            exit(1);
+        }
     }
+
     char real_path_res_dir[PATH_MAX + 1];
     if (!realpath(path_res_dir, real_path_res_dir)) {
         fprintf(stderr, "ERROR: Could NOT make realpath of %s\n.",
@@ -954,21 +1031,27 @@ int add_empty_sim(const char* path_proj_root) {
     sqlite3* db;
     int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
-                sqlite3_errmsg(db));
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Can NOT open "
+                "database '%s': %s\n",
+                __func__, __LINE__, path_database, sqlite3_errmsg(db));
         exit(1);
     }
     rc = sqlite3_exec(db, get_create_table_query(), NULL, NULL, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: %s\n",
-                get_create_table_query());
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: %s\n",
+                __func__, __LINE__, get_create_table_query());
         exit(1);
     }
     rc = sqlite3_exec(db, "INSERT INTO runs DEFAULT VALUES", NULL, NULL, NULL);
     if (rc != SQLITE_OK) {
         fprintf(stderr,
-                "Could NOT perform the SQLite3 query: INSERT INTO runs "
-                "DEFAULT VALUES\n");
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: INSERT INTO runs DEFAULT "
+                "VALUES\n",
+                __func__, __LINE__);
         exit(1);
     }
     int id = (int) sqlite3_last_insert_rowid(db);
@@ -988,8 +1071,10 @@ void delete_sim(const char* path_proj_root, int id) {
     sqlite3* db;
     int rc = sqlite3_open(path_database, &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Can NOT open database '%s': %s\n", path_database,
-                sqlite3_errmsg(db));
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Can NOT open "
+                "database '%s': %s\n",
+                __func__, __LINE__, path_database, sqlite3_errmsg(db));
         exit(1);
     }
 
@@ -997,7 +1082,10 @@ void delete_sim(const char* path_proj_root, int id) {
     sprintf(query, "DELETE FROM runs WHERE id = %d", id);
     rc = sqlite3_exec(db, query, NULL, NULL, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Could NOT perform the SQLite3 query: %s\n", query);
+        fprintf(stderr,
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "perform the SQLite3 query: %s\n",
+                __func__, __LINE__, query);
         exit(1);
     }
     sqlite3_close(db);

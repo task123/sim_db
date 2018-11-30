@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    sim_db::Connection sim_db(argc, argv, store_metadata = store_metadata);
+    sim_db::Connection sim_db(argc, argv, store_metadata);
 
     int param1 = sim_db.read<int>("test_param1");
     std::cout << param1 << std::endl;
@@ -91,13 +91,6 @@ int main(int argc, char** argv) {
     std::cout << sim_db.read<int>("new_test_param10") << std::endl;
 
     if (store_metadata) {
-        // Get full path to result directory.
-        char cwd[4097];
-        getcwd(cwd, 4096);
-        std::string path_res_dir = cwd + std::string("/") + __FILE__;
-        path_res_dir.erase(path_res_dir.find_last_of('/'), path_res_dir.size());
-        path_res_dir += "/results";
-
         // Make unique subdirectory in results/.
         std::string filename_result =
                 sim_db.make_unique_subdir("root/tests/results/")

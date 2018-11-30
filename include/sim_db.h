@@ -11,20 +11,34 @@
 
 typedef struct SimDB SimDB;
 
-/// Initialize SimDB with command line arguments --id ID --path_proj_root PATH.
+/// Initialize SimDB and connect to the **sim_db** database.
 //
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+/// @param argc Length of \p argv.
+/// @param argv Array of command line arguments containing ```--id 'ID'``` and
+/// optionally ```--path_proj_root 'PATH'```. *PATH* is the root directory of
+/// the project, where *.sim_db/* is located. If not passed, the current working
+/// directory and its parent directories will be searched until *.sim_db/* is
+/// found.
 SimDB* sim_db_ctor(int argc, char** argv);
 
-/// Initialize SimDB with command line arguments --id ID --path_proj_root PATH.
+/// Initialize SimDB and connect to the **sim_db** database.
 //
+/// No metadata store automatically, and only explicit calls will write to the
+/// database.
+///
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+/// @param argc Length of \p argv.
+/// @param argv Array of command line arguments containing ```--id 'ID'``` and
+/// optionally ```--path_proj_root 'PATH'```. *PATH* is the root directory of
+/// the project, where *.sim_db/* is located. If not passed, the current working
+/// directory and its parent directories will be searched until *.sim_db/* is
+/// found.
 SimDB* sim_db_ctor_no_metadata(int argc, char** argv);
 
-/// Initialize SimDB with id of the simulation parameters in the database.
+/// Initialize SimDB and connect to the **sim_db** database.
 //
-/// Metadata is also added to database. (sha1 is only added if in a git
-/// project.) {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+/// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
 /// @param path_proj_root Path to root directory of the project, where
 /// *.sim_db/* is located.
 /// @param id ID number of the simulation paramters in the **sim_db** database.
@@ -51,7 +65,6 @@ double sim_db_read_double(SimDB* self, const char* column);
 
 /// Read parameter from the database.
 //
-/// Clean up is done by {@link sim_db_dtor()}, so don't free \p string.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
 /// @param column Name of the parameter and column in the database.

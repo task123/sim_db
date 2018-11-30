@@ -6,6 +6,7 @@
 // Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -110,7 +111,7 @@ int main(int argc, char** argv) {
         fclose(result_file);
     }
 
-    char path_proj_root[4096];
+    char path_proj_root[PATH_MAX + 1];
     strcpy(path_proj_root, sim_db_get_path_proj_root(sim_db));
 
     sim_db_dtor(sim_db);

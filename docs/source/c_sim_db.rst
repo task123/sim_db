@@ -47,7 +47,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.c
    :language: C
-   :lines: 14-82
+   :lines: 16-85
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 
