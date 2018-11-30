@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     char* name_subdir =
-            sim_db_make_unique_subdir(sim_db, "root/example/results");
+            sim_db_make_unique_subdir(sim_db, "root/examples/results");
 
     // Write some results to a file in the newly create subdirectory.
     FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
@@ -65,7 +65,8 @@ int main(int argc, char** argv) {
     // Get the 'ID' of the connected simulation and the path to the project's
     // root directoy.
     int id = sim_db_get_id(sim_db);
-    char* path_proj_root = sim_db_get_path_proj_root(sim_db);
+    char path_proj_root[4097];
+    strcpy(path_proj_root, sim_db_get_path_proj_root(sim_db));
 
     // Write final metadata to database and free memory allocated by sim_db.
     sim_db_dtor(sim_db);

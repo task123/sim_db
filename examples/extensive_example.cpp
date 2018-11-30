@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     std::string name_results_dir =
-            sim_db.make_unique_subdir("root/example/results");
+            sim_db.make_unique_subdir("root/examples/results");
 
     // Write some results to a file in the newly create subdirectory.
     std::ofstream results_file;

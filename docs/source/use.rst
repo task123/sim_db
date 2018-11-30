@@ -69,7 +69,7 @@ This syntax for can be used to simplify the parameter files for projects with ma
 
 .. literalinclude:: ../../examples/extensive_example.cpp
    :language: c++
-   :lines: 16-70
+   :lines: 16-72
 
 Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example:
 

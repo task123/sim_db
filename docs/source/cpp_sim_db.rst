@@ -47,7 +47,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.cpp
    :language: C++
-   :lines: 16-70
+   :lines: 16-72
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 

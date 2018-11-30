@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
         fclose(result_file);
     }
 
-    char path_proj_root[4096];
+    char path_proj_root[4097];
     strcpy(path_proj_root, sim_db_get_path_proj_root(sim_db));
 
     sim_db_dtor(sim_db);
