@@ -44,13 +44,13 @@ extensive_c_example: extensive_example.c ../lib/libsimdbc.a
 extensive_cpp_example: extensive_example.cpp ../lib/libsimdbcpp.a
 	$(CXX) -std=c++11 -o extensive_cpp_example extensive_example.cpp -I../Include -L../lib -lsimdbcpp -lm -lpthread -ldl
 
-minimal_c_example_without_lib: minimal_example.cpp ../src/sim_db.c ../include/sim_db.h
-	$(CC) -o minimal_c_example minimal_example.c ../src/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/ -lm -lpthread -ldl
+minimal_c_example_without_lib: minimal_example.cpp ../src_c_and_cpp/sim_db.c ../include/sim_db.h
+	$(CC) -o minimal_c_example minimal_example.c ../src_c_and_cpp/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/ -lm -lpthread -ldl
 
-minimal_cpp_example_without_lib: minimal_example.cpp ../src/sim_db.cpp ../include/sim_db.hpp ../src/sim_db.c ../include/sim_db.h
-	$(CC) -c -o sim_db.o ../src/sim_db.c 
+minimal_cpp_example_without_lib: minimal_example.cpp ../src_c_and_cpp/sim_db.cpp ../include/sim_db.hpp ../src_c_and_cpp/sim_db.c ../include/sim_db.h
+	$(CC) -c -o sim_db.o ../src_c_and_cpp/sim_db.c 
 	$(CC) -c -o sqlite3.o ../third_party/sqlite3/sqlite3.c
-	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp ../src/sim_db.cpp -I../include sim_db.o sqlite3.o -lm -lpthread -ldl
+	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp ../src_c_and_cpp/sim_db.cpp -I../include sim_db.o sqlite3.o -lm -lpthread -ldl
 	rm -f sim_db.o sqlite3.o
 
 # $ make minimal_c_example_run ID='ID'

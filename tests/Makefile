@@ -6,7 +6,7 @@ CXXFLAGS_DEBUG = -g -Wall -Wextra
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_RELEASE)
 CXXFLAGS = $(CXXFLAGS_RELEASE)
-LDFLAGS = -L../lib -I../include -lm -lpthread -ldl
+LDFLAGS = -lm -lpthread -ldl
 
 PATH_SIM_DB := $(if $(PATH_SIM_DB), $(PATH_SIM_DB), "..")
 
@@ -28,17 +28,17 @@ cpp_program_updated:
 
 # Use target c_program_updated instead as it check libsimdbc.a's dependencies.
 c_program: program.c ../lib/libsimdbc.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -o c_program program.c -lsimdbc
+	$(CC) $(CFLAGS) -o c_program program.c -L../lib -I../include -lsimdbc $(LDFLAGS) 
 
 # Use target cpp_program_updated instead as it check libsimdbcpp.a's dependencies.
 cpp_program: program.cpp ../lib/libsimdbcpp.a
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o cpp_program program.cpp -lsimdbcpp
+	$(CXX) $(CXXFLAGS) -o cpp_program program.cpp -L../lib -I../include -lsimdbcpp $(LDFLAGS)
 
 c_program_run: c_program_updated
-	./c_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
+	./c_program --id ${ID} --path_proj_root ${PATH_SIM_DB}
 
 cpp_program_run: cpp_program_updated
-	./cpp_program --id ${ID} --path_sim_db ${PATH_SIM_DB}
+	./cpp_program --id ${ID} --path_proj_root ${PATH_SIM_DB}
 
 clean:
 	rm -f c_program

@@ -13,7 +13,7 @@ all:
 	$(MAKE) libsimdbcpp.a
 
 libsimdbc.a: ../src_c_and_cpp/sim_db.o ../third_party/sqlite3/sqlite3.o
-	ar -rc libsimdbc.a $^ 
+	ar -rc libsimdbc.a $^
 
 libsimdbcpp.a: ../src_c_and_cpp/sim_db_cpp.o ../src_c_and_cpp/sim_db.o ../third_party/sqlite3/sqlite3.o
 	ar -rc libsimdbcpp.a $^
