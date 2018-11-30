@@ -12,7 +12,7 @@
 ######################### Run minimal Python example ########################## 
 
 # Add example parameters to database for miniaml Python example.
-sim_db add --filename params_minimal_python_example.txt
+sim_db add --filename root/examples/params_minimal_python_example.txt
 
 # Get hold of the ID of the exampel parameters for minimal Python example.
 id_for_minimal_python_example=`sdb print -n 1 --columns id --no_headers`

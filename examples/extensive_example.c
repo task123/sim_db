@@ -13,6 +13,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef PATH_MAX
+#define PATH_MAX
+#endif
+
 #include "sim_db.h"  // Parts from the standard library is also included.
 
 int main(int argc, char** argv) {

@@ -12,7 +12,7 @@
 ######################## Run extensive Python example ######################### 
 
 # Add example parameters to database for miniaml Python example.
-sdb add --filename params_extensive_python_example.txt
+sdb add --filename root/examples/params_extensive_python_example.txt
 
 # Get hold of the ID of the exampel parameters for extensive Python example.
 id_for_extensive_python_example=`sdb print -n 1 --columns id --no_headers`
@@ -28,7 +28,7 @@ sdb delete --id ${id_for_extensive_python_example} --no_checks
 ########################## Run extensive C example ############################ 
 
 # Add example parameters to database for miniaml C example.
-sdb add --filename params_extensive_c_example.txt
+sdb add --filename root/examples/params_extensive_c_example.txt
 
 # Get hold of the ID of the exampel parameters for extensive C example.
 id_for_extensive_c_example=`sdb print -n 1 --columns id --no_headers`
@@ -44,7 +44,7 @@ sdb delete --id ${id_for_extensive_c_example} --no_checks
 ######################### Run extensive C++ example ########################### 
 
 # Add example parameters to database for miniaml C++ example.
-sdb add --filename params_extensive_cpp_example.txt
+sdb add --filename root/examples/params_extensive_cpp_example.txt
 
 # Get hold of the ID of the exampel parameters for extensive C++ example.
 id_for_extensive_cpp_example=`sdb print -n 1 --columns id --no_headers`

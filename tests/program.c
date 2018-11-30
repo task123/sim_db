@@ -12,6 +12,10 @@
 #include <unistd.h>
 #include "sim_db.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 int main(int argc, char** argv) {
     bool store_metadata = true;
     for (int i = 0; i < argc; i++) {
