@@ -4,11 +4,22 @@ Command Line Tool
 
 The command line tool is called ``sim_db``, but can also be called with ``sdb``. It has a syntax simular to ``git``, where commands are passed to ``sim_db`` followed by the arguments to the command: ``$ sim_db <command> [<args>]``. 
 
-All the available commands can be listed with the ``list_commands`` (run as ``$ sim_db list_commands``), and what they do and which arguments they take is found by passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. 
+All the available commands can be listed with the ``list_commands`` (run as ``$ sim_db list_commands``). What they do and which arguments they take is found by passing the ``--help`` or ``-h`` option to any of the commands. The same information is found below. 
 
 Commands ending in *_sim* can also be used without this ending, so ``add`` is the same commend as ``add_sim``.
 
 All the commands can be called from anywhere is your project after the ``init`` command is called in your projects root directory. The only exception is inside the ``sim_db/`` directory if that is included.
+
+Example of commands to run the other examples
+=============================================
+
+The minimal and extensive examples of the Python, C and C++ versions of **sim_db** can all be run with the bash script ``run_all_examples.sh`` found inside the *sim_db/examples/* directory of the `source code <https://github.com/task123/sim_db>`_. The part of the script that run the minimal python example is show here:
+
+.. literalinclude:: ../../examples/run_all_examples.sh
+   :language: bash 
+   :lines: 12-24
+
+Note that *sim_db/* is here the root directory of the project, and ``sim_db init`` have already been called in that directory.
 
 sim_db
 ======

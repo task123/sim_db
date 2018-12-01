@@ -10,7 +10,6 @@ external code for to interact with the database.
 import add_package_root_to_path
 import common_test_helpers
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
-import time
 import os
 
 
@@ -33,7 +32,6 @@ def __c_functions(capsys, store_metadata):
     if not store_metadata:
         __add_no_metadata_flag_to_run_command(capsys, db_id)
     command_line_tool("sim_db", "run_sim --id {0}".format(db_id).split())
-    time.sleep(0.1)  # Wait for c_program to finish
     output_program, err_program = capsys.readouterr()
     command_line_tool("sim_db", "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
@@ -81,7 +79,6 @@ def __cpp_functions(capsys, store_metadata):
     if not store_metadata:
         __add_no_metadata_flag_to_run_command(capsys, db_id)
     command_line_tool("sim_db", "run_sim --id {0}".format(db_id).split())
-    time.sleep(0.1)  # Wait for cpp_program to finish
     output_program, err_program = capsys.readouterr()
     command_line_tool("sim_db", "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "
             "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "

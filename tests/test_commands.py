@@ -8,7 +8,6 @@ import common_test_helpers
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import sim_db.src_command_line_tool.commands.helpers as helpers
 import os
-import time
 import subprocess
 import shutil
 
@@ -92,7 +91,6 @@ def test_add_and_run(capsys):
             "{0}/sim_params_python_program.txt".format(common_test_helpers.get_test_dir())
     ], print_ids_added=False)
     assert db_id != None
-    time.sleep(0.1)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     command_line_tool("sim_db", "print_sim --id {0} -v --no_headers --columns name test_param1 "
             "test_param2 test_param3 test_param4 test_param5 test_param6 "
@@ -555,7 +553,6 @@ def test_duplicate_and_run(capsys):
     ], print_ids_added=False)
     new_id = command_line_tool("sim_db", ["duplicate_and_run", "--id", str(db_id)], 
         print_ids_added=False)
-    time.sleep(0.1)  # Wait for program.py to finish
     output_program, err = capsys.readouterr()
     command_line_tool("sim_db", "print_sim --id {0} -v --no_headers --columns name test_param1 "
             "test_param2 test_param3 test_param4 test_param5 test_param6 "
