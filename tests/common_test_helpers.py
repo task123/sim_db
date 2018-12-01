@@ -16,12 +16,12 @@ def is_outside_sim_db():
     cwd = os.getcwd()
     if os.path.basename(cwd) == "sim_db":
         return False
-    elif (os.path.basename(cwd) == "tests" 
-            and os.path.basename(os.path.dirname(cwd)) == "sim_db"):
+    elif (os.path.basename(cwd) == "tests"
+          and os.path.basename(os.path.dirname(cwd)) == "sim_db"):
         return False
-    else: 
+    else:
         return True
-    
+
 
 def get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))

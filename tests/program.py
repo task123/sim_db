@@ -89,7 +89,7 @@ sim_database.end()
 db_id = sim_db_lib.add_empty_sim()
 print(db_id)
 
-sim_database = sim_db_lib.SimDB(db_id = db_id, store_metadata=False)
+sim_database = sim_db_lib.SimDB(db_id=db_id, store_metadata=False)
 
 sim_database.write("test_param1", 7, type_of_value="int")
 param1 = sim_database.read("test_param1")
