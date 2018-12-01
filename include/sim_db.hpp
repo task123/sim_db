@@ -40,6 +40,7 @@ public:
     //
     /// @param column Name of the parameter and column in the database.
     /// @return Parameter read from database.
+    /// @exception std::invalid_argument \p column not a column in the database.
     template <typename T>
     T read(std::string column);
 
@@ -60,10 +61,8 @@ public:
     /// @return Path to new subdirectory.
     std::string make_unique_subdir(std::string path_directory);
 
-    /// Save the sha1 hash of the file \p paths_executables to the database.
-    //
-    /// @param paths_executables Paths to executable files.
-    void update_sha1_executables(std::vector<std::string> paths_executables);
+    /// Return true if \p column is a column in the database.
+    bool column_exists(std::string column);
 
     /// Return ID number of simulation in the database that is connected.
     int get_id();
@@ -71,6 +70,11 @@ public:
     /// Return path to root directory of the project, where *.sim_db/* is
     /// located.
     std::string get_path_proj_root();
+
+    /// Save the sha1 hash of the file \p paths_executables to the database.
+    //
+    /// @param paths_executables Paths to executable files.
+    void update_sha1_executables(std::vector<std::string> paths_executables);
 
     ~Connection();
 
@@ -220,6 +224,10 @@ class TemplateSpecializationHelper<std::vector<bool> > {
 
 template <typename T>
 T Connection::read(std::string column) {
+    if (!sim_db_column_exists(sim_db, column.c_str())) {
+        throw std::invalid_argument(
+                "Column does NOT exists in the 'sim_db' database.");
+    }
     return TemplateSpecializationHelper<T>::read(sim_db, column);
 };
 

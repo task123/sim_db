@@ -67,6 +67,10 @@ int main(int argc, char** argv) {
     }
     fclose(result_file);
 
+    // Check is column exists in database.
+    bool is_column_in_database =
+            sim_db_column_exists(sim_db, "column_not_in_database");
+
     // Get the 'ID' of the connected simulation and the path to the project's
     // root directoy.
     int id = sim_db_get_id(sim_db);

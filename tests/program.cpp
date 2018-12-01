@@ -104,6 +104,15 @@ int main(int argc, char** argv) {
         }
     }
 
+    std::cout << sim_db.column_exists("test_param1") << std::endl;
+    std::cout << sim_db.column_exists("test_column_does_not_exists")
+              << std::endl;
+    try {
+        sim_db.read<int>("test_column_does_not_exists");
+    } catch (std::invalid_argument&) {
+        std::cout << "threw exception" << std::endl;
+    }
+
     std::string path_proj_root = sim_db.get_path_proj_root();
 
     int id = sim_db::add_empty_sim(path_proj_root);

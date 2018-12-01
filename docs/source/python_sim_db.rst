@@ -41,7 +41,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.py
    :language: python
-   :lines: 16-65
+   :lines: 16-68
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from the *sim_db/examples/* directory with:
 
@@ -51,7 +51,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
 Python API referance
 ====================
-.. automodule:: sim_db
+.. automodule:: sim_db_lib
 .. autoclass:: SimDB
     :members:
     :special-members: __init__

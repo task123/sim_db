@@ -84,6 +84,14 @@ if store_metadata:
     res_dir = sim_database.make_unique_subdir("root/tests/results")
     np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
+print(sim_database.column_exists("test_param1"))
+print(sim_database.column_exists("test_column_does_not_exists"))
+
+try:
+    sim_database.read("test_column_does_not_exists")
+except sim_db_lib.ColumnError:
+    print("raised ColumnError")
+
 sim_database.end()
 
 db_id = sim_db_lib.add_empty_sim()

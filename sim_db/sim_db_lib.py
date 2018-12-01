@@ -39,7 +39,7 @@ class SimDB:
 
         if self.store_metadata:
             self.write(column="status", value="running")
-            self.write('time_started', self.get_date_and_time_as_string())
+            self.write('time_started', self.__get_date_and_time_as_string())
 
         if self.store_metadata and self.__is_a_git_project():
             if os.sep == '/':
@@ -102,7 +102,8 @@ class SimDB:
             'check_type_is'.The valid types the strings 'int', 'float', 'bool',
             'string' and 'int/float/bool/string array' or the types int, float, 
             bool, str and list.
-        :raises: ValueError - if return type does not match 'check_type_is'.
+        :raises ColumnError: If column do not exists.
+        :raises ValueError: If return type does not match 'check_type_is'.
         """
         if db_id == None:
             db_id = self.id
@@ -113,9 +114,11 @@ class SimDB:
         column_names, column_types = helpers.get_db_column_names_and_types(
                 db_cursor)
         if column not in column_names:
-            print("Column, {0}, is NOT a column in the database, 'sim.db'.".
-                  format(column))
-            exit()
+            db.commit()
+            db_cursor.close()
+            db.close()
+            raise ColumnError("Column, {0}, is NOT a column in the database."
+                              .format(column))
 
         db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
                 column, db_id))
@@ -146,7 +149,7 @@ class SimDB:
             'bool', 'string' and 'int/float/bool/string array' or the types int,
             float, bool and str.
         :type type_of_value: str or type
-        :raises: ValueError - if column exists, but type does not match, or 
+        :raises ValueError: If column exists, but type does not match, or 
             empty list is passed without type_of_value given.
         """
         if db_id == None:
@@ -156,6 +159,7 @@ class SimDB:
         db_cursor = db.cursor()
         column_names, column_types = helpers.get_db_column_names_and_types(
                 db_cursor)
+
         type_dict = dict(zip(column_names, column_types))
         if column in column_names:
             self.__check_type(db_cursor, type_of_value, column)
@@ -184,17 +188,9 @@ class SimDB:
                 str(db_id), "--columns", column, "--value", value_string
         ])
 
-    def get_id(self):
-        """Return 'ID' of the connected simulation."""
-        return self.id
-
-    def get_path_proj_root(self):
-        """Return the path to the root directory of the project.
-
-        The project's root directory is assumed to be where the '.sim_db/'
-        directory is located.
-        """
-        return self.path_proj_root
+        db.commit()
+        db_cursor.close()
+        db.close()
 
     def make_unique_subdir(self, path_directory):
         """Make a unique subdirectory in 'name_result_directory'.
@@ -214,7 +210,7 @@ class SimDB:
             path_directory = os.path.join(self.path_proj_root,
                                           path_directory[5:])
         subdir = os.path.join(path_directory,
-                              self.get_date_and_time_as_string())
+                              self.__get_date_and_time_as_string())
         subdir += '_' + self.read('name') + '_' + str(self.id)
         subdir = os.path.abspath(os.path.realpath(subdir))
         if os.path.exists(subdir):
@@ -228,6 +224,34 @@ class SimDB:
             self.write(column="results_dir", value=subdir)
 
         return subdir
+
+    def column_exists(self, column):
+        """Return True if column is a column in the database."""
+        db = helpers.connect_sim_db()
+        db_cursor = db.cursor()
+        column_names, column_types = helpers.get_db_column_names_and_types(
+                db_cursor)
+        db.commit()
+        db_cursor.close()
+        db.close()
+        if column in column_names:
+            return True
+        else:
+            return False
+
+    def get_id(self):
+        """Return 'ID' of the connected simulation."""
+        return self.id
+
+    def get_path_proj_root(self):
+        """Return the path to the root directory of the project.
+
+        The project's root directory is assumed to be where the '.sim_db/'
+        directory is located.
+        """
+        db = helpers.connect_sim_db()
+        db_cursor = db.cursor()
+        return self.path_proj_root
 
     def update_sha1_executables(self, paths_executables):
         """Update the 'sha1_executable' column in the database.
@@ -431,9 +455,13 @@ class SimDB:
                 escaped_string += letter
         return escaped_string
 
-    def get_date_and_time_as_string(self):
+    def __get_date_and_time_as_string(self):
         """Return data and time as 'Year-Month-Date_Hours-Minutes-Seconds'."""
         return time.strftime("%Y-%b-%d_%H-%M-%S")
+
+
+class ColumnError(Exception):
+    pass
 
 
 def add_empty_sim():

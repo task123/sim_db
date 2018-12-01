@@ -660,6 +660,7 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
 }
 
 SimDBStringVec sim_db_get_column_names(SimDB* self) {
+    /*sim_db_free_column_names NEEDS to be called to free return value.*/
     char query[256];
     sprintf(query, "SELECT * FROM runs WHERE id = %d;", self->id);
     sqlite3_stmt* stmt = NULL;
@@ -698,31 +699,39 @@ SimDBStringVec sim_db_get_column_names(SimDB* self) {
         exit(1);
     }
     sqlite3_finalize(stmt);
-    for (size_t i = 0; i < column_names.size; i++) {
-        sim_db_add_pointer_to_free(self, column_names.array[i]);
-    }
-    sim_db_add_pointer_to_free(self, column_names.array);
 
     return column_names;
 }
 
-void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
-                                     const char* type) {
-    SimDBStringVec column_names = sim_db_get_column_names(self);
-    bool column_exists = false;
+void sim_db_free_column_names(SimDBStringVec column_names) {
     for (size_t i = 0; i < column_names.size; i++) {
-        if (strcmp(column_names.array[i], column) == 0) {
-            column_exists = true;
-            break;
+        free(column_names.array[i]);
+    }
+    free(column_names.array);
+}
+
+bool sim_db_column_exists(SimDB* self, const char* column) {
+    SimDBStringVec columns = sim_db_get_column_names(self);
+    for (size_t i = 0; i < columns.size; i++) {
+        if (strcmp(column, columns.array[i]) == 0) {
+            sim_db_free_column_names(columns);
+            return true;
         }
     }
-    if (!column_exists) {
+    sim_db_free_column_names(columns);
+    return false;
+}
+
+void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
+                                     const char* type) {
+    if (!sim_db_column_exists(self, column)) {
         char query[256];
         sprintf(query, "ALTER TABLE runs ADD COLUMN '%s' %s", column, type);
         int rc = sqlite3_exec(self->db, query, NULL, NULL, NULL);
         if (rc != SQLITE_OK) {
             fprintf(stderr,
-                    "Error in function %s at line %d.\nERROR: Could NOT "
+                    "Error in function %s at line %d.\nERROR: Could "
+                    "NOT "
                     "perform the SQLite3 query: '%s'\n",
                     __func__, __LINE__, query);
             exit(1);
@@ -912,7 +921,8 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
     }
     if (mkdir(name_subdir, 0700)) {
         fprintf(stderr,
-                "Error in function %s at line %d.\nERROR: Could NOT create "
+                "Error in function %s at line %d.\nERROR: Could NOT "
+                "create "
                 "subdirectory %s\n",
                 __func__, __LINE__, name_subdir);
         exit(1);

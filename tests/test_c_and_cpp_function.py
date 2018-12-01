@@ -57,7 +57,7 @@ def __c_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___output_c_and_cpp_program(output_program, db_id)
+    ___output_c_and_cpp_program(output_program, db_id, is_cpp=False)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
@@ -106,12 +106,12 @@ def __cpp_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___output_c_and_cpp_program(output_program, db_id)
+    ___output_c_and_cpp_program(output_program, db_id, is_cpp=True)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
 
-def ___output_c_and_cpp_program(output_program, db_id):
+def ___output_c_and_cpp_program(output_program, db_id, is_cpp=False):
     printed_lines = output_program.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
         printed_lines = output_program.split('\n')[3:]
@@ -133,12 +133,17 @@ def ___output_c_and_cpp_program(output_program, db_id):
     printed_lines[20:23] == printed_lines[23:26]
     printed_lines[26:29] == ['1', '0', '1']
     printed_lines[26:29] == printed_lines[29:32]
-    printed_lines[32] == "9"
-    printed_lines[33] == printed_lines[32]
-    printed_lines[34] == "11"
+    printed_lines[32] == "1"
+    printed_lines[33] == "0"
+    if is_cpp:
+        printed_lines[34] == "threw exception"
+        printed_lines.pop(34)
+    printed_lines[34] == "9"
     printed_lines[35] == printed_lines[34]
-    printed_lines[36] == str(db_id + 1)
-    printed_lines[37] == "7"
+    printed_lines[36] == "11"
+    printed_lines[37] == printed_lines[36]
+    printed_lines[38] == str(db_id + 1)
+    printed_lines[39] == "7"
 
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):

@@ -115,6 +115,9 @@ int main(int argc, char** argv) {
         fclose(result_file);
     }
 
+    printf("%d\n", sim_db_column_exists(sim_db, "test_param1"));
+    printf("%d\n", sim_db_column_exists(sim_db, "test_column_does_not_exists"));
+
     char path_proj_root[PATH_MAX + 1];
     strcpy(path_proj_root, sim_db_get_path_proj_root(sim_db));
 

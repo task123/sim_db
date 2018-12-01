@@ -47,7 +47,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.cpp
    :language: C++
-   :lines: 16-72
+   :lines: 16-75
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 
@@ -72,8 +72,9 @@ C++ API referance
 .. doxygenfunction:: sim_db::Connection::read
 .. doxygenfunction:: sim_db::Connection::write
 .. doxygenfunction:: sim_db::Connection::make_unique_subdir
-.. doxygenfunction:: sim_db::Connection::update_sha1_executables
+.. doxygenfunction:: sim_db::Connection::column_exists
 .. doxygenfunction:: sim_db::Connection::get_id
 .. doxygenfunction:: sim_db::Connection::get_path_proj_root
+.. doxygenfunction:: sim_db::Connection::update_sha1_executables
 .. doxygenfunction:: sim_db::add_empty_sim
 .. doxygenfunction:: sim_db::delete_sim

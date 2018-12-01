@@ -209,25 +209,43 @@ void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
 
 /// Make unique subdirectory in \p rel_path_to_result_dir.
 //
-/// This new subdirectory is intended for storing results from the simulation.
+/// This new subdirectory is intended for storing results from the
+/// simulation.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
-/// @param path_to_result_dir Path to where the new directory is created. If it
-/// starts with 'root/', that part will be replaced with the full
-/// path to the root directory of the project.
+/// @param path_to_result_dir Path to where the new directory is created. If
+/// it starts with 'root/', that part will be replaced with the full path to
+/// the root directory of the project.
 /// @return Path to new subdirectory.
 char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_result_dir);
 
 /// Make unique subdirectory in \p abs_path_to_result_dir.
 //
-/// This new subdirectory is intended for storing results from the simulation.
+/// This new subdirectory is intended for storing results from the
+/// simulation.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
 /// sim_db_ctor_with_id()}.
-/// @param abs_path_to_result_dir Absolute path to where the new directory is
-/// created.
+/// @param abs_path_to_result_dir Absolute path to where the new directory
+/// is created.
 /// @return Path to new subdirectory.
 char* sim_db_make_unique_subdir_abs_path(SimDB* self,
                                          const char* abs_path_to_result_dir);
+
+/// Return true if \p column is a column in the database.
+bool sim_db_column_exists(SimDB* self, const char* column);
+
+/// Return ID number of simulation in the database that is connected.
+//
+/// @param self Return value of {@link sim_db_ctor()} or {@link
+/// sim_db_ctor_with_id()}.
+int sim_db_get_id(SimDB* self);
+
+/// Return path to root directory of the project, where *.sim_db/* is
+/// located.
+//
+/// @param self Return value of {@link sim_db_ctor()} or {@link
+/// sim_db_ctor_with_id()}.
+char* sim_db_get_path_proj_root(SimDB* self);
 
 /// Save the sha1 hash of the files \p paths_executables to the database.
 //
@@ -237,18 +255,6 @@ char* sim_db_make_unique_subdir_abs_path(SimDB* self,
 /// @param len Length of \p paths_executables.
 void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
                                     size_t len);
-
-/// Return ID number of simulation in the database that is connected.
-//
-/// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
-int sim_db_get_id(SimDB* self);
-
-/// Return path to root directory of the project, where *.sim_db/* is located.
-//
-/// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
-char* sim_db_get_path_proj_root(SimDB* self);
 
 /// Clean up SimDB.
 //

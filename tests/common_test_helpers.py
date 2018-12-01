@@ -51,8 +51,11 @@ def assert_output_python_program(output_program, db_id):
     assert printed_params[19] == printed_params[18]
     assert printed_params[20] == "None"
     assert printed_params[21] == "None"
-    assert printed_params[22] == str(db_id + 1)
-    assert printed_params[23] == "7"
+    assert printed_params[22] == "True"
+    assert printed_params[23] == "False"
+    assert printed_params[24] == "raised ColumnError"
+    assert printed_params[25] == str(db_id + 1)
+    assert printed_params[26] == "7"
 
 
 def assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):

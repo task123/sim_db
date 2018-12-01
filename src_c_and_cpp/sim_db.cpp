@@ -46,6 +46,10 @@ void Connection::update_sha1_executables(
     delete[] string_vec;
 }
 
+bool Connection::column_exists(std::string column) {
+    return sim_db_column_exists(sim_db, column.c_str());
+}
+
 int Connection::get_id() { return sim_db_get_id(sim_db); }
 
 std::string Connection::get_path_proj_root() {

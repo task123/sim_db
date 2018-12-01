@@ -46,6 +46,9 @@ results = np.array(param6)
 name_results_dir = sim_database.make_unique_subdir("root/examples/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
+# Check if column exists in database.
+is_column_in_database = sim_database.column_exists("column_not_in_database")
+
 # Get the 'ID' of the connected simulation and the path to the root directory.
 db_id = sim_database.get_id()
 path_proj_root = sim_database.get_path_proj_root()

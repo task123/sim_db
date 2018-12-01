@@ -47,7 +47,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.c
    :language: C
-   :lines: 16-85
+   :lines: 22-93
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 
@@ -93,9 +93,10 @@ C API referance
 .. doxygenfunction:: sim_db_write_bool_array
 .. doxygenfunction:: sim_db_make_unique_subdir
 .. doxygenfunction:: sim_db_make_unique_subdir_abs_path
-.. doxygenfunction:: sim_db_update_sha1_executables
+.. doxygenfunction:: sim_db_column_exists
 .. doxygenfunction:: sim_db_get_id
 .. doxygenfunction:: sim_db_get_path_proj_root
+.. doxygenfunction:: sim_db_update_sha1_executables
 .. doxygenfunction:: sim_db_dtor
 .. doxygenfunction:: add_empty_sim(const char *)
 .. doxygenfunction:: delete_sim(const char *, int)

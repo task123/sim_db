@@ -55,6 +55,9 @@ int main(int argc, char** argv) {
         results_file << i << std::endl;
     }
 
+    // Check is column exists in database.
+    bool is_column_in_database = sim_db.column_exists("column_not_in_database");
+
     // Get the 'ID' of the connected simulation an the path to the project's
     // root directory.
     int id = sim_db.get_id();
