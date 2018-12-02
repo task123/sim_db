@@ -60,7 +60,7 @@ The C and C++ libraries now needs to by complied and this is done with:
 
 If **sim_db** haven't already been install with ``pip``, it will be installed now. The libraries should now be available in *sim_db/lib/* as *libsimdb.a* and *libsimdbcpp.a* with headers *sim_db/include/sim_db.h* and *sim_db/include/sim_db.hpp* respectfully.
 
-Include in your project
+Include in Your Project
 =======================
 (Skip to this section of one have choosen to install **sim_db**.)
 

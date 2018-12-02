@@ -4,11 +4,11 @@
 Use
 ===
 
-How it is used - an brief overview
+An Brief Overview
 ==================================
 **sim_db** is used as follows:
 
-* Run :`$ sim_db init`` in project's root directoy.
+* Run ``$ sim_db init`` in project's root directoy.
  
 * All simulation parameters is placed in a text file with formatting described in :ref:`here<Parameter files>`.
 
@@ -18,7 +18,7 @@ How it is used - an brief overview
 
 That is the brief overview. Reading the examples below and the links above will fill in the details. 
 
-Minimal example using Python
+Minimal Example using Python
 ============================
 A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
@@ -47,7 +47,7 @@ where ``sdb`` is just a shorter name for ``sim_db`` and ``-f`` a shorter version
 
 Minimal examples for C++ and C can also be found in the same directory.
 
-Extensive example using C++
+Extensive Example using C++
 ==============================
 This example is as the name suggerst much more extensive. It is not as straightforward as the minimal example, but it will demostrate a lot more and will also include explainations of more details.
 

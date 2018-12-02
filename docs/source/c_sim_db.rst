@@ -6,7 +6,7 @@ sim_db for C
    :maxdepth: 1
    :caption: sim_db for C
 
-Minimal example using C
+Minimal Example using C
 =======================
 A parameter file called `params_mininal_c_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
@@ -31,7 +31,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ cc -o minimal_c_example minimal_example.c -lsimdbc -I../include -L../lib -lm -lpthread -ldl
 
-Extensive example using C
+Extensive Example using C
 =========================
 A parameter file called params_extensive_c_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:
 
@@ -61,7 +61,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ cc -o extensive_c_example extensive_example.c -lsimdbc -I../include -L../lib -lm -lpthread -ldl
 
-C API referance
+C API Referance
 ====================
 
 .. doxygenfunction:: sim_db_ctor

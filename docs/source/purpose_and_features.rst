@@ -15,23 +15,23 @@ When doing simulations, one will usually run a great number of simulations with 
 Features
 ========
 
-Easy to use
+Easy to Use
 +++++++++++
 Have a look at a :ref:`minimal example <Minimal example using Python>` and decide for yourself.
 
-Well documented
+Well Documented
 +++++++++++++++
 Important for use of any code and software and believed to be a modest claim in this case. However, you are currently reading the site documenting **sim_db**, so you can again just decide for yourself.
 
-Keep track of your results
+Keep Track of Your Results
 ++++++++++++++++++++++++++
 It obviously stores all the parameters used to run the simulation, but it also provides two mechanicams to organise your results as well. Results can can easily be written to the database, but for large results and for files that are read by other software for visualization or postprocessing it should be written to file. **sim_db** will create a unique subdirectory for you to store your results in, keep track of this subdirectory and easily jump into it.
 
-Stores a lot of metadata automatically
+Stores a lot of Metadata Automatically
 ++++++++++++++++++++++++++++++++++++++
 **sim_db** stores a lot of metadata that might be useful down the line or even right away. A full list of what is stored is given in the list explaining the :ref:`default columns <Default columns - metadata stored>` in the database. In total what parameters was used, what was the result / where was it stored, what code was used to produce the result (for git projects) including what binary (was it compiled with this code), why this simulation was run, how long did it take to run on how many logical cpus on which hardware should be stored to the database — all while being less work to use that too not use **sim_db** (that is at least the idea).
 
-Few dependencies
+Few Dependencies
 ++++++++++++++++
 Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`this minimum <dependencies>`.
 
@@ -39,20 +39,20 @@ Python, C and C++
 +++++++++++++++++
 **sim_db** exists for both Python, C and C++ and wrappers for languages that can call C functions are quite easy to add. It is also very useful that multiple programs of different languages can read the same parameters from the database. This does for example allows the plotting, visualization and after work can be seperated in a in a python program and the actual computational intensive simulation in a C++ program.
 
-Thread safe
+Thread Safe
 +++++++++++
 **sim_db** is thread safe with the exceptiong of the ``make_unique_subdir`` functions that should only be called from a single thread.
 
-Build to run on both local machine and super computers/clusters
+Built to Run on both Local Machine and Super Computers/Clusters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Can easily both run your simulations on your local machine and on a super computer/cluster with a job scheduler, where it will generate the job script and submit it for you. 
 
-Many print options
+Many Print Options
 ++++++++++++++++++
 With many parameters and lots of simulations it becomes important to be able to view only the simulations and parameters you want to see. **sim_db** has lots of print options to do that. 
 
 
-Default columns - metadata stored
+Default Columns - Metadata Stored
 ---------------------------------
 The default columns in the database contain the metadata of the simulations run and are the columns not containing the parameters to the simulations or results saved from the simulations. The purpose of each one is explained below and is essentially a full list of the metadata stored.
 

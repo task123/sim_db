@@ -6,7 +6,7 @@ sim_db for C++
    :maxdepth: 1
    :caption: sim_db for C++
 
-Minimal example using C++
+Minimal Example using C++
 =========================
 A parameter file called `params_mininal_cpp_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
@@ -31,7 +31,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ c++ -o minimal_cpp_example minimal_example.cpp -lsimdbcpp -I../include -L../lib -lm -lpthread -ldl
 
-Extensive example using C++
+Extensive Example using C++
 ===========================
 A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:
 
@@ -61,7 +61,7 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ cc -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -lm -lpthread -ldl
 
-C++ API referance
+C++ API Referance
 ====================
 
 .. doxygenclass:: sim_db::Connection

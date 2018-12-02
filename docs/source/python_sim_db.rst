@@ -6,7 +6,7 @@ sim_db for Python
    :maxdepth: 1
    :caption: sim_db for Python
 
-Minimal example using Python
+Minimal Example using Python
 ============================
 A parameter file called `params_mininal_python_example.txt` is located in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. The file contains the following:
 
@@ -25,7 +25,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
     $ sim_db add_and_run -f params_minimal_python_example.txt
 
-Extensive example using Python
+Extensive Example using Python
 ==============================
 A parameter file called params_extensive_python_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:
 
@@ -49,7 +49,7 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
     $ sdb add_and_run -f params_extensive_python_example.txt
 
-Python API referance
+Python API Referance
 ====================
 .. automodule:: sim_db_lib
 .. autoclass:: SimDB

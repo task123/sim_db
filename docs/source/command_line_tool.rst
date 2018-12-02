@@ -10,7 +10,7 @@ Commands ending in *_sim* can also be used without this ending, so ``add`` is th
 
 All the commands can be called from anywhere is your project after the ``init`` command is called in your projects root directory. The only exception is inside the ``sim_db/`` directory if that is included.
 
-Example of commands to run the other examples
+Example of Commands to Run the Other Examples
 =============================================
 
 The minimal and extensive examples of the Python, C and C++ versions of **sim_db** can all be run with the bash script ``run_all_examples.sh`` found inside the *sim_db/examples/* directory of the `source code <https://github.com/task123/sim_db>`_. The part of the script that run the minimal python example is show here:
