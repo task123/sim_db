@@ -89,17 +89,18 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
 
 def make_job_script(db_cursor, i, args, id_submit):
     try:
-        db_cursor.execute("SELECT name, max_walltime, n_tasks " \
-                + "FROM runs WHERE id={0}".format(id_submit))
+        db_cursor.execute("SELECT name, max_walltime, n_tasks FROM runs WHERE "
+                "id={0}".format(id_submit))
     except:
-        raise ValueError("ID {0} in the database is ".format(id_submit) \
-                + "missing neccessary parameters to submit job script.")
+        raise ValueError("ID {0} in the database is missing neccessary "
+                         "parameters to submit job script.".format(id_submit))
     job_script_variables = db_cursor.fetchall()[0]
     settings = helpers.Settings()
     which_job_scheduler = settings.read('which_job_scheduler')[0]
     if which_job_scheduler != 'SLURM' and which_job_scheduler != 'PBS':
-        print("'Which job scheduler' in settings.txt is NOT one of the valid " \
-            + "values: 'SLURM' or 'PBS'.")
+        print("'Which job scheduler' in .sim_db/settings.txt is NOT one of the "
+              "valid values: 'SLURM' or 'PBS'. Change with: '$ sim_db settings "
+              "<args>'")
         exit(1)
 
     name = job_script_variables[0]
@@ -124,7 +125,8 @@ def make_job_script(db_cursor, i, args, id_submit):
     if max_walltime == None:
         print("Job script can NOT be submitted without either 'max_walltime' " \
             "being set in simulation parameters file or " \
-            "'--max_walltime HH:MM:SS' being passed as flags to 'submit_sim'.")
+            "'--max_walltime HH:MM:SS' being passed as flags to 'sim_db "
+            "submit_sim'.")
         job_script_file.close()
         os.remove(job_script_name)
         exit(1)
@@ -147,9 +149,9 @@ def make_job_script(db_cursor, i, args, id_submit):
             n_tasks = args.n_tasks[i]
         else:
             if (n_cpus_per_node == None):
-                print("'Number of logical cpus per node' is NOT set in " \
-                      +"settings.txt and it must be when '--n_nodes N' is " \
-                      +"passed to 'submit_sim'.")
+                print("'Number of logical cpus per node' is NOT set in "
+                      ".sim_db/settings.txt and it must be when '--n_nodes N' "
+                      "is passed to 'sim_db submit_sim' command.")
                 job_script_file.close()
                 os.remove(job_script_name)
                 exit(1)
@@ -159,7 +161,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     if n_tasks == None:
         print("Job script can NOT be submitted without either 'n_tasks' " \
               +"being set in simulation parameters file or '--n_tasks N' or " \
-              +"'--n_nodes M' being passed as flags to 'submit_sim'.")
+              +"'--n_nodes M' being passed as flags to 'sim_db submit_sim'.")
         job_script_file.close()
         os.remove(job_script_name)
         exit(1)

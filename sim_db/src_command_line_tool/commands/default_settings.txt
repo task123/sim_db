@@ -25,15 +25,12 @@ cpu: -v --columns id name used_walltime cpu_info
 
 ### Which job scheduler
 (SLURM or PBS)
-SLURM
 
 ### Number of logical cpus per node
-16
 
 ### Memory per node
 (in GB)
 (Probably have to be slightly lower than the actual memory on a node.)
-64
 
 ### Account 
 (user account batch system)
