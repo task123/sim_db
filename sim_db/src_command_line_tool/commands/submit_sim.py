@@ -34,6 +34,10 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             nargs='+',
             help="ID of simulations to submit.")
     parser.add_argument(
+            '--allow_reruns',
+            action="store_true",
+            help="Allow simulations with non 'new' status to be submitted.")
+    parser.add_argument(
             '--max_walltime',
             type=str,
             default=None,
@@ -262,6 +266,18 @@ def submit_sim(name_command_line_tool="sim_db",
                 db_cursor.close()
                 db.close()
                 return (job_script_name, job_id)
+    elif not args.allow_reruns:
+        for i in ids:
+            db_cursor.execute("SELECT status FROM runs WHERE id = {0};"
+                              .format(i))
+            status = db_cursor.fetchone()[0]
+            if status != "new":
+                print("No simulations was submitted.\nStatus of simulation "
+                      "with 'ID' = {0} is {1}.\nEither:\n- Add "
+                      "'--allow_reruns' flag to allow it to run.\n- Update "
+                      "status to 'new'.".format(args.id, 
+                      status))
+                exit()
 
     which_job_scheduler = helpers.Settings().read('which_job_scheduler')[0]
     for i, id_submit in enumerate(ids):
