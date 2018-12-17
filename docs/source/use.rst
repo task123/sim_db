@@ -69,7 +69,7 @@ This syntax for can be used to simplify the parameter files for projects with ma
 
 .. literalinclude:: ../../examples/extensive_example.cpp
    :language: c++
-   :lines: 16-75
+   :lines: 16-76
 
 Adding the simulation parameters to the **sim_db** database and running the simulation can be just as in the minimal example:
 
@@ -153,13 +153,23 @@ If a number of simulations are added all including the parameters `max_walltime`
 
 , which will run all simulations that have not been run yet after a confimation question.
 
-Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github <https://github.com/task123/sim_db/tree/master/example>`.
+Extensive examples for Python and C can also be found in the same directory, *sim_db/examples/*, on `github <https://github.com/task123/sim_db/tree/master/example>`_.
 
 .. _dependencies:
 
 Multithreading and Multiprocessing
 ==================================
-**sim_db** is thread safe and can be used in both multithreading and multiprocessing appications with the notable exception of the ``make_unique_subdir`` functions that should only be called from a single thread and process. (**sim_db** is thread safe in the same way that SQLite in serialized mode is thread safe.)
+**sim_db** is thread safe and can be used in both multithreading and multiprocessing appications (and is intended for such use). **sim_db** utilies SQLite as its database engine and is thread safe in the same way that SQLite is thread safe. This means that connections to the database should not be shared across threads. Instead each thread/process should have its own connection (instance of a SimDB class). 
+
+One should also be aware of that writing to the database is blocking - other threads/processes have to wait before they can read from or write to the database and could potentially time out. Extensive concurrent writing to the database, must therefor be avoided (or dealt with). A 'only_if_empty' option for writing is however provided as a convenient way for many thead/processes to write to the same column without additional syncronisation. 
+
+In a nutshell:
+++++++++++++++
+* **sim_db** is thread safe.
+
+* Each thread/process MUST have its own connection.
+
+* Avoid extensive concurrent writing. (Can be done with the 'only_if_empty' option.)
  
 Dependencies
 ============

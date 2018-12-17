@@ -16,16 +16,13 @@ import os
 class SimDB:
     """To interact with the **sim_db** database.
 
-    Should be initialised at the very start of the simulation (with 
-    'store_metadata' set to True) and closed with :func:`~SimDB.close` at 
-    the very end of the simulation to add the corrrect metadata.
+    For an actuall simulation it should be initialised at the very start of the 
+    simulation (with 'store_metadata' set to True) and closed with 
+    :func:`~SimDB.close` at the very end of the simulation. This must be done 
+    to add the corrrect metadata.
 
-    For multithreading/multiprocessing be aware that writing is a blocking 
-    operation on the database. If a method call is blocked for more than 5 
-    seconds, an 'sqlite3.OperationalError' exception is raised. For this to 
-    happen, way too much concurrent writing must be done. It indicates a
-    design error of the user program, and should probably lead to termination 
-    of the program.
+    For multithreading/multiprocessing each thread/process MUST have its
+    own connection (instance of this class).
     """
 
     def __init__(self, store_metadata=True, db_id=None):
@@ -141,10 +138,10 @@ class SimDB:
             bool, str and list.
         :raises ColumnError: If column do not exists.
         :raises ValueError: If return type does not match 'check_type_is'.
-        :raises sqlite3.OperationalError: If blocked by writing operations on 
-            the entry in the database from other threads/processes for more 
-            than 5 seconds. Way too much concurrent writing is done and 
-            indicates an design error in the user program.
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to read 
+            from the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
 
         if column not in self.column_names:
@@ -184,10 +181,10 @@ class SimDB:
         :type only_if_empty: bool
         :raises ValueError: If column exists, but type does not match, or 
             empty list is passed without type_of_value given.
-        :raises sqlite3.OperationalError: If blocked by writing operations on 
-            the entry in the database from other threads/processes for more 
-            than 5 seconds. Way too much concurrent writing is done and 
-            indicates an design error in the user program.
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
+            to the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
 
         self.__add_column_if_not_exists_and_check_type(column, type_of_value)
@@ -241,6 +238,10 @@ class SimDB:
         :type path_directory: str
         :returns: Full path to new subdirectory.
         :rtype: str
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
+            to the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
         results_dir = self.read("results_dir")
         if (
@@ -275,7 +276,13 @@ class SimDB:
         return results_dir
 
     def column_exists(self, column):
-        """Return True if column is a column in the database."""
+        """Return True if column is a column in the database.
+
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to read
+            from the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
+        """
         if column in self.column_names:
             return True
         else:
@@ -289,10 +296,10 @@ class SimDB:
     def is_empty(self, column):
         """Return True if entry in the database under 'column' is empty.
 
-        :raises sqlite3.OperationalError: If blocked by writing operations on 
-            the entry in the database from other threads/processes for more 
-            than 5 seconds. Way too much concurrent writing is done and 
-            indicates an design error in the user program.
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to read
+            from the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
         value = self.read(column)
         if value == None:
@@ -303,10 +310,10 @@ class SimDB:
     def set_empty(self, column):
         """Set entry under 'column' in the database to empty.
 
-        :raises sqlite3.OperationalError: If blocked by writing operations on 
-            the entry in the database from other threads/processes for more 
-            than 5 seconds. Way too much concurrent writing is done and 
-            indicates an design error in the user program.
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
+            to the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
         self.write(column, None)
 
@@ -330,6 +337,10 @@ class SimDB:
 
         :param paths_executables: List of full paths to executables.
         :type paths_executables: [str]
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
+            to the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
         """
         sha1 = hashlib.sha1()
         for executable in executables:
@@ -341,7 +352,13 @@ class SimDB:
             pass
 
     def delete_from_database(self):
-        """Delete simulation from database."""
+        """Delete simulation from database.
+
+        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
+            to the database, because other threads/processes are busy writing 
+            to it. Way too much concurrent writing is done and it indicates an 
+            design error in the user program.
+        """
         self.db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(
                 self.id))
         self.db.commit()

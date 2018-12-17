@@ -41,7 +41,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.py
    :language: python
-   :lines: 16-68
+   :lines: 16-71
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from the *sim_db/examples/* directory with:
 
@@ -56,4 +56,3 @@ Python API Referance
     :members:
     :special-members: __init__
 .. autofunction:: add_empty_sim
-.. autofunction:: delete_sim

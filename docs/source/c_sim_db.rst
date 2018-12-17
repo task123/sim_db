@@ -17,7 +17,7 @@ A C file called `minimal_example.c` and is found in the same directory:
 
 .. literalinclude:: ../../examples/minimal_example.c
    :language: C
-   :lines: 13-29
+   :lines: 14-29
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 
@@ -47,7 +47,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 
 .. literalinclude:: ../../examples/extensive_example.c
    :language: C
-   :lines: 22-93
+   :lines: 20-98
 
 Add the those simulations parameters to the **sim_db** database and run the simulation from within the `sim_db/examples` directory with:
 
@@ -67,6 +67,7 @@ C API Referance
 .. doxygenfunction:: sim_db_ctor
 .. doxygenfunction:: sim_db_ctor_no_metadata
 .. doxygenfunction:: sim_db_ctor_with_id
+.. doxygenfunction:: sim_db_ctor_without_search
 .. doxygenfunction:: sim_db_read_int
 .. doxygenfunction:: sim_db_read_double
 .. doxygenfunction:: sim_db_read_string
@@ -91,14 +92,15 @@ C API Referance
 .. doxygenfunction:: sim_db_write_double_array
 .. doxygenfunction:: sim_db_write_string_array
 .. doxygenfunction:: sim_db_write_bool_array
-.. doxygenfunction:: sim_db_make_unique_subdir
-.. doxygenfunction:: sim_db_make_unique_subdir_abs_path
+.. doxygenfunction:: sim_db_unique_results_dir
+.. doxygenfunction:: sim_db_unique_results_dir_abs_path
 .. doxygenfunction:: sim_db_column_exists
 .. doxygenfunction:: sim_db_get_id
 .. doxygenfunction:: sim_db_get_path_proj_root
 .. doxygenfunction:: sim_db_update_sha1_executables
-.. doxygenfunction:: sim_db_ignore_timeouts
+.. doxygenfunction:: sim_db_allow_timeouts
 .. doxygenfunction:: sim_db_have_timed_out
+.. doxygenfunction:: sim_db_delete_from_database
 .. doxygenfunction:: sim_db_dtor
-.. doxygenfunction:: add_empty_sim(const char *)
-.. doxygenfunction:: delete_sim(const char *, int)
+.. doxygenfunction:: sim_db_add_empty_sim
+.. doxygenfunction:: sim_db_add_empty_sim_without_search

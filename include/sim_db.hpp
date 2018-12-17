@@ -22,7 +22,7 @@ namespace sim_db {
 /// entirety of the simulation. This must be done to add the corrrect metadata.
 ///
 /// For multithreading/multiprocessing each thread/process MUST have its
-/// own connection (instance of the class).
+/// own connection (instance of this class).
 ///
 class Connection {
 public:
@@ -65,10 +65,10 @@ public:
     /// @param column Name of the parameter and column in the database.
     /// @return Parameter read from database.
     /// @exception std::invalid_argument \p column not a column in the database.
-    /// @exception sim_db::TimeoutError Waited more than 5 seconds to write to
-    /// the database because other threads/processes are busy writing to it.
-    /// Way too much concurrent writing is done and indicates an design error
-    // / in the user program.
+    /// @exception sim_db::TimeoutError Waited more than 5 seconds to read from
+    /// the database, because other threads/processes are busy writing to it.
+    /// Way too much concurrent writing is done and it indicates an design error
+    /// in the user program.
     template <typename T>
     T read(std::string column);
 
@@ -77,7 +77,7 @@ public:
     /// @param column Name of the parameter and column in the database.
     /// @param value To be written to database.
     /// @param only_if_empty If True, it will only write to the database if the
-    /// simulation's entry under 'column' is empty. Will avoid any potential
+    /// simulation's entry under 'column' is empty. Will avoid potential
     /// timeouts for concurrect applications.
     /// @exception sim_db::TimeoutError Waited more than 5 seconds to write to
     /// the database because other threads/processes are busy writing to it.
@@ -124,7 +124,7 @@ public:
     //
     /// @param paths_executables Paths to executable files.
     /// @param only_if_empty If True, it will only write to the database if the
-    /// simulation's entry under 'column' is empty. Will avoid any potential
+    /// simulation's entry under 'column' is empty. Will avoid potential
     /// timeouts for concurrect applications.
     /// @exception sim_db::TimeoutError Waited more than 5 seconds to write to
     /// the database because other threads/processes are busy writing to it.
@@ -144,8 +144,8 @@ private:
 
 /// Add empty simulation to database and return Connection connected to it.
 //
-/// @param path_proj_root Path to the root directory of the project, where
-/// *.sim_db/* is located.
+/// @param store_metadata Stores metadata to database if true. Set to
+/// 'false' for postprocessing (e.g. visualization) of data from simulation.
 /// @exception sim_db::TimeoutError Waited more than 5 seconds to write to the
 /// database because other threads/processes are busy writing to it. Way too
 /// much concurrent writing is done and indicates an design error in the user
