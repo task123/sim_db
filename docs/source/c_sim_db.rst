@@ -97,6 +97,8 @@ C API Referance
 .. doxygenfunction:: sim_db_get_id
 .. doxygenfunction:: sim_db_get_path_proj_root
 .. doxygenfunction:: sim_db_update_sha1_executables
+.. doxygenfunction:: sim_db_ignore_timeouts
+.. doxygenfunction:: sim_db_have_timed_out
 .. doxygenfunction:: sim_db_dtor
 .. doxygenfunction:: add_empty_sim(const char *)
 .. doxygenfunction:: delete_sim(const char *, int)

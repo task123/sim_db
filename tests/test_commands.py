@@ -51,7 +51,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
             "print --id {0} -v --no_headers --columns name test_param1 "
             "test_param2 test_param3 test_param4 test_param5 test_param6 "
             "test_param7 test_param8 test_param9 test_param10 test_param11 "
-            "test_param12".format(db_id).split())
+            "test_param12 test_param13".format(db_id).split())
     output_print_sim, err = capsys.readouterr()
     command_line_tool("sim_db",
                       ["delete_sim", "--id",
@@ -60,7 +60,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
         print("\nTest add_sim, print_sim and delete_sim...")
-
+    
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
@@ -72,6 +72,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
 def __assert_output_print_sim_after_add_sim(output_print_sim):
     printed_params = output_print_sim.split('\n')[0::2]
     printed_params = [param.strip() for param in printed_params]
+    print(printed_params)
     assert printed_params[0] == "test_sim"
     assert printed_params[1] == "3"
     assert printed_params[2] == "-5000000000.0"
@@ -83,8 +84,9 @@ def __assert_output_print_sim_after_add_sim(output_print_sim):
     assert printed_params[8] == "bool[True, False, True]"
     assert printed_params[9] == "9"
     assert printed_params[10] == "11"
-    assert printed_params[11] == "None"
+    assert printed_params[11] == "11" or printed_params[11] == "None"
     assert printed_params[12] == "None"
+    assert printed_params[13] == "None" or printed_params[13] == "int[1, 2, 3]"
 
 
 def test_add_and_run(capsys):
@@ -103,7 +105,7 @@ def test_add_and_run(capsys):
             "print_sim --id {0} -v --no_headers --columns name test_param1 "
             "test_param2 test_param3 test_param4 test_param5 test_param6 "
             "test_param7 test_param8 test_param9 test_param10 test_param11 "
-            "test_param12".format(db_id).split())
+            "test_param12 test_param13".format(db_id).split())
     output_print_sim_after_add_sim, err = capsys.readouterr()
     command_line_tool(
             "sim_db",
@@ -613,7 +615,7 @@ def test_duplicate_and_run(capsys):
             "print_sim --id {0} -v --no_headers --columns name test_param1 "
             "test_param2 test_param3 test_param4 test_param5 test_param6 "
             "test_param7 test_param8 test_param9 test_param10 test_param11 "
-            "test_param12".format(new_id).split())
+            "test_param12 test_param13".format(new_id).split())
     output_print_sim_after_duplicate_sim, err = capsys.readouterr()
     command_line_tool(
             "sim_db",

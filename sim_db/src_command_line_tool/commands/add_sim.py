@@ -246,7 +246,7 @@ def add_included_parameter_files(sim_params_file_lines):
     return sim_params_file_lines
 
 
-def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
+def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     db = helpers.connect_sim_db()
 
     args = command_line_arguments_parser(name_command_line_tool,
@@ -260,9 +260,9 @@ def add_sim(name_command_line_tool="sim_db", name_command="print", argv=None):
     if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_matching_settings()
         if sim_params_filename == None:
-            print("No parameter files in the current directory matches the ones " \
-                    "under 'Parameter filenames'\nin s settings.txt.\n" \
-                    "\nAdd the '--filename' flag to specify the filename of " \
+            print("No parameter files in the current directory matches the ones "
+                    "under 'Parameter filenames'\nin settings.txt.\n"
+                    "\nAdd the '--filename' flag to specify the filename of "
                     "the parameter file.")
             exit()
 

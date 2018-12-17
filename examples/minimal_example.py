@@ -24,5 +24,5 @@ param2 = sim_database.read("param2") # Integer
 # Print param1 just to show that the example is running.
 print(param1)
 
-# Write final metadata to database.
-sim_database.end()
+# Write final metadata to database and close connection.
+sim_database.close()

@@ -42,23 +42,23 @@ int main(int argc, char** argv) {
 
     // Write all the possible types to database.
     // Only these types are can be written to the database.
-    sim_db_write_int(sim_db, "example_result_1", param1);
-    sim_db_write_double(sim_db, "example_result_2", param2);
-    sim_db_write_string(sim_db, "example_result_3", param3);
-    sim_db_write_bool(sim_db, "example_result_4", param4);
+    sim_db_write_int(sim_db, "example_result_1", param1, false);
+    sim_db_write_double(sim_db, "example_result_2", param2, true);
+    sim_db_write_string(sim_db, "example_result_3", param3, false);
+    sim_db_write_bool(sim_db, "example_result_4", param4, true);
     sim_db_write_int_array(sim_db, "example_result_5", param5.array,
-                           param5.size);
+                           param5.size, false);
     sim_db_write_double_array(sim_db, "example_result_6", param6.array,
-                              param6.size);
+                              param6.size, true);
     sim_db_write_string_array(sim_db, "example_result_7", param7.array,
-                              param7.size);
+                              param7.size, false);
     sim_db_write_bool_array(sim_db, "example_result_8", param8.array,
-                            param8.size);
+                            param8.size, true);
 
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     char* name_subdir =
-            sim_db_make_unique_subdir(sim_db, "root/examples/results");
+            sim_db_unique_results_dir(sim_db, "root/examples/results");
 
     // Write some results to a file in the newly create subdirectory.
     FILE* result_file = fopen(strcat(name_subdir, "/results.txt"), "w");
@@ -67,9 +67,13 @@ int main(int argc, char** argv) {
     }
     fclose(result_file);
 
-    // Check is column exists in database.
+    // Check if column exists in database.
     bool is_column_in_database =
             sim_db_column_exists(sim_db, "column_not_in_database");
+
+    // Check if column is empty and then set it to empty.
+    bool is_empty = sim_db_is_empty(sim_db, "example_result_1");
+    sim_db_set_empty(sim_db, "example_result_1");
 
     // Get the 'ID' of the connected simulation and the path to the project's
     // root directoy.
@@ -77,17 +81,18 @@ int main(int argc, char** argv) {
     char path_proj_root[PATH_MAX + 1];
     strcpy(path_proj_root, sim_db_get_path_proj_root(sim_db));
 
-    // Write final metadata to database and free memory allocated by sim_db.
+    // Write final metadata to the database, close the connection and free
+    // memory allocated by sim_db.
     sim_db_dtor(sim_db);
 
-    // Add an empty simulation to the database.
-    id = add_empty_sim(path_proj_root);
+    // Add an empty simulation to the database, open connection and write to it.
+    SimDB* sim_db_2 =
+            sim_db_add_empty_sim_without_search(path_proj_root, false);
+    sim_db_write_int(sim_db_2, "param1_extensive", 7, false);
 
-    // Open this empty simulation and write to it.
-    SimDB* sim_db_2 = sim_db_ctor_with_id(path_proj_root, id, false);
-    sim_db_write_int(sim_db_2, "param1_extensive", 7);
+    // Delete simulation from database.
+    sim_db_delete_from_database(sim_db_2);
+
+    // Close connection to the database and free memory allocated by sim_db.
     sim_db_dtor(sim_db_2);
-
-    // Delete this simulation.
-    delete_sim(path_proj_root, id);
 }

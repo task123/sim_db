@@ -90,10 +90,14 @@ int main(int argc, char** argv) {
     sim_db.write<int>("new_test_param10", param10);
     std::cout << sim_db.read<int>("new_test_param10") << std::endl;
 
+    std::cout << sim_db.is_empty("test_param11") << std::endl;
+    sim_db.set_empty("test_param11");
+    std::cout << sim_db.is_empty("test_param11") << std::endl;
+
     if (store_metadata) {
         // Make unique subdirectory in results/.
         std::string filename_result =
-                sim_db.make_unique_subdir("root/tests/results/")
+                sim_db.unique_results_dir("root/tests/results/")
                 + "/results.txt";
 
         // Save param6 to file in this unique subdirectory.
@@ -115,13 +119,12 @@ int main(int argc, char** argv) {
 
     std::string path_proj_root = sim_db.get_path_proj_root();
 
-    int id = sim_db::add_empty_sim(path_proj_root);
-    std::cout << id << std::endl;
+    sim_db::Connection sim_db_2 = sim_db::add_empty_sim(false);
+    std::cout << sim_db_2.get_id() << std::endl;
 
-    sim_db::Connection sim_db_2(path_proj_root, id, false);
     sim_db_2.write<int>("test_param1", 7);
     param1 = sim_db_2.read<int>("test_param1");
     std::cout << param1 << std::endl;
 
-    sim_db::delete_sim(path_proj_root, id);
+    sim_db_2.delete_from_database();
 }

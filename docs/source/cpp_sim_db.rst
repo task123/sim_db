@@ -76,5 +76,6 @@ C++ API Referance
 .. doxygenfunction:: sim_db::Connection::get_id
 .. doxygenfunction:: sim_db::Connection::get_path_proj_root
 .. doxygenfunction:: sim_db::Connection::update_sha1_executables
+.. doxygenfunction:: sim_db::Connection::ignore_timeouts
 .. doxygenfunction:: sim_db::add_empty_sim
 .. doxygenfunction:: sim_db::delete_sim

@@ -7,26 +7,26 @@ CC = cc
 CXX = c++
 
 all:
-	$(MAKE) minimal_c_example_updated
-	$(MAKE) minimal_cpp_example_updated
-	$(MAKE) extensive_c_example_updated
-	$(MAKE) extensive_cpp_example_updated
+	$(MAKE) -f handwritten_makefile minimal_c_example_updated
+	$(MAKE) -f handwritten_makefile minimal_cpp_example_updated
+	$(MAKE) -f handwritten_makefile extensive_c_example_updated
+	$(MAKE) -f handwritten_makefile extensive_cpp_example_updated
 
 minimal_c_example_updated: 
-	$(MAKE) -C ../lib libsimdbc.a # Compile sim_db's C library.
-	$(MAKE) minimal_c_example
+	$(MAKE) -f handwritten_makefile -C ../lib libsimdbc.a # Compile sim_db's C library.
+	$(MAKE) -f handwritten_makefile minimal_c_example
 
 minimal_cpp_example_updated: 
-	$(MAKE) -C ../lib libsimdbcpp.a # Compile sim_db's C++ library.
-	$(MAKE) minimal_cpp_example
+	$(MAKE) -f handwritten_makefile -C ../lib libsimdbcpp.a # Compile sim_db's C++ library.
+	$(MAKE) -f handwritten_makefile minimal_cpp_example
 
 extensive_c_example_updated: 
-	$(MAKE) -C ../lib libsimdbc.a # Compile sim_db's C library.
-	$(MAKE) extensive_c_example
+	$(MAKE) -f handwritten_makefile -C ../lib libsimdbc.a # Compile sim_db's C library.
+	$(MAKE) -f handwritten_makefile extensive_c_example
 
 extensive_cpp_example_updated:
-	$(MAKE) -C ../lib libsimdbcpp.a # Compile sim_db's C++ library. 
-	$(MAKE) extensive_cpp_example 
+	$(MAKE) -f handwritten_makefile -C ../lib libsimdbcpp.a # Compile sim_db's C++ library. 
+	$(MAKE) -f handwritten_makefile extensive_cpp_example 
 
 # Use target minimal_c_example_updated instead as it check libsimdbc.a's dependencies.
 minimal_c_example: minimal_example.c ../lib/libsimdbc.a
@@ -67,7 +67,7 @@ clean:
 	rm -f extensive_c_example
 	rm -f extensive_cpp_example
 	rm -fr results/*
-	$(MAKE) -C ../lib clean
+	$(MAKE) -f handwritten_makefile -C ../lib clean
 
 clean_except_third_party:
 	rm -f minimal_c_example
@@ -75,7 +75,7 @@ clean_except_third_party:
 	rm -f extensive_c_example
 	rm -f extensive_cpp_example
 	rm -fr results/*
-	$(MAKE) -C ../lib clean_except_third_party
+	$(MAKE) -f handwritten_makefile -C ../lib clean_except_third_party
 
 clean_etp:
-	$(MAKE) clean_except_third_party
+	$(MAKE) -f handwritten_makefile clean_except_third_party

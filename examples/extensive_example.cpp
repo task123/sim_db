@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     // Make unique subdirectory for storing results and write its name to
     // database. Large results are recommended to be saved in this subdirectory.
     std::string name_results_dir =
-            sim_db.make_unique_subdir("root/examples/results");
+            sim_db.unique_results_dir("root/examples/results");
 
     // Write some results to a file in the newly create subdirectory.
     std::ofstream results_file;
@@ -55,21 +55,22 @@ int main(int argc, char** argv) {
         results_file << i << std::endl;
     }
 
-    // Check is column exists in database.
+    // Check if column exists in database.
     bool is_column_in_database = sim_db.column_exists("column_not_in_database");
+
+    // Check if column is empty and then set it to empty.
+    bool is_empty = sim_db.is_empty("example_result_1");
+    sim_db.set_empty("example_result_1");
 
     // Get the 'ID' of the connected simulation an the path to the project's
     // root directory.
     int id = sim_db.get_id();
     std::string path_proj_root = sim_db.get_path_proj_root();
 
-    // Add an empty simulation to the database.
-    id = sim_db::add_empty_sim(path_proj_root);
-
-    // Open this empty simulation and write to it.
-    sim_db::Connection sim_db_2(path_proj_root, id);
+    // Add an empty simulation to the database, open connection and write to it.
+    sim_db::Connection sim_db_2 = sim_db::add_empty_sim(path_proj_root, false);
     sim_db_2.write<int>("param1_extensive", 7);
 
-    // Delete this simulation.
-    sim_db::delete_sim(path_proj_root, id);
+    // Delete simulation from database.
+    sim_db_2.delete_from_database();
 }

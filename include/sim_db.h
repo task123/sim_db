@@ -13,7 +13,10 @@ typedef struct SimDB SimDB;
 
 /// Initialize SimDB and connect to the **sim_db** database.
 //
-/// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+/// Should be called at the very start of the simulation and
+/// {@link sim_db_dtor(SimDB*)} at the very end, to add the correct metadata.
+/// {@link sim_db_dtor(SimDB*)} also does the clean up, so it MUST be called.
+///
 /// @param argc Length of \p argv.
 /// @param argv Array of command line arguments containing ```--id 'ID'``` and
 /// optionally ```--path_proj_root 'PATH'```. *PATH* is the root directory of
@@ -25,9 +28,14 @@ SimDB* sim_db_ctor(int argc, char** argv);
 /// Initialize SimDB and connect to the **sim_db** database.
 //
 /// No metadata store automatically, and only explicit calls will write to the
-/// database.
+/// database. Should be used instead of {@link sim_db_ctor(SimDB*)} for
+/// postprocessing.
+///
+/// For multithreading/multiprocessing each thread/process MUST have its
+/// own connection.
 ///
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+///
 /// @param argc Length of \p argv.
 /// @param argv Array of command line arguments containing ```--id 'ID'``` and
 /// optionally ```--path_proj_root 'PATH'```. *PATH* is the root directory of
@@ -38,19 +46,32 @@ SimDB* sim_db_ctor_no_metadata(int argc, char** argv);
 
 /// Initialize SimDB and connect to the **sim_db** database.
 //
+/// Will search the current working directory and its parents directories until
+/// *.sim_db/* is found.
+///
 /// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+///
+/// @param id ID number of the simulation paramters in the **sim_db** database.
+/// @param store_metadata Stores metadata if true. Set to 'false' for
+/// postprocessing (e.g. visualization) of data from simulation.
+SimDB* sim_db_ctor_with_id(int id, bool store_metadata);
+
+/// Initialize SimDB and connect to the **sim_db** database.
+//
+/// {@link sim_db_dtor(SimDB*)} MUST be called to clean up.
+///
 /// @param path_proj_root Path to root directory of the project, where
 /// *.sim_db/* is located.
 /// @param id ID number of the simulation paramters in the **sim_db** database.
-/// @param store_metadata Whether or not to store metadata automatically to the
-/// database. (Recommended)
-SimDB* sim_db_ctor_with_id(const char* path_proj_root, int id,
-                           bool store_metadata);
+/// @param store_metadata Stores metadata if true. Set to 'false' for
+/// postprocessing (e.g. visualization) of data from simulation.
+SimDB* sim_db_ctor_without_search(const char* path_proj_root, int id,
+                                  bool store_metadata);
 
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Integer read from database.
 int sim_db_read_int(SimDB* self, const char* column);
@@ -58,7 +79,7 @@ int sim_db_read_int(SimDB* self, const char* column);
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Double read from database.
 double sim_db_read_double(SimDB* self, const char* column);
@@ -66,7 +87,7 @@ double sim_db_read_double(SimDB* self, const char* column);
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return String read from database. Do NOT free the string, as {@link
 /// sim_db_dtor()} will do that.
@@ -75,7 +96,7 @@ char* sim_db_read_string(SimDB* self, const char* column);
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Bool read from database.
 bool sim_db_read_bool(SimDB* self, const char* column);
@@ -89,7 +110,7 @@ typedef struct SimDBIntVec {
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Vector of integers read from database. Do NOT free array as {@link
 /// sim_db_dtor()} will do that.
@@ -104,7 +125,7 @@ typedef struct SimDBDoubleVec {
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Vector of doubles read from database. Do NOT free array as {@link
 /// sim_db_dtor()} will do that.
@@ -119,7 +140,7 @@ typedef struct SimDBStringVec {
 /// Read parameter from the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Vector of strings read from database. Do NOT free array as {@link
 /// sim_db_dtor()} will do that.
@@ -133,7 +154,7 @@ typedef struct SimDBBoolVec {
 
 /// Read parameter from the database.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the parameter and column in the database.
 /// @return Vector of booleans read from database. Do NOT free array as {@link
 /// sim_db_dtor()} will do that.
@@ -142,141 +163,207 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column);
 /// Write \p value to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
-void sim_db_write_int(SimDB* self, const char* column, int value);
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
+void sim_db_write_int(SimDB* self, const char* column, int value,
+                      bool only_if_empty);
 
 /// Write \p value to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
-void sim_db_write_double(SimDB* self, const char* column, double value);
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
+void sim_db_write_double(SimDB* self, const char* column, double value,
+                         bool only_if_empty);
 
 /// Write \p value to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
-void sim_db_write_string(SimDB* self, const char* column, const char* value);
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
+void sim_db_write_string(SimDB* self, const char* column, const char* value,
+                         bool only_if_empty);
 
 /// Write \p value to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
-void sim_db_write_bool(SimDB* self, const char* column, bool value);
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
+void sim_db_write_bool(SimDB* self, const char* column, bool value,
+                       bool only_if_empty);
 
 /// Write \p arr to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
 /// @param arr Array to be written to simulation database.
 /// @param len Length of \p arr.
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
 void sim_db_write_int_array(SimDB* self, const char* column, int* arr,
-                            size_t len);
+                            size_t len, bool only_if_empty);
 
 /// Write \p arr to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
 /// @param arr Array to be written to simulation database.
 /// @param len Length of \p arr.
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
 void sim_db_write_double_array(SimDB* self, const char* column, double* arr,
-                               size_t len);
+                               size_t len, bool only_if_empty);
 
 /// Write \p arr to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
 /// @param arr Array to be written to simulation database.
 /// @param len Length of \p arr.
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
 void sim_db_write_string_array(SimDB* self, const char* column, char** arr,
-                               size_t len);
+                               size_t len, bool only_if_empty);
 
 /// Write \p arr to database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param column Name of the column in the database to write to.
 /// @param arr Array to be written to simulation database.
 /// @param len Length of \p arr.
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'column' is empty. Will avoid any potential
+/// timeouts for concurrect applications.
 void sim_db_write_bool_array(SimDB* self, const char* column, bool* arr,
-                             size_t len);
+                             size_t len, bool only_if_empty);
 
-/// Make unique subdirectory in \p rel_path_to_result_dir.
+/// Get path to subdirectory in \p abs_path_to_dir unique to simulation.
 //
-/// This new subdirectory is intended for storing results from the
-/// simulation.
+/// The subdirectory will be named 'date_time_name_id' and is intended to store
+/// results in. If 'results_dir' in the database is empty, a new and unique
+/// directory is created and the path stored in 'results_dir'. Otherwise the
+/// path in 'results_dir' is just returned.
+///
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
-/// @param path_to_result_dir Path to where the new directory is created. If
+/// sim_db_ctor_without_cla()}.
+/// @param path_to_dir Path to where the new directory is created. If
 /// it starts with 'root/', that part will be replaced with the full path to
 /// the root directory of the project.
 /// @return Path to new subdirectory.
-char* sim_db_make_unique_subdir(SimDB* self, const char* path_to_result_dir);
+char* sim_db_unique_results_dir(SimDB* self, const char* path_to_dir);
 
-/// Make unique subdirectory in \p abs_path_to_result_dir.
+/// Get path to subdirectory in \p abs_path_to_dir unique to simulation.
 //
-/// This new subdirectory is intended for storing results from the
-/// simulation.
+/// The subdirectory will be named 'date_time_name_id' and is intended to store
+/// results in. If 'results_dir' in the database is empty, a new and unique
+/// directory is created and the path stored in 'results_dir'. Otherwise the
+/// path in 'results_dir' is just returned.
+///
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
-/// @param abs_path_to_result_dir Absolute path to where the new directory
+/// sim_db_ctor_()}.
+/// @param abs_path_to_dir Absolute path to where the new directory
 /// is created.
 /// @return Path to new subdirectory.
-char* sim_db_make_unique_subdir_abs_path(SimDB* self,
-                                         const char* abs_path_to_result_dir);
+char* sim_db_unique_results_dir_abs_path(SimDB* self,
+                                         const char* abs_path_to_dir);
 
 /// Return true if \p column is a column in the database.
 bool sim_db_column_exists(SimDB* self, const char* column);
 
+/// Return true if entry in database under \p column is empty.
+bool sim_db_is_empty(SimDB* self, const char* column);
+
+/// Set entry under \p column in database to empty.
+void sim_db_set_empty(SimDB* self, const char* column);
+
 /// Return ID number of simulation in the database that is connected.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 int sim_db_get_id(SimDB* self);
 
 /// Return path to root directory of the project, where *.sim_db/* is
 /// located.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 char* sim_db_get_path_proj_root(SimDB* self);
 
 /// Save the sha1 hash of the files \p paths_executables to the database.
 //
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 /// @param paths_executables Paths to executable files.
 /// @param len Length of \p paths_executables.
+/// @param only_if_empty If True, it will only write to the database if the
+/// simulation's entry under 'sha1_executables' is empty. Will avoid any
+/// potential timeouts for concurrect applications.
 void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
-                                    size_t len);
+                                    size_t len, bool only_if_empty);
+
+/// Allow timeouts to occure without exiting if set to true.
+//
+/// A timeout occures after waiting more than 5 seconds to access the database
+/// because other threads/processes are busy writing to it. **sim_db**
+/// will exit with an error in that case, unless allow timeouts is set to true.
+/// It is false by default. If allowed and a timeout occures the called
+/// funciton will have had no effect.
+void sim_db_allow_timeouts(SimDB* self, bool allow_timeouts);
+
+/// Checks if a timeout have occured since last call to this function.
+bool sim_db_have_timed_out(SimDB* self);
+
+/// Delete simulation from database.
+void sim_db_delete_from_database(SimDB* self);
 
 /// Clean up SimDB.
 //
 /// Add metadate for 'used_walltime' to database and update 'status' to
 /// 'finished'.
 /// @param self Return value of {@link sim_db_ctor()} or {@link
-/// sim_db_ctor_with_id()}.
+/// sim_db_ctor_without_cla()}.
 void sim_db_dtor(SimDB* self);
 
-/// Add empty simulation to database and return its 'ID'.
+/// Add empty simulation to database and return a SimDB connected to it.
 //
-/// @param path_proj_root Path to root directory of the project, where
-/// *.sim_db/* is located.
-/// @return Integer ID of the added simulation.
-int add_empty_sim(const char* path_proj_root);
+/// The current working directory and its parent directories will be searched
+/// until *.sim_db/* is found.
+///
+/// @return SimDB of the added simulation.
+/// @param store_metadata Stores metadata if true. Set to 'false' for
+/// postprocessing (e.g. visualization) of data from simulation.
+SimDB* sim_db_add_empty_sim(bool store_metadata);
 
-/// Delete simulation from database with ID number \p id.
+/// Add empty simulation to database and return a SimDB connected to it.
 //
+/// The current working directory and its parent directories will be searched
+/// until *.sim_db/* is found.
+///
+/// @return SimDB of the added simulation.
 /// @param path_proj_root Path to root directory of the project, where
 /// *.sim_db/* is located.
-/// @param id ID number of the simulation paramters in the **sim_db**
-/// database.
-void delete_sim(const char* path_proj_root, int id);
+/// @param store_metadata Stores metadata if true. Set to 'false' for
+/// postprocessing (e.g. visualization) of data from simulation.
+SimDB* sim_db_add_empty_sim_without_search(const char* path_proj_root,
+                                           bool store_metadata);
 
 #endif

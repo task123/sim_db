@@ -13,7 +13,7 @@ import sys, os
 # Include the 'sim_db/' directory to path.
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-import sim_db # 'sim_db/' have been include in the path.
+import sim_db # 'sim_db/' have been included in the path.
 
 # Open database and write some initial metadata to database.
 sim_database = sim_db.SimDB()
@@ -43,26 +43,29 @@ sim_database.write("example_result_8", param8, type_of_value="bool array")
 
 # Make unique subdirectory for storing results and write its name to database.
 results = np.array(param6)
-name_results_dir = sim_database.make_unique_subdir("root/examples/results")
+name_results_dir = sim_database.unique_results_dir("root/examples/results")
 np.savetxt(name_results_dir + "/results.txt", results)
 
 # Check if column exists in database.
 is_column_in_database = sim_database.column_exists("column_not_in_database")
 
+# Check is column is empty and then set it to empty.
+sim_database.is_empty("example_result_1")
+sim_database.set_empty("example_result_1")
+
 # Get the 'ID' of the connected simulation and the path to the root directory.
 db_id = sim_database.get_id()
 path_proj_root = sim_database.get_path_proj_root()
 
-# Write final metadata to database.
-sim_database.end()
+# Write final metadata to the database and close the connection.
+sim_database.close()
 
-# Add an empty simulation to database.
-db_id = sim_db.add_empty_sim()
+# Add an empty simulation to database, open connection and write to it.
+sim_database_2 = sim_db.add_empty_sim(False)
+sim_database_2.write("param1_extensive", 7, type_of_value="int")
 
-# Open this empty simulation and write to it.
-sim_database = sim_db.SimDB(db_id=db_id)
-sim_database.write("param1_extensive", 7, type_of_value="int")
-sim_database.end()
+# Delete simulation from the database.
+sim_database_2.delete_from_database()
 
-# Delete this simulation.
-sim_db.delete_sim(db_id)
+# Close connection to the database.
+sim_database_2.close()

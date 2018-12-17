@@ -4,42 +4,60 @@
 # Licenced under the MIT License.
 
 import sim_db.src_command_line_tool.commands.helpers as helpers
-import sim_db.src_command_line_tool.commands.update_sim as update_sim
-import sim_db.src_command_line_tool.commands.add_column as add_column
 import sqlite3
 import argparse
 import subprocess
 import time
 import hashlib
+import threading
 import os
 
 
 class SimDB:
+    """To interact with the **sim_db** database.
+
+    Should be initialised at the very start of the simulation (with 
+    'store_metadata' set to True) and closed with :func:`~SimDB.close` at 
+    the very end of the simulation to add the corrrect metadata.
+
+    For multithreading/multiprocessing be aware that writing is a blocking 
+    operation on the database. If a method call is blocked for more than 5 
+    seconds, an 'sqlite3.OperationalError' exception is raised. For this to 
+    happen, way too much concurrent writing must be done. It indicates a
+    design error of the user program, and should probably lead to termination 
+    of the program.
+    """
+
     def __init__(self, store_metadata=True, db_id=None):
-        """Add metadata to database and note start time.
-
-        Update 'time_started', 'git_hash', 'commit_message', 'git_diff_stat'
-        and 'git_diff'.
-
-        'time_started' used the format: 'Year-Month-Date_Hours-Minutes-Seconds'.
+        """Connect to the **sim_db** database.
 
         :param store_metadata: If False, no metadata is added to the database.
             Typically used when postprocessing (visualizing) data from a
             simulation.
         :type store_metadata: bool
-        :param db_id: ID of the row in the database to update. If it is
-            'None', then it is read from the last argument passed to the program
-            after option '--id'.
+        :param db_id: ID number of the simulation parameters in the **sim_db**
+            database. If it is 'None', then it is read from the argument passed
+            to the program after option '--id'.
         :type db_id: int
         """
+        self.start_time = time.time()
         self.store_metadata = store_metadata
         self.id, self.path_proj_root = self.__read_from_command_line_arguments(
                 db_id)
-        self.start_time = time.time()
-
+        self.db = helpers.connect_sim_db()
+        self.db_cursor = self.db.cursor()
+        self.column_names = []
+        self.column_types = []
+    
         if self.store_metadata:
-            self.write(column="status", value="running")
-            self.write('time_started', self.__get_date_and_time_as_string())
+            try:
+                self.write(
+                        'time_started',
+                        self.__get_date_and_time_as_string(),
+                        only_if_empty=True)
+            except sqlite3.OperationalError:
+                self.init_timeout += 1
+                pass
 
         if self.store_metadata and self.__is_a_git_project():
             if os.sep == '/':
@@ -52,7 +70,14 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(column="git_hash", value=out.decode('ascii', 'replace'))
+            try:
+                self.write(
+                        column="git_hash",
+                        value=out.decode('ascii', 'replace'),
+                        only_if_empty=True)
+            except sqlite3.OperationalError:
+                self.init_timeout += 1
+                pass
 
             proc = subprocess.Popen(
                     [
@@ -63,9 +88,14 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(
-                    column="commit_message",
-                    value=out.decode('ascii', 'replace'))
+            try:
+                self.write(
+                        column="commit_message",
+                        value=out.decode('ascii', 'replace'),
+                        only_if_empty=True)
+            except sqlite3.OperationalError:
+                self.init_timeout += 1
+                pass
 
             proc = subprocess.Popen(
                     ["cd {0}; git diff HEAD --stat".format(path_proj_root)],
@@ -73,9 +103,14 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            self.write(
-                    column="git_diff_stat",
-                    value=out.decode('ascii', 'replace'))
+            try:
+                self.write(
+                        column="git_diff_stat",
+                        value=out.decode('ascii', 'replace'),
+                        only_if_empty=True)
+            except sqlite3.OperationalError:
+                self.init_timeout += 1
+                pass
 
             proc = subprocess.Popen(
                     ["cd {0}; git diff HEAD".format(path_proj_root)],
@@ -87,116 +122,117 @@ class SimDB:
             if len(out) > 3000:
                 warning = "WARNING: Diff limited to first 3000 characters.\n"
                 out = warning + '\n' + out[0:3000] + '\n\n' + warning
-            self.write(column="git_diff", value=out)
+            try:
+                self.write(column="git_diff", value=out, only_if_empty=True)
+            except sqlite3.OperationalError:
+                self.init_timeout += 1
+                pass
 
-    def read(self, column, db_id=None, check_type_is=''):
-        """Read parameter with id 'db_id' and column 'column' from the database.
+    def read(self, column, check_type_is=''):
+        """Read parameter in 'column' from the database.
+
+        Return None if parameter is empty.
 
         :param column: Name of the column the parameter is read from.
         :type column: str
-        :param db_id: ID of the row the parameter is read from. If it is 
-            'None', then it is read from arguments passed to the program after 
-            the option '--id'.
-        :type db_id: int
         :param check_type_is: Throws ValueError if type does not match 
             'check_type_is'.The valid types the strings 'int', 'float', 'bool',
             'string' and 'int/float/bool/string array' or the types int, float, 
             bool, str and list.
         :raises ColumnError: If column do not exists.
         :raises ValueError: If return type does not match 'check_type_is'.
+        :raises sqlite3.OperationalError: If blocked by writing operations on 
+            the entry in the database from other threads/processes for more 
+            than 5 seconds. Way too much concurrent writing is done and 
+            indicates an design error in the user program.
         """
-        if db_id == None:
-            db_id = self.id
 
-        db = helpers.connect_sim_db()
-        db_cursor = db.cursor()
-
-        column_names, column_types = helpers.get_db_column_names_and_types(
-                db_cursor)
-        if column not in column_names:
-            db.commit()
-            db_cursor.close()
-            db.close()
-            raise ColumnError("Column, {0}, is NOT a column in the database."
-                              .format(column))
-
-        db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
-                column, db_id))
-        value = db_cursor.fetchone()[0]
-
-        value = self.__check_type(db_cursor, check_type_is, column, value)
-
-        db.commit()
-        db_cursor.close()
-        db.close()
+        if column not in self.column_names:
+            self.column_names, self.column_types = (
+                helpers.get_db_column_names_and_types(self.db_cursor))
+            if column not in self.column_names:
+                raise ColumnError("Column, {0}, is NOT a column in the "
+                                  "database.".format(column))
+        self.db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
+                column, self.id))
+        value = self.db_cursor.fetchone()
+        if value != None:
+            value = value[0]
+            value = self.__check_type(check_type_is, column, self.column_names,
+                                      self.column_types, value)
 
         return value
 
-    def write(self, column, value, type_of_value='', db_id=None):
-        """Write to entry with id 'db_id' and column 'column' from the database.
+    def write(self, column, value, type_of_value='', only_if_empty=False):
+        """Write value to 'column' in the database.
 
         If 'column' does not exists, a new is added.
+
+        If value is None and type_of_value is not set, the entry under 'column'
+        is set to empty.
 
         :param column: Name of the column the parameter is read from.
         :type column: str
         :param value: New value of the specified entry in the database.
-        :param db_id: ID of the row the parameter is read from. If it is
-            'None', then it is read from arguments passed to the program after
-            the option '--id'.
-        :type db_id: int
         :param type_of_value: Needed if column does note exists or if
             value is empty list. The valid types the strings 'int', 'float',
             'bool', 'string' and 'int/float/bool/string array' or the types int,
             float, bool and str.
         :type type_of_value: str or type
+        :param only_if_empty: If True, it will only write to the database if the
+            simulation's entry under 'column' is empty. Will avoid any possible 
+        :type only_if_empty: bool
         :raises ValueError: If column exists, but type does not match, or 
             empty list is passed without type_of_value given.
+        :raises sqlite3.OperationalError: If blocked by writing operations on 
+            the entry in the database from other threads/processes for more 
+            than 5 seconds. Way too much concurrent writing is done and 
+            indicates an design error in the user program.
         """
-        if db_id == None:
-            db_id = self.id
 
-        db = helpers.connect_sim_db()
-        db_cursor = db.cursor()
-        column_names, column_types = helpers.get_db_column_names_and_types(
-                db_cursor)
-
-        type_dict = dict(zip(column_names, column_types))
-        if column in column_names:
-            self.__check_type(db_cursor, type_of_value, column)
-        else:
-            if type_of_value == '':
-                print("ERROR: Column {0} does not exists in ".format(column) \
-                        + "database and 'type_of_value' must be provided for " \
-                        + "it to be added.")
-                exit()
-            if type_of_value == int:
-                type_of_value = 'int'
-            if type_of_value == float:
-                type_of_value = 'float'
-            if type_of_value == bool:
-                type_of_value = 'bool'
-            if type_of_value == str:
-                type_of_value = 'string'
-            add_column.add_column(
-                    argv=["--column", column, "--type", type_of_value])
+        self.__add_column_if_not_exists_and_check_type(column, type_of_value)
 
         value_string = self.__convert_to_value_string(value, type_of_value)
-        if value_string != None:
-            value_string = self.__escape_quote_with_two_quotes(value_string)
-        update_sim.update_sim(argv=[
-                "--id",
-                str(db_id), "--columns", column, "--value", value_string
-        ])
+        value_string = self.__escape_quote_with_two_quotes(value_string)
+        type_dict = dict(zip(self.column_names, self.column_types))
+        if type_dict[column] == 'TEXT' and value != None:
+            value_string = "'{0}'".format(value_string)
+        if only_if_empty:
+            is_busy = True
+            start_time = time.time()
+            while is_busy:
+                is_busy = False
+                is_empty = self.is_empty(column)
+                if is_empty:
+                    self.db_cursor.execute("PRAGMA busy_timeout=0")
+                    self.db.commit()
+                    try:
+                        self.db_cursor.execute(
+                                "UPDATE runs SET \"{0}\" = {1} WHERE \"id\" = "
+                                "{2} AND {0} IS NULL".format(
+                                        column, value_string, self.id))
+                        self.db.commit()
+                    except sqlite3.OperationalError:
+                        is_busy = True
+                        if time.time() > start_time + 5.0:
+                            self.db_cursor.execute("PRAGMA busy_timeout=5000")
+                            self.db.commit()
+                            raise
+                self.db_cursor.execute("PRAGMA busy_timeout=5000")
+                self.db.commit()
+        else:
+            self.db_cursor.execute(
+                    "UPDATE runs SET \"{0}\" = {1} WHERE id = {2}".format(
+                            column, value_string, self.id))
+            self.db.commit()
 
-        db.commit()
-        db_cursor.close()
-        db.close()
+    def unique_results_dir(self, path_directory):
+        """Get path to subdirectory in 'path_directory' unique to simulation.
 
-    def make_unique_subdir(self, path_directory):
-        """Make a unique subdirectory in 'name_result_directory'.
-
-        The subdirectory will be named date_time_name_id and is intended to
-        store results in.
+        The subdirectory will be named 'date_time_name_id' and is intended to
+        store results in. If 'results_dir' in the database is empty, a new and 
+        unique directory is created and the path stored in 'results_dir'. 
+        Otherwise the path in 'results_dir' is just returned.
 
         :param path_directory: Path to directory of which to make a 
             subdirectory. If 'path_directory' starts with 'root/', that part 
@@ -206,38 +242,73 @@ class SimDB:
         :returns: Full path to new subdirectory.
         :rtype: str
         """
-        if (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
-            path_directory = os.path.join(self.path_proj_root,
-                                          path_directory[5:])
-        subdir = os.path.join(path_directory,
-                              self.__get_date_and_time_as_string())
-        subdir += '_' + self.read('name') + '_' + str(self.id)
-        subdir = os.path.abspath(os.path.realpath(subdir))
-        if os.path.exists(subdir):
-            subdir += "__no2"
-        while (os.path.exists(subdir)):
-            i = subdir.rfind("_no")
-            subdir = subdir[:i + 4] + str(int(subdir[i + 4:]) + 1)
-        os.mkdir(subdir)
+        results_dir = self.read("results_dir")
+        if (
+                results_dir != None
+                and results_dir[0:32] != "results_dir_is_currenty_made_by_"):
+            return results_dir
 
-        if self.store_metadata:
-            self.write(column="results_dir", value=subdir)
+        unique_process_thread_name = ("results_dir_is_currenty_made_by_" + str(
+                os.getpid()) + "_" + str(threading.current_thread().ident))
 
-        return subdir
+        self.write(
+                "results_dir", unique_process_thread_name, only_if_empty=True)
+
+        results_dir = self.read("results_dir")
+        if results_dir == unique_process_thread_name:
+            if (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
+                path_directory = os.path.join(self.path_proj_root,
+                                              path_directory[5:])
+            results_dir = os.path.join(path_directory,
+                                       self.__get_date_and_time_as_string())
+            results_dir += '_' + self.read('name') + '_' + str(self.id)
+            results_dir = os.path.abspath(os.path.realpath(results_dir))
+            os.mkdir(results_dir)
+            self.write(
+                    column="results_dir",
+                    value=results_dir,
+                    only_if_empty=False)
+        else:
+            while results_dir[0:32] == "results_dir_is_currenty_made_by_":
+                results_dir = self.read("results_dir")
+
+        return results_dir
 
     def column_exists(self, column):
         """Return True if column is a column in the database."""
-        db = helpers.connect_sim_db()
-        db_cursor = db.cursor()
-        column_names, column_types = helpers.get_db_column_names_and_types(
-                db_cursor)
-        db.commit()
-        db_cursor.close()
-        db.close()
-        if column in column_names:
+        if column in self.column_names:
+            return True
+        else:
+            self.column_names, self.column_types = (
+                    helpers.get_db_column_names_and_types(self.db_cursor))
+            if column in self.column_names:
+                return True
+            else:
+                return False
+
+    def is_empty(self, column):
+        """Return True if entry in the database under 'column' is empty.
+
+        :raises sqlite3.OperationalError: If blocked by writing operations on 
+            the entry in the database from other threads/processes for more 
+            than 5 seconds. Way too much concurrent writing is done and 
+            indicates an design error in the user program.
+        """
+        value = self.read(column)
+        if value == None:
             return True
         else:
             return False
+
+    def set_empty(self, column):
+        """Set entry under 'column' in the database to empty.
+
+        :raises sqlite3.OperationalError: If blocked by writing operations on 
+            the entry in the database from other threads/processes for more 
+            than 5 seconds. Way too much concurrent writing is done and 
+            indicates an design error in the user program.
+        """
+        self.write(column, None)
 
     def get_id(self):
         """Return 'ID' of the connected simulation."""
@@ -249,8 +320,6 @@ class SimDB:
         The project's root directory is assumed to be where the '.sim_db/'
         directory is located.
         """
-        db = helpers.connect_sim_db()
-        db_cursor = db.cursor()
         return self.path_proj_root
 
     def update_sha1_executables(self, paths_executables):
@@ -266,16 +335,31 @@ class SimDB:
         for executable in executables:
             with open(executable, 'r') as executable_file:
                 sha1.update(executable_file.read())
-        self.write('sha1_executables', sha1)
+        try:
+            self.write('sha1_executables', sha1)
+        except sqlite3.OperationalError:
+            pass
 
-    def end(self):
-        """Add metadata for 'used_walltime' and update 'status' to 'finished'."""
+    def delete_from_database(self):
+        """Delete simulation from database."""
+        self.db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(
+                self.id))
+        self.db.commit()
+        self.store_metadata = False
+
+    def close(self):
+        """Closes connection to **sim_db** database and add metadata."""
         if self.store_metadata:
             used_time = time.time() - self.start_time
             used_walltime = "{0}h {1}m {2}s".format(
                     int(used_time / 3600), int(used_time / 60), used_time % 60)
-            self.write('used_walltime', used_walltime)
-            self.write('status', 'finished')
+            self.write('used_walltime', used_walltime, only_if_empty=True)
+            try:
+                self.write('status', 'finished')
+            except sqlite3.OperationalError:
+                pass
+        self.db_cursor.close()
+        self.db.close()
 
     def __read_from_command_line_arguments(self, db_id):
         path_proj_root = None
@@ -310,9 +394,12 @@ class SimDB:
                        "passed to program as command line arguments.")
         return (db_id, path_proj_root)
 
-    def __check_type(self, db_cursor, check_type_is, column, value=None):
-        column_names, column_types = helpers.get_db_column_names_and_types(
-                db_cursor)
+    def __check_type(self,
+                     check_type_is,
+                     column,
+                     column_names,
+                     column_types,
+                     value=None):
         type_dict = dict(zip(column_names, column_types))
         type_of_value = type_dict[column]
 
@@ -435,6 +522,57 @@ class SimDB:
                             "'float array', 'string array' or 'bool array' "
                             "when a empty list is passed to SimDB.write().")
                 return value_string
+        elif value == None:
+            return "NULL"
+
+    def __add_column(self, column, type_of_value):
+        if type_of_value == '':
+            print("ERROR: Column {0} does not exists in database and "
+                  "'type_of_value' must be provided for it to be added."
+                  .format(column))
+            exit(1)
+        start_time = time.time()
+        is_busy = True
+        self.db_cursor.execute("PRAGMA busy_timeout=0")
+        while is_busy:
+            is_busy = False
+            try:
+                if type_of_value == 'int' or type_of_value == int:
+                    self.db_cursor.execute(
+                            "ALTER TABLE runs ADD COLUMN {0} INTEGER".format(
+                                    column))
+                elif type_of_value == 'float' or type_of_value == float:
+                    self.db_cursor.execute(
+                            "ALTER TABLE runs ADD COLUMN {0} REAL".format(column))
+                else:
+                    self.db_cursor.execute(
+                            "ALTER TABLE runs ADD COLUMN {0} TEXT".format(column))
+                self.db.commit()
+            except sqlite3.OperationalError as e:
+                if str(e)[0:12] == "duplicate column name:":
+                    is_busy = False
+                else:
+                    is_busy = True
+                if time.time() > start_time + 5.0:
+                    self.db_cursor.execute("PRAGMA busy_timeout=5000")
+                    raise
+        self.db_cursor.execute("PRAGMA busy_timeout=5000")
+
+
+    def __add_column_if_not_exists_and_check_type(self, column, type_of_value):
+        if column in self.column_names:
+            self.__check_type(type_of_value, column, self.column_names,
+                              self.column_types)
+        else:
+            self.column_names, self.column_types = (
+                    helpers.get_db_column_names_and_types(self.db_cursor))
+            if column in self.column_names:
+                self.__check_type(type_of_value, column, self.column_names,
+                                  self.column_types)
+            else:
+                self.__add_column(column, type_of_value)
+                self.column_names, self.column_types = (
+                        helpers.get_db_column_names_and_types(self.db_cursor))
 
     def __is_a_git_project(self):
         directory = self.path_proj_root
@@ -464,8 +602,13 @@ class ColumnError(Exception):
     pass
 
 
-def add_empty_sim():
-    """Add an empty entry into the database and return its 'ID'."""
+def add_empty_sim(store_metadata):
+    """Add an empty entry into the database and SimDB connected to it.
+
+    :param store_metadata: If False, no metadata is added to the database.
+        Typically used when postprocessing (visualizing) data from a simulation.
+    :type store_metadata: bool
+    """
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
     default_db_columns = ""
@@ -481,15 +624,4 @@ def add_empty_sim():
     db_cursor.close()
     db.close()
 
-    return db_id
-
-
-def delete_sim(db_id):
-    """Delete simulation from database with 'ID' db_id."""
-    db = helpers.connect_sim_db()
-    db_cursor = db.cursor()
-    db_cursor.execute("DELETE FROM runs WHERE id = {0}".format(db_id))
-    db_id = db_cursor.lastrowid
-    db.commit()
-    db_cursor.close()
-    db.close()
+    return SimDB(db_id=db_id, store_metadata=store_metadata)

@@ -21,6 +21,11 @@ if 'no_metadata' in sys.argv:
 else:
     store_metadata = True
 
+if 'running_in_parallel' in sys.argv:
+    running_in_parallel = True
+else:
+    running_in_parallel = False
+
 sim_database = sim_db_lib.SimDB(store_metadata=store_metadata)
 
 param1 = sim_database.read("test_param1")
@@ -73,15 +78,21 @@ print(param10)
 sim_database.write("new_test_param10", param10, type_of_value="int")
 print(sim_database.read("new_test_param10"))
 
-param11 = sim_database.read("test_param11")
-print(param11)
-
 param12 = sim_database.read("test_param12")
 print(param12)
 
+param13 = sim_database.read("test_param13")
+print(param13)
+sim_database.write("test_param13", [1, 2, 3])
+print(sim_database.read("test_param13"))
+
+print(sim_database.is_empty("test_param11"))
+sim_database.set_empty("test_param11")
+print(sim_database.is_empty("test_param11"))
+
 if store_metadata:
     large_test_res = np.array(param6)
-    res_dir = sim_database.make_unique_subdir("root/tests/results")
+    res_dir = sim_database.unique_results_dir("root/tests/results")
     np.savetxt("{0}/results.txt".format(res_dir), large_test_res)
 
 print(sim_database.column_exists("test_param1"))
@@ -92,17 +103,16 @@ try:
 except sim_db_lib.ColumnError:
     print("raised ColumnError")
 
-sim_database.end()
+sim_database.close()
 
-db_id = sim_db_lib.add_empty_sim()
-print(db_id)
+if not running_in_parallel:
+    sim_database = sim_db_lib.add_empty_sim(False)
+    print(sim_database.get_id())
 
-sim_database = sim_db_lib.SimDB(db_id=db_id, store_metadata=False)
+    sim_database.write("test_param1", 7, type_of_value="int", 
+                       only_if_empty=True)
+    param1 = sim_database.read("test_param1")
+    print(param1)
 
-sim_database.write("test_param1", 7, type_of_value="int")
-param1 = sim_database.read("test_param1")
-print(param1)
-
-sim_database.end()
-
-sim_db_lib.delete_sim(db_id)
+    sim_database.delete_from_database()
+    sim_database.close()

@@ -157,10 +157,10 @@ Extensive examples for Python and C can also be found in the same directory, *si
 
 .. _dependencies:
 
-Multithreading
-==============
-**sim_db** is thread safe with the notable exception of the ``make_unique_subdir`` functions that should only be called from a single thread.
-
+Multithreading and Multiprocessing
+==================================
+**sim_db** is thread safe and can be used in both multithreading and multiprocessing appications with the notable exception of the ``make_unique_subdir`` functions that should only be called from a single thread and process. (**sim_db** is thread safe in the same way that SQLite in serialized mode is thread safe.)
+ 
 Dependencies
 ============
 The dependencies for **sim_db** is tried to keep at a minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.

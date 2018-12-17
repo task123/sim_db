@@ -90,7 +90,12 @@ def delete_sim(name_command_line_tool="sim_db",
                 db_cursor.execute(
                         "DELETE FROM runs WHERE id = {0}".format(delete_id))
         elif args.where:
-            delete_results_dir.delete_results_dir(argv=["--where", args.where])
+            if args.no_checks:
+                delete_results_dir.delete_results_dir(
+                        argv=["--no_checks", "--where", args.where])
+            else:
+                delete_results_dir.delete_results_dir(
+                        argv=["--where", args.where])
             db_cursor.execute("DELETE FROM runs WHERE {0}".format(args.where))
     else:
         print("No simulations were deleted.")

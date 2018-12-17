@@ -57,7 +57,7 @@ def __c_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___output_c_and_cpp_program(output_program, db_id, is_cpp=False)
+    ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=False)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
@@ -106,44 +106,46 @@ def __cpp_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___output_c_and_cpp_program(output_program, db_id, is_cpp=True)
+    ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=True)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
 
-def ___output_c_and_cpp_program(output_program, db_id, is_cpp=False):
+def ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=False):
     printed_lines = output_program.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
         printed_lines = output_program.split('\n')[3:]
-    printed_lines[0] == "3"
-    printed_lines[1] == printed_lines[0]
+    assert printed_lines[0] == "3"
+    assert printed_lines[1] == printed_lines[0]
     abs(float(printed_lines[2]) - -5000000000.0) < 0.001
-    printed_lines[3] == printed_lines[2]
-    printed_lines[4] == "hei"
-    printed_lines[5] == printed_lines[4]
-    printed_lines[6] == "1"
-    printed_lines[7] == printed_lines[6]
-    printed_lines[8:11] == ['1', '2', '3']
-    printed_lines[8:11] == printed_lines[11:14]
+    assert printed_lines[3] == printed_lines[2]
+    assert printed_lines[4] == "hei"
+    assert printed_lines[5] == printed_lines[4]
+    assert printed_lines[6] == "1"
+    assert printed_lines[7] == printed_lines[6]
+    assert printed_lines[8:11] == ['1', '2', '3']
+    assert printed_lines[8:11] == printed_lines[11:14]
     abs(float(printed_lines[14]) - 1.5) < 0.001
     abs(float(printed_lines[15]) - 2.5) < 0.001
     abs(float(printed_lines[16]) - 3.5) < 0.001
-    printed_lines[14:17] == printed_lines[17:20]
-    printed_lines[20:23] == ['a', 'b', 'c']
-    printed_lines[20:23] == printed_lines[23:26]
-    printed_lines[26:29] == ['1', '0', '1']
-    printed_lines[26:29] == printed_lines[29:32]
-    printed_lines[32] == "1"
-    printed_lines[33] == "0"
+    assert printed_lines[14:17] == printed_lines[17:20]
+    assert printed_lines[20:23] == ['a', 'b', 'c']
+    assert printed_lines[20:23] == printed_lines[23:26]
+    assert printed_lines[26:29] == ['1', '0', '1']
+    assert printed_lines[26:29] == printed_lines[29:32]
+    assert printed_lines[32] == "9"
+    assert printed_lines[33] == printed_lines[32]
+    assert printed_lines[34] == "11"
+    assert printed_lines[35] == printed_lines[34]
+    assert printed_lines[36] == "0"
+    assert printed_lines[37] == "1"
+    assert printed_lines[38] == "1"
+    assert printed_lines[39] == "0"
     if is_cpp:
-        printed_lines[34] == "threw exception"
-        printed_lines.pop(34)
-    printed_lines[34] == "9"
-    printed_lines[35] == printed_lines[34]
-    printed_lines[36] == "11"
-    printed_lines[37] == printed_lines[36]
-    printed_lines[38] == str(db_id + 1)
-    printed_lines[39] == "7"
+        assert printed_lines[40] == "threw exception"
+        assert printed_lines.pop(40)
+    assert printed_lines[40] == str(db_id + 1)
+    assert printed_lines[41] == "7"
 
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):

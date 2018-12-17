@@ -53,14 +53,14 @@ def add_column(name_command_line_tool="sim_db",
                                          name_command).parse_args(argv)
     if args.column not in column_names:
         if args.type == 'int' or args.type == int:
-            db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {0} INTEGER".format(args.column))
+            db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} INTEGER".format(
+                    args.column))
         elif args.type == 'float' or args.type == float:
-            db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {0} REAL".format(args.column))
+            db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} REAL".format(
+                    args.column))
         else:
-            db_cursor.execute("ALTER TABLE runs ADD COLUMN \
-                               {0} TEXT".format(args.column))
+            db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} TEXT".format(
+                    args.column))
 
     db.commit()
     db_cursor.close()

@@ -29,6 +29,7 @@ import sim_db.src_command_line_tool.commands.add_range_sim as add_range_sim
 import sim_db.src_command_line_tool.commands.add_sim as add_sim
 import sim_db.src_command_line_tool.commands.combine_dbs as combine_dbs
 import sim_db.src_command_line_tool.commands.delete_empty_columns as delete_empty_columns
+import sim_db.src_command_line_tool.commands.delete_results_dir as delete_results_dir
 import sim_db.src_command_line_tool.commands.delete_sim as delete_sim
 import sim_db.src_command_line_tool.commands.duplicate_and_run as duplicate_and_run
 import sim_db.src_command_line_tool.commands.duplicate_sim as duplicate_sim

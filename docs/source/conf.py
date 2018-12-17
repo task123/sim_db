@@ -88,7 +88,9 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+# Sphinx options
 autodoc_member_order = 'bysource'
+add_module_names = False
 
 
 # -- Options for HTML output -------------------------------------------------
