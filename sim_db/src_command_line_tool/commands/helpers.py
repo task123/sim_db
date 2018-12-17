@@ -8,7 +8,7 @@ import subprocess
 import os
 from sys import version_info, platform
 
-# Update 'get_create_table_query' function in src/sim_db.c if ever changed.
+# Update 'get_create_table_query' function in sim_db.c if ever changed.
 default_db_columns = {
         'id': 'INTEGER PRIMARY KEY',
         'status': 'TEXT',
@@ -29,7 +29,8 @@ default_db_columns = {
         'commit_message': 'TEXT',
         'git_diff_stat': 'TEXT',
         'git_diff': 'TEXT',
-        'sha1_executables': 'TEXT'
+        'sha1_executables': 'TEXT',
+        'initial_parameters': 'TEXT'
 }
 
 
@@ -302,3 +303,55 @@ def if_unicode_convert_to_str(value):
             return value.encode('ascii', 'backslashreplace')
     else:
         return value
+
+def convert_text_to_correct_type(value, check_type_is):
+    correct_type = False
+    value_split = value.split('[')
+    if value == "True":
+        value = True
+        if (check_type_is == 'bool' or check_type_is == bool):
+            correct_type = True
+    elif value == "False":
+        value = False
+        if (check_type_is == 'bool' or check_type_is == bool):
+            correct_type = True
+    elif len(value_split) == 1:
+        if (check_type_is == 'string' or check_type_is == str):
+            correct_type = True
+    else:
+        value = []
+        if value_split[0].strip() == 'int':
+            if (check_type_is == 'int array' or check_type_is == list):
+                correct_type = True
+            for element in value_split[1].split(']')[0].split(','):
+                value.append(int(element))
+        elif value_split[0].strip() == 'float':
+            if (check_type_is == 'float array' or check_type_is == list):
+                correct_type = True
+            for element in value_split[1].split(']')[0].split(','):
+                value.append(float(element))
+        elif value_split[0].strip() == 'string':
+            if (check_type_is == 'string array' or check_type_is == list):
+                correct_type = True
+            for i, element in enumerate(
+                    value_split[1].split(']')[0].split(',')):
+                if i > 0 and len(element) > 0 and element[0] == ' ':
+                    element = element[1:]
+                value.append(str(element))
+        elif value_split[0].strip() == 'bool':
+            if (check_type_is == 'bool array' or check_type_is == list):
+                correct_type = True
+            for i, element in enumerate(
+                    value_split[1].split(']')[0].split(',')):
+                if i > 0 and len(element) > 0 and element[0] == ' ':
+                    element = element[1:]
+                if element == 'True':
+                    element = True
+                elif element == 'False':
+                    element = False
+                else:
+                    correct_type = False
+                value.append(element)
+        else:
+            correct_type = False
+    return value, correct_type

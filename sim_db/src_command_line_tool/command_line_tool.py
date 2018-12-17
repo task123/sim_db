@@ -32,6 +32,7 @@ import sim_db.src_command_line_tool.commands.delete_empty_columns as delete_empt
 import sim_db.src_command_line_tool.commands.delete_results_dir as delete_results_dir
 import sim_db.src_command_line_tool.commands.delete_sim as delete_sim
 import sim_db.src_command_line_tool.commands.duplicate_and_run as duplicate_and_run
+import sim_db.src_command_line_tool.commands.duplicate_delete_and_run as duplicate_delete_and_run
 import sim_db.src_command_line_tool.commands.duplicate_sim as duplicate_sim
 import sim_db.src_command_line_tool.commands.extract_params as extract_params
 import sim_db.src_command_line_tool.commands.get as get
@@ -153,6 +154,12 @@ def command_line_tool(name_command_line_tool="sim_db",
     elif command == 'duplicate_and_run':
         db_id = duplicate_and_run.duplicate_and_run(name_command_line_tool,
                                                     command, argv[1:])
+        if print_ids_added:
+            print("ID of new simulation: {0}".format(db_id))
+        res = db_id
+    elif command == 'ddr' or command == 'duplicate_delete_and_run':
+        db_id = duplicate_delete_and_run.duplicate_delete_and_run(
+                name_command_line_tool, command, argv[1:])
         if print_ids_added:
             print("ID of new simulation: {0}".format(db_id))
         res = db_id

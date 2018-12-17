@@ -43,6 +43,10 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
              "valid SQL (sqlite3) command when added after WHERE in a DELETE "
              "command."))
     parser.add_argument(
+            '--all',
+            action="store_true",
+            help="Delete all simulation from database.")
+    parser.add_argument(
             '--no_checks',
             action='store_true',
             help=("No questions are asked about wheter you really want to "
@@ -59,6 +63,9 @@ def delete_sim(name_command_line_tool="sim_db",
 
     args = command_line_arguments_parser(name_command_line_tool,
                                          name_command).parse_args(argv)
+
+    if args.all:
+        args.where = "id > -1"
 
     answer = 'n'
     if len(args.id) == 0 and args.where == None:

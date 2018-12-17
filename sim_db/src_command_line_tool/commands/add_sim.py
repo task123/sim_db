@@ -289,10 +289,13 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     column_names, column_types = helpers.get_db_column_names_and_types(
             db_cursor)
 
+    initial_parameters = []
+
     last_row_id = None
     for i, line in enumerate(sim_params_file_lines):
         if len(line.split(':')) > 1:
             param_name, param_type, value = split_parameter_line(line, i)
+            initial_parameters.append(param_name)
 
             if param_name == 'run_command':
                 value = make_path_relative_to_root(value, sim_params_filename)
@@ -313,6 +316,9 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
             if len(value) > 0:
                 last_row_id = insert_value(db_cursor, param_name, last_row_id,
                                            value)
+    initial_parameters = standardize_value(str(initial_parameters), "string array")
+    last_row_id = insert_value(db_cursor, 'initial_parameters', last_row_id, 
+                               initial_parameters)
 
     db.commit()
     db_cursor.close()

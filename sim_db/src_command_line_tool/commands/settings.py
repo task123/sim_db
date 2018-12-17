@@ -14,6 +14,7 @@ if __name__ == '__main__':
 import sim_db.src_command_line_tool.commands.helpers as helpers
 import argparse
 import sys
+import os.path
 
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",

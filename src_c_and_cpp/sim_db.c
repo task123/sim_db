@@ -1248,7 +1248,8 @@ const char* sim_db_get_create_table_query() {
            "max_walltime TEXT, n_tasks INTEGER, job_id INTEGER, "
            "time_submitted TEXT, time_started TEXT, used_walltime TEXT, "
            "cpu_info TEXT, git_hash TEXT, commit_message TEXT, "
-           "git_diff_stat TEXT, git_diff TEXT, sha1_executables TEXT)";
+           "git_diff_stat TEXT, git_diff TEXT, sha1_executables TEXT, "
+           "inital_parameters TEXT)";
 }
 
 SimDB* sim_db_add_empty_sim_without_search(const char* path_proj_root,

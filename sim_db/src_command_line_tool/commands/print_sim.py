@@ -77,6 +77,20 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             help=("Print all columns. Otherwise only non empty columns are "
                   "printed."))
     parser.add_argument(
+            '--params',
+            action='store_true',
+            help=("Print the parameters added before the simulation run."))
+    parser.add_argument(
+            '--results',
+            action='store_true',
+            help=("Print results - the parameters added during the simulation, "
+                  "excluding metadata."))
+    parser.add_argument(
+            '--metadata',
+            action='store_true',
+            help=("Print metadata. '--params', '--results' and '--metadata' "
+                  "will together print all non empty columns."))
+    parser.add_argument(
             '--no_headers',
             action='store_true',
             help="Print without any headers.")
@@ -125,25 +139,76 @@ def get_personalized_print_config(key_string):
                 return split_line[1].strip()
     return None
 
+metadata_columns = ['status', 'add_to_job_script', 'max_walltime', 'n_tasks', 
+                    'job_id', 'time_submitted', 'time_started', 'used_walltime', 
+                    'cpu_info', 'git_hash', 'commit_message', 'git_diff', 
+                    'git_diff_stat', 'sha1_executables', 'initial_parameters']
+
+def get_initial_parameters_columns(db_cursor, args):
+    ids = []
+    if args.where != None:
+        try:
+            db_cursor.execute("SELECT id FROM runs WHERE {0};".format(args.where))
+        except sqlite3.OperationalError as e:
+            if str(e) == "no such table: runs":
+                print("There do NOT exists a database yet.\n"
+                      "Try adding a simulation from a parameter file.")
+                exit(1)
+            else:
+                raise e
+        ids = list(db_cursor.fetchall()[0])
+    if args.id != None:
+        ids = ids + args.id
+    all_initial_parameters = []
+    for i in ids:
+        db_cursor.execute("SELECT initial_parameters FROM runs WHERE id={0}"
+                          .format(i))
+        initial_parameters = db_cursor.fetchone()[0]
+        initial_parameters, correct_type = helpers.convert_text_to_correct_type(
+                                             initial_parameters, 'string array')
+        all_initial_parameters = all_initial_parameters + initial_parameters
+    all_initial_parameters = list(set(all_initial_parameters))
+
+    return all_initial_parameters
+
+
+def add_columns(new_columns, columns, column_names):
+    for col in new_columns:
+        column_names.append(col)
+        columns += "{0}, ".format(col)
+    if len(new_columns) > 0:
+        columns = columns[:-2]
+    return (columns, column_names)
+
 
 def select_command(db_cursor, args, column_names):
-    if args.columns == None and args.col_by_num == None:
+    all_column_names = column_names
+    if (args.columns == None and args.col_by_num == None and not args.params 
+            and not args.results and not args.metadata):
         columns = '*'
     else:
         columns = ""
+        column_names = []
+        if args.results:
+            parameter_columns = get_initial_parameters_columns(db_cursor, args)
+            result_columns = [c for c in all_column_names if (
+                      c not in parameter_columns and c not in metadata_columns)]
+            columns, column_names = add_columns(result_columns, columns, 
+                                                column_names)
+        if args.params:
+            parameter_columns = get_initial_parameters_columns(db_cursor, args)
+            columns, column_names = add_columns(parameter_columns, columns, 
+                                                column_names)
+        if args.metadata:
+            columns, column_names = add_columns(metadata_columns, columns, 
+                                                column_names)
         if args.columns != None:
-            column_names = []
-            for col in args.columns:
-                columns += "{0}, ".format(col)
-                column_names.append(col)
-            columns = columns[:-2]
+            columns, column_names = add_columns(args.columns, columns, 
+                                                column_names)
         if args.col_by_num != None:
-            new_column_names = []
-            for i in args.col_by_num:
-                columns += "{0}, ".format(column_names[i])
-                new_column_names.append(column_names[i])
-            columns = columns[:-2]
-            column_names = new_column_names
+            new_columns = [all_column_names[i] for i in args.col_by_num]
+            columns, column_names = add_columns(new_columns, columns, 
+                                                column_names)
     if args.id == None:
         try:
             db_cursor.execute("SELECT {0} FROM runs WHERE {1} ORDER BY {2};"

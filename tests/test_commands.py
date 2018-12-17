@@ -145,18 +145,19 @@ def test_list_commands(capsys):
     assert output_lines[11] == "delete_results_dir"
     assert output_lines[12] == "delete / delete_sim"
     assert output_lines[13] == "duplicate_and_run"
-    assert output_lines[14] == "duplicate / duplicate_sim"
-    assert output_lines[15] == "extract_params"
-    assert output_lines[16] == "get"
-    assert output_lines[17] == "init"
-    assert output_lines[18] == "list_commands"
-    assert output_lines[19] == "list_print_configs"
-    assert output_lines[20] == "print / print_sim"
-    assert output_lines[21] == "run_serial / run_serial_sims"
-    assert output_lines[22] == "run / run_sim"
-    assert output_lines[23] == "settings"
-    assert output_lines[24] == "submit / submit_sim"
-    assert output_lines[25] == "update / update_sim"
+    assert output_lines[14] == "ddr / duplicate_delete_and_run"
+    assert output_lines[15] == "duplicate / duplicate_sim"
+    assert output_lines[16] == "extract_params"
+    assert output_lines[17] == "get"
+    assert output_lines[18] == "init"
+    assert output_lines[19] == "list_commands"
+    assert output_lines[20] == "list_print_configs"
+    assert output_lines[21] == "print / print_sim"
+    assert output_lines[22] == "run_serial / run_serial_sims"
+    assert output_lines[23] == "run / run_sim"
+    assert output_lines[24] == "settings"
+    assert output_lines[25] == "submit / submit_sim"
+    assert output_lines[26] == "update / update_sim"
 
 
 def test_add_column_and_delete_empty_columns(capsys):
@@ -638,6 +639,54 @@ def test_duplicate_and_run(capsys):
     common_test_helpers.assert_output_python_program(output_program, new_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim_after_run_sim, True)
+
+
+def test_duplicate_delete_and_run(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
+    db_id = command_line_tool(
+            "sim_db", [
+                    "add_sim", "--filename",
+                    "{0}/sim_params_python_program.txt".format(
+                            common_test_helpers.get_test_dir())
+            ],
+            print_ids_added=False)
+    new_id = command_line_tool(
+            "sim_db", ["duplicate_delete_and_run", "--id",
+                       str(db_id), "--no_checks"],
+            print_ids_added=False)
+    output_program, err = capsys.readouterr()
+    command_line_tool(
+            "sim_db",
+            "print_sim --id {0} -v --no_headers --columns name test_param1 "
+            "test_param2 test_param3 test_param4 test_param5 test_param6 "
+            "test_param7 test_param8 test_param9 test_param10 test_param11 "
+            "test_param12 test_param13".format(new_id).split())
+    output_print_sim_after_duplicate_sim, err = capsys.readouterr()
+    command_line_tool(
+            "sim_db",
+            "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(new_id).split())
+    output_print_sim_after_run_sim, err = capsys.readouterr()
+    command_line_tool("sim_db",
+                      ["delete_sim", "--id",
+                       str(new_id), "--no_checks"])
+    command_line_tool("sim_db", "print -n 1 --no_headers --columns id".split())
+    output_after_delete, err = capsys.readouterr()
+    with capsys.disabled():
+        print("\nTest duplicate_delete_and_run...")
+    __assert_output_print_sim_after_add_sim(
+            output_print_sim_after_duplicate_sim)
+    common_test_helpers.assert_output_python_program(output_program, new_id)
+    common_test_helpers.assert_output_print_sim_after_run_sim(
+            output_print_sim_after_run_sim, True)
+
+    # Test that the added simulation parameters are deleted
+    assert (len(output_after_delete) == 0
+            or output_after_delete.splitlines()[-1].strip() !=
+            "{0}".format(db_id))
 
 
 def test_settings(capsys):

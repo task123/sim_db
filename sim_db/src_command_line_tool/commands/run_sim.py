@@ -34,6 +34,10 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             type=int,
             default=None,
             help="Number of threads/core to run the simulation on.")
+    parser.add_argument(
+            '--allow_reruns',
+            action="store_true",
+            help="Allow simulations with non 'new' status to run.")
 
     return parser
 
@@ -52,6 +56,16 @@ def run_sim(name_command_line_tool="sim_db", name_command="run_sim",
         ids = [i[0] for i in ids]
         args.id = max(ids)
         print("Start simulation with ID {0}.".format(args.id))
+    elif not args.allow_reruns:
+        db_cursor.execute("SELECT status FROM runs WHERE id = {0};".format(args.id))
+        status = db_cursor.fetchone()[0]
+        if status != "new":
+            print("Status of simulation with 'ID' = {0} is {1}.\nEither:\n"
+                  "- Add '--allow_reruns' flag to allow it to run.\n- Update "
+                  "status to 'new'.\n- Duplicate it, delete the old and run it "
+                  "with: 'ddr' / 'duplicate_delete_and_run'".format(args.id, 
+                  status))
+            exit()
 
     run_command = helpers.get_run_command(db_cursor, args.id, args.n)
     db.commit()

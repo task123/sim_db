@@ -40,6 +40,8 @@ def list_commands(name_command_line_tool="sim_db",
             script_name = script_name[:-4] + ' / ' + script_name
         if (len(script_name) > 5 and script_name[-5:] == '_sims'):
             script_name = script_name[:-5] + ' / ' + script_name
+        if script_name == "duplicate_delete_and_run":
+            script_name = "ddr" + ' / ' + script_name
         print(script_name)
 
 
