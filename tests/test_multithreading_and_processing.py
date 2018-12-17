@@ -9,6 +9,7 @@ import subprocess
 import os.path
 
 def test_c_multithreading(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
     with capsys.disabled():
         print("\nTest C multithreading and processing...")
     output = subprocess.check_output(
@@ -19,6 +20,7 @@ def test_c_multithreading(capsys):
     assert last_line.strip() == "finished"
 
 def test_python_multithreading(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
     with capsys.disabled():
         print("\nTest python multithreading and processing...")
     path_script = os.path.join(common_test_helpers.get_test_dir(), 
