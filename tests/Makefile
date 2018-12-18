@@ -15,21 +15,21 @@ export CC CXX CFLAGS CXXFLAGS
 .PHONY: all c_program_updated cpp_program_updated clean clean_except_third_party clean_etp
 
 all:
-	$(MAKE) -f handwritten_makefile c_program_updated
-	$(MAKE) -f handwritten_makefile cpp_program_updated
-	$(MAKE) -f handwritten_makefile c_mtap_updated
+	$(MAKE) c_program_updated
+	$(MAKE) cpp_program_updated
+	$(MAKE) c_mtap_updated
 
 c_program_updated:
-	$(MAKE) -f handwritten_makefile -C ../lib libsimdbc.a
-	$(MAKE) -f handwritten_makefile c_program
+	$(MAKE) -C ../lib libsimdbc.a
+	$(MAKE) c_program
 	
 cpp_program_updated:
-	$(MAKE) -f handwritten_makefile -C ../lib libsimdbcpp.a
-	$(MAKE) -f handwritten_makefile cpp_program
+	$(MAKE) -C ../lib libsimdbcpp.a
+	$(MAKE) cpp_program
 
 c_mtap_updated:
-	$(MAKE) -f handwritten_makefile c_program_updated
-	$(MAKE) -f handwritten_makefile c_mtap
+	$(MAKE) c_program_updated
+	$(MAKE) c_mtap
 
 # Use target c_program_updated instead as it check libsimdbc.a's dependencies.
 c_program: program.c ../lib/libsimdbc.a
@@ -60,7 +60,7 @@ clean:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
-	$(MAKE) -f handwritten_makefile -C ../lib clean
+	$(MAKE) -C ../lib clean
 
 clean_except_third_party:
 	rm -f c_program
@@ -70,7 +70,7 @@ clean_except_third_party:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
-	$(MAKE) -f handwritten_makefile -C ../lib clean_except_third_party
+	$(MAKE) -C ../lib clean_except_third_party
 
 clean_etp:
-	$(MAKE) -f handwritten_makefile clean_except_third_party
+	$(MAKE) clean_except_third_party

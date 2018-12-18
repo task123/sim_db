@@ -13,8 +13,7 @@ def test_c_multithreading(capsys):
     with capsys.disabled():
         print("\nTest C multithreading and processing...")
     output = subprocess.check_output(
-            ["make", "-C", common_test_helpers.get_test_dir(), "-f", 
-             "handwritten_makefile", "c_mtap_run"],
+            ["make", "-C", common_test_helpers.get_test_dir(), "c_mtap_run"],
             universal_newlines=True)
     last_line = output.splitlines()[-1]
     assert last_line.strip() == "finished"

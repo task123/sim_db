@@ -9,8 +9,8 @@ CXX := $(if $(CXX), $(CXX), c++)
 .PHONY: all libsimdbc libsimdbcpp clean clean_except_third_party clean_etp
 
 all:
-	$(MAKE) -f handwritten_makefile libsimdbc.a
-	$(MAKE) -f handwritten_makefile libsimdbcpp.a
+	$(MAKE) libsimdbc.a
+	$(MAKE) libsimdbcpp.a
 
 libsimdbc.a: ../src_c_and_cpp/sim_db.o ../third_party/sqlite3/sqlite3.o
 	ar -rc libsimdbc.a $^
@@ -25,11 +25,11 @@ libsimdbcpp.a: ../src_c_and_cpp/sim_db_cpp.o ../src_c_and_cpp/sim_db.o ../third_
 	$(CXX) $(CXXFLAGS) -c -o $@ ../src_c_and_cpp/sim_db.cpp
 
 ../third_party/sqlite3/sqlite3.o:
-	$(MAKE) -f handwritten_makefile -C ../third_party/sqlite3/ sqlite3.o
+	$(MAKE) -C ../third_party/sqlite3/ sqlite3.o
 
 clean:
-	$(MAKE) -f handwritten_makefile clean_except_third_party
-	$(MAKE) -f handwritten_makefile -C ../third_party/sqlite3 clean
+	$(MAKE) clean_except_third_party
+	$(MAKE) -C ../third_party/sqlite3 clean
 
 clean_except_third_party:
 	rm -f libsimdbc.a
@@ -38,4 +38,4 @@ clean_except_third_party:
 	rm -f ../src_c_and_cpp/sim_db_cpp.o
 
 clean_etp:
-	$(MAKE) -f handwritten_makefile clean_except_third_party
+	$(MAKE) clean_except_third_party
