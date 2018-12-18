@@ -43,14 +43,25 @@ def init(name_command_line_tool="sim_db", name_command="init", argv=None):
         args.path = os.getcwd()
     elif args.path[-1] == '/':
         args.path = args.path[:-1]
-    os.mkdir(os.path.join(args.path, '.sim_db'))
-    path_default_settings = os.path.abspath(
-            os.path.join(
+
+    path_dot_sim_db_dir = os.path.join(args.path, '.sim_db')
+
+    if os.path.exists(path_dot_sim_db_dir):
+        if os.path.isdir(path_dot_sim_db_dir):
+            if os.path.exists(
+                    os.path.join(path_dot_sim_db_dir, "settings.txt")):
+                print("sim_db is already initialized in {0}/".format(
+                        path_dot_sim_db_dir))
+                exit()
+
+    os.mkdir(path_dot_sim_db_dir)
+    path_default_settings = os.path.abspath(os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'default_settings.txt'))
     shutil.copyfile(
             path_default_settings,
             os.path.join(os.path.join(args.path, '.sim_db'), 'settings.txt'))
+    print("Initialized sim_db directory.")
 
 
 if __name__ == '__main__':

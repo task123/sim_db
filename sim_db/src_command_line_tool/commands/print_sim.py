@@ -151,7 +151,7 @@ def get_initial_parameters_columns(db_cursor, args):
             db_cursor.execute("SELECT id FROM runs WHERE {0};".format(args.where))
         except sqlite3.OperationalError as e:
             if str(e) == "no such table: runs":
-                print("There do NOT exists a database yet.\n"
+                print("There does NOT exist a database yet.\n"
                       "Try adding a simulation from a parameter file.")
                 exit(1)
             else:
