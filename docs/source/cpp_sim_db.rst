@@ -31,6 +31,8 @@ Notice that when it is run, it first call `make` to compile the code if needed. 
 
     $ c++ -o minimal_cpp_example minimal_example.cpp -lsimdbcpp -I../include -L../lib -lm -lpthread -ldl
 
+If you already have compiled your program into a executable called ``program`` located in the current directory, the ``run_command`` can be simpy ``run_command (string): ./program``.
+
 Extensive Example using C++
 ===========================
 A parameter file called params_extensive_cpp_example.txt is found in the *sim_db/examples/* directory in the `source code <https://github.com/task123/sim_db/tree/master/examples>`_. This parameter file contains all the possible types available in addition to some comments:

@@ -11,7 +11,7 @@ description (string): Extensive C++ example to demonstrate most features in sim_
 # Here the the 'run_command' consists of two commands separeated with semi colon.
 # The first call make to compile the code and the second run the compiled example.
 # It is import that they are both on the same line.
-run_command (string): make -s -C root/examples -f handwritten_makefile extensive_cpp_example_updated; root/examples/extensive_cpp_example
+run_command (string): make -s -C root/examples extensive_cpp_example_updated; root/examples/extensive_cpp_example
 
 # A parameter is added for each of the avaiable types.
 param1_extensive (int): 3
