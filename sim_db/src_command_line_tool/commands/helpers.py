@@ -214,6 +214,8 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
         space_escaped = ' '
     run_command = run_command.replace(
             ' root/', ' ' + proj_root_dir.replace(' ', space_escaped) + os.sep)
+    if len(run_command) > 5 and run_command[0:5] == 'root/':
+        run_command = proj_root_dir.replace(' ', space_escaped) + run_command[5:]
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_proj_root "{0}"'.format(proj_root_dir)

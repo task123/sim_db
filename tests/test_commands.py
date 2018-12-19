@@ -573,12 +573,13 @@ def test_duplicate_sim(capsys):
             "sim_db",
             ["duplicate_sim", "--id", str(db_id)],
             print_ids_added=False)
-    command_line_tool("sim_db",
-                      "print_sim -i {0} --no_headers -v".format(db_id).split())
+    command_line_tool(
+            "sim_db", "print_sim -i {0} --no_headers -v -c id status name "
+            "--params --results".format(db_id).split())
     output_original_sim, err = capsys.readouterr()
     command_line_tool(
-            "sim_db", "print_sim -i {0} --no_headers -v".format(
-                    db_id_duplicated).split())
+            "sim_db", "print_sim -i {0} --no_headers -v -c id status name "
+            "--params --results".format(db_id_duplicated).split())
     output_duplicated_sim, err = capsys.readouterr()
     command_line_tool("sim_db",
                       ["delete_sim", "--id",
@@ -589,6 +590,7 @@ def test_duplicate_sim(capsys):
              str(db_id_duplicated), "--no_checks"])
     with capsys.disabled():
         print("\nTest duplicate_sim...")
+        print(output_duplicated_sim)
     assert (output_original_sim.split('\n')[0].strip() !=
             output_duplicated_sim.split('\n')[0].strip())
     assert output_duplicated_sim.split('\n')[2].strip() == 'new'
@@ -709,11 +711,18 @@ def test_settings(capsys):
     output_setting_print_after_add, err = capsys.readouterr()
     command_line_tool("sim_db", [
             "settings", "remove", "--setting", "parameter_files", "--line",
-            "test_settings.txt"
+            "sim_params.txt"
     ])
     command_line_tool("sim_db",
                       ["settings", "print", "--setting", "parameter_files"])
     output_setting_print_after_remove, err = capsys.readouterr()
+    command_line_tool("sim_db", [
+            "settings", "reset_to_default"
+    ])
+    output, err = capsys.readouterr()
+    command_line_tool("sim_db",
+                      ["settings", "print", "--setting", "parameter_files"])
+    output_setting_print_after_reset, err = capsys.readouterr()
 
     with capsys.disabled():
         print("\nTest settings...")
@@ -726,7 +735,8 @@ def test_settings(capsys):
             0].strip() == 'sim_params.txt'
     assert output_setting_print_after_add.split('\n')[
             1].strip() == 'test_settings.txt'
-    assert output_setting_print_after_remove.strip() == 'sim_params.txt'
+    assert output_setting_print_after_remove.strip() == 'test_settings.txt'
+    assert output_setting_print_after_reset.strip() == 'sim_params.txt'
 
 
 def test_delete_results_dir(capsys):

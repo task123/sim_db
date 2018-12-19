@@ -12,6 +12,7 @@ if __name__ == '__main__':
 import sim_db.src_command_line_tool.commands.helpers as helpers
 import sqlite3
 import argparse
+import shlex
 import sys
 import os
 
@@ -19,16 +20,19 @@ import os
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="print_sim"):
     parser = argparse.ArgumentParser(
-            description=('Print content in sim.db. If no arguments are '
-                         'provided "-p default" is passed automatically.'),
+            description=("Print content in sim.db. The default configuration "
+                "corresponding to the '-p default' option is applied first, as "
+                "long as the '--columns'/'-c' option is not passed. It can can "
+                "however be overwritten, as only the last occcurence of any "
+                "flag is used."),
             prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument(
             '--id', '-i', type=int, nargs='+', help="List of ID's.")
     parser.add_argument(
-            '--id_no_print',
+            '--not_id',
             type=int,
             nargs='+',
-            help="List of ID's not to print.")
+            help="List of ID's not to print. Takes president over '--id'.")
     parser.add_argument(
             '-n', type=int, help="Number of row printed from the bottom up.")
     parser.add_argument(
@@ -37,14 +41,14 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             type=str,
             nargs='+',
             default=None,
-            help=("Name of the columns to print. All non empty columns are "
-                  "printed by default."))
+            help="Name of the columns to print.")
     parser.add_argument(
-            '--columns_no_print',
+            '--not_columns',
             type=str,
             nargs='+',
             default=None,
-            help="Name of the columns not to print.")
+            help=("Name of the columns not to print. Takes presidents over "
+                  "'--columns'."))
     parser.add_argument(
             '--col_by_num',
             type=int,
@@ -74,7 +78,11 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
     parser.add_argument(
             '--all_columns',
             action='store_true',
-            help=("Print all columns. Otherwise only non empty columns are "
+            help="Print all columns. Takes president over '--not_columns'.")
+    parser.add_argument(
+            '--empty_columns',
+            action='store_true',
+            help=("Print empty columns. Otherwise only non empty columns are "
                   "printed."))
     parser.add_argument(
             '--params',
@@ -114,7 +122,7 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             type=str,
             default=None,
             help=
-            ("Personal print configuration. Apply the print "
+            ("Personal print configuration. Substituted with the print "
              "configuration in 'settings.txt' corresponding to the provided "
              "key string."))
     parser.add_argument(
@@ -139,9 +147,9 @@ def get_personalized_print_config(key_string):
                 return split_line[1].strip()
     return None
 
-metadata_columns = ['status', 'add_to_job_script', 'max_walltime', 'n_tasks', 
-                    'job_id', 'time_submitted', 'time_started', 'used_walltime', 
-                    'cpu_info', 'git_hash', 'commit_message', 'git_diff', 
+metadata_columns = ['status', 'add_to_job_script', 'max_walltime', 'n_tasks',
+                    'job_id', 'time_submitted', 'time_started', 'used_walltime',
+                    'cpu_info', 'git_hash', 'commit_message', 'git_diff',
                     'git_diff_stat', 'sha1_executables', 'initial_parameters']
 
 def get_initial_parameters_columns(db_cursor, args):
@@ -156,9 +164,12 @@ def get_initial_parameters_columns(db_cursor, args):
                 exit(1)
             else:
                 raise e
-        ids = list(db_cursor.fetchall()[0])
+        ids = [id_tuple[0] for id_tuple in db_cursor.fetchall()]
     if args.id != None:
-        ids = ids + args.id
+        if len(ids) > 0:
+            ids = [i for i in ids if i in args.id]
+        else:
+            ids = args.id
     all_initial_parameters = []
     for i in ids:
         db_cursor.execute("SELECT initial_parameters FROM runs WHERE id={0}"
@@ -174,41 +185,51 @@ def get_initial_parameters_columns(db_cursor, args):
 
 def add_columns(new_columns, columns, column_names):
     for col in new_columns:
-        column_names.append(col)
-        columns += "{0}, ".format(col)
-    if len(new_columns) > 0:
-        columns = columns[:-2]
+        if col not in column_names:
+            column_names.append(col)
+            columns += ", {0}".format(col)
+    if len(columns) > 2 and columns[0:2] == ", ":
+        columns = columns[2:]
     return (columns, column_names)
 
 
-def select_command(db_cursor, args, column_names):
-    all_column_names = column_names
-    if (args.columns == None and args.col_by_num == None and not args.params 
-            and not args.results and not args.metadata):
+def select_command(name_command_line_tool, name_command, db_cursor, args,
+                   all_column_names):
+    columns = ""
+    column_names = []
+
+    if args.columns != None:
+        columns, column_names = add_columns(args.columns, columns,
+                                            column_names)
+    if args.col_by_num != None:
+        new_columns = [all_column_names[i] for i in args.col_by_num]
+        columns, column_names = add_columns(new_columns, columns, column_names)
+    if args.params:
+        parameter_columns = get_initial_parameters_columns(db_cursor, args)
+        columns, column_names = add_columns(parameter_columns, columns,
+                                            column_names)
+    if args.results:
+        parameter_columns = get_initial_parameters_columns(db_cursor, args)
+        result_columns = [
+                c for c in all_column_names
+                if (c not in parameter_columns and c not in metadata_columns)
+        ]
+        columns, column_names = add_columns(result_columns, columns,
+                                            column_names)
+    if args.metadata:
+        columns, column_names = add_columns(metadata_columns, columns,
+                                            column_names)
+    if columns == "" or args.all_columns:
         columns = '*'
-    else:
-        columns = ""
-        column_names = []
-        if args.results:
-            parameter_columns = get_initial_parameters_columns(db_cursor, args)
-            result_columns = [c for c in all_column_names if (
-                      c not in parameter_columns and c not in metadata_columns)]
-            columns, column_names = add_columns(result_columns, columns, 
-                                                column_names)
-        if args.params:
-            parameter_columns = get_initial_parameters_columns(db_cursor, args)
-            columns, column_names = add_columns(parameter_columns, columns, 
-                                                column_names)
-        if args.metadata:
-            columns, column_names = add_columns(metadata_columns, columns, 
-                                                column_names)
-        if args.columns != None:
-            columns, column_names = add_columns(args.columns, columns, 
-                                                column_names)
-        if args.col_by_num != None:
-            new_columns = [all_column_names[i] for i in args.col_by_num]
-            columns, column_names = add_columns(new_columns, columns, 
-                                                column_names)
+        column_names = all_column_names
+
+    for col in column_names:
+        if col not in all_column_names:
+            print("ERROR: {0} is NOT a column in the database.\n"
+                  "Run command '{1} {2} --column_names' to see all the columns "
+                  "in the database.".format(col, name_command_line_tool,
+                  name_command))
+            exit(1)
     if args.id == None:
         try:
             db_cursor.execute("SELECT {0} FROM runs WHERE {1} ORDER BY {2};"
@@ -247,17 +268,15 @@ def select_command(db_cursor, args, column_names):
             selected_output.append(output[0])
 
     selected_output = [list(row) for row in selected_output]
-    if not args.all_columns and args.columns == None and args.col_by_num == None:
+    if (not args.all_columns and not args.empty_columns):
         selected_output, column_names = remove_empty_columns(
-                selected_output, column_names)
-    if args.columns_no_print != None:
+                selected_output, column_names, args)
+    if (args.not_columns != None and not args.all_columns):
         selected_output, column_names = remove_columns_not_to_print(
-                selected_output, column_names, args.columns_no_print)
-    if args.columns != None:
-        column_names = args.columns
-    if args.id_no_print != None:
+                selected_output, column_names, args.not_columns)
+    if args.not_id != None:
         selected_output = remove_rows_not_to_print(selected_output,
-                                                   args.id_no_print)
+                                                   args.not_id)
     n = args.n
     if n == None:
         n = len(selected_output)
@@ -266,12 +285,19 @@ def select_command(db_cursor, args, column_names):
     return selected_output, column_names
 
 
-def remove_empty_columns(selected_output, column_names):
+def remove_empty_columns(selected_output, column_names, args):
+    columns_not_to_remove = []
+    if args.columns != None:
+        columns_not_to_remove = args.columns 
+    if args.col_by_num != None:
+        columns_by_num = [all_column_names[i] for i in args.col_by_num]
+        columns_not_to_remove = columns_not_to_remove + columns_by_num
     if len(selected_output) == 0:
         return selected_output, column_names
     columns_to_remove = []
     for col in range(len(selected_output[0])):
-        if all(elem is None for elem in [row[col] for row in selected_output]):
+        if (all(elem is None for elem in [row[col] for row in selected_output])
+                and column_names[col] not in columns_not_to_remove):
             columns_to_remove.append(col)
     n_deleted = 0
     for col in columns_to_remove:
@@ -284,12 +310,12 @@ def remove_empty_columns(selected_output, column_names):
 
 
 def remove_columns_not_to_print(selected_output, column_names,
-                                columns_no_print):
+                                not_columns):
     if len(selected_output) == 0:
         return selected_output, column_names
     columns_to_remove = []
     for i, col_name in enumerate(column_names):
-        for col_name_no_print in columns_no_print:
+        for col_name_no_print in not_columns:
             if col_name == col_name_no_print:
                 columns_to_remove.append(i)
     n_deleted = 0
@@ -301,10 +327,10 @@ def remove_columns_not_to_print(selected_output, column_names,
     return selected_output, column_names
 
 
-def remove_rows_not_to_print(selected_output, id_no_print):
+def remove_rows_not_to_print(selected_output, not_id):
     rows_to_remove = []
     for j in range(len(selected_output)):
-        for i in id_no_print:
+        for i in not_id:
             if selected_output[j][0] == i:
                 rows_to_remove.append(j)
     n_deleted = 0
@@ -432,33 +458,33 @@ def print_sim(name_command_line_tool="sim_db",
               name_command="print_sim",
               argv=None):
     if argv == None:
-        args = command_line_arguments_parser(name_command_line_tool,
-                                             name_command).parse_args(
-                                                     ['-p', 'default'])
-    else:
-        args = command_line_arguments_parser(name_command_line_tool,
-                                             name_command).parse_args(argv)
-    if args.p != None:
-        print_config = get_personalized_print_config(args.p)
-        if print_config == None:
-            print("No personalized print configuration with key string " \
-                  + "'{0}' is found in settings.".format(args.p))
-            exit(1)
-        p_arg_keys = [
-                key.strip('-') for key in print_config.split() if key[0] == '-'
-        ]
-        p_args = command_line_arguments_parser(name_command_line_tool,
-                                               name_command).parse_args(
-                                                       print_config.split())
-
-        p_arg_keys = replace_element_in_list(p_arg_keys, 'v', 'vertically')
-        p_arg_keys = replace_element_in_list(p_arg_keys, 'i', 'id')
-        p_arg_keys = replace_element_in_list(p_arg_keys, 'c', 'columns')
-        p_arg_keys = replace_element_in_list(p_arg_keys, 'w', 'where')
-
-        for arg in vars(p_args):
-            if arg in p_arg_keys:
-                setattr(args, arg, getattr(p_args, arg))
+        argv = ['-p', 'default']
+    elif '--columns' not in argv and '-c' not in argv:
+        if len(argv) > 0 and argv[0][0] != '-':
+            # To print correct error message even though '-p default' is added.
+            command_line_arguments_parser(name_command_line_tool,
+                                          name_command).parse_args(argv)
+        argv = ['-p', 'default'] + argv
+    argv_p_replaced = []
+    i = 0
+    while i < len(argv):
+        if argv[i] != '-p':
+            argv_p_replaced.append(argv[i])
+        else:
+            while i + 1 < len(argv) and argv[i + 1][0] != '-':
+                i += 1
+                print_config_key = argv[i]
+                print_config = get_personalized_print_config(print_config_key)
+                if print_config == None:
+                    print("No personalized print configuration with key string "
+                          "'{0}' is found in settings.".format(
+                          print_config_key))
+                    exit(1)
+                argv_p_replaced = argv_p_replaced + shlex.split(print_config)
+        i += 1
+    argv = argv_p_replaced
+    args = command_line_arguments_parser(name_command_line_tool,
+                                         name_command).parse_args(argv)
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
@@ -467,8 +493,8 @@ def print_sim(name_command_line_tool="sim_db",
             db_cursor)
     type_dict = dict(zip(column_names, column_types))
 
-    selected_output, column_names = select_command(db_cursor, args,
-                                                   column_names)
+    selected_output, column_names = select_command(name_command_line_tool,
+        name_command_line_tool, db_cursor, args, column_names)
 
     if args.diff:
         selected_output, column_names = remove_columns_with_only_same_values(

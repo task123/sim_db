@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Print and change the settings.
 
-Pass either 'print', 'add' or 'remove' as commands.
+Pass either 'print', 'add', 'remove' or 'reset_to_default' as commands.
 
 usage: python settings <command> <args>
 """
@@ -13,9 +13,9 @@ if __name__ == '__main__':
 
 import sim_db.src_command_line_tool.commands.helpers as helpers
 import argparse
+import shutil
 import sys
-import os.path
-
+import os
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="settings"):
@@ -23,7 +23,8 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             description=("Print and change settings. The settings can also "
                          "be changed be editing the '.settings.txt' file."),
             prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('command', type=str, help="'print', 'add' or 'remove'")
+    parser.add_argument('command', type=str, help="'print', 'add', 'remove' "
+                        "or 'reset_to_default'")
 
     return parser
 
@@ -66,13 +67,20 @@ def parser_for_add(name_command_line_tool="sim_db", name_command="settings"):
 
 def parser_for_remove(name_command_line_tool="sim_db",
                       name_command="settings"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
         description="Remove a line from the settings.",
         usage="{0} {1} remove".format(name_command_line_tool, name_command))
     parser.add_argument('--line', '-l', type=str, required=True, help="<Required> Line to remove from 'setting' in the settings.")
     parser.add_argument('--setting', '-s', type=str, required=True, help="<Required> Which setting to remove a line from.")
-    # yapf: enable
+
+    return parser
+
+
+def parser_for_reset_to_default(name_command_line_tool="sim_db",
+                      name_command="settings"):
+    parser = argparse.ArgumentParser(
+        description="Resets settings to default.",
+        usage="{0} {1} reset_to_default".format(name_command_line_tool, name_command))
 
     return parser
 
@@ -129,9 +137,20 @@ def settings(name_command_line_tool="sim_db",
             print("'{0}' was NOT found under the '{1}' settings.\nIt was "
                   "therefor NOT removed from the settings.".format(
                           args.line, args.setting))
+    elif command == 'reset_to_default':
+        args = parser_for_reset_to_default(name_command_line_tool,
+                                 name_command).parse_args(argv[1:])
+        path_settings = os.path.join(helpers.get_dot_sim_db_dir_path(), 
+                                     "settings.txt")
+        os.remove(path_settings)
+        path_default_settings = os.path.abspath(os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)),
+                        'default_settings.txt'))
+        shutil.copyfile(path_default_settings, path_settings)
+        print("Settings reset to default.")
     else:
-        print("'{0}' is not a valid command. 'print', 'add' and 'remove' are "
-              "the valid commands.".format(command))
+        print("'{0}' is not a valid command. 'print', 'add', 'remove' or "
+              "'reset_to_default' are the valid commands.".format(command))
 
 
 if __name__ == '__main__':
