@@ -58,14 +58,19 @@ def run_sim(name_command_line_tool="sim_db", name_command="run_sim",
         print("Start simulation with ID {0}.".format(args.id))
     elif not args.allow_reruns:
         db_cursor.execute("SELECT status FROM runs WHERE id = {0};".format(args.id))
-        status = db_cursor.fetchone()[0]
+        status = db_cursor.fetchone()
+        if status == None:
+            print("There exists no entry in the database with id = {0} and a "
+                  "'run_command'.".format(args.id))
+            exit(1)
+        status = status[0]
         if status != "new":
             print("Status of simulation with 'ID' = {0} is {1}.\nEither:\n"
                   "- Add '--allow_reruns' flag to allow it to run.\n- Update "
                   "status to 'new'.\n- Duplicate it, delete the old and run it "
                   "with: 'ddr' / 'duplicate_delete_and_run'".format(args.id, 
                   status))
-            exit()
+            exit(1)
 
     run_command = helpers.get_run_command(db_cursor, args.id, args.n)
     db.commit()

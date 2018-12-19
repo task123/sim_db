@@ -194,6 +194,10 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
             "SELECT run_command, n_tasks FROM runs WHERE id={0};".format(
                     db_id))
     run_command, n_tasks_database = db_cursor.fetchall()[0]
+    if run_command == None:
+        print("There exists no entry in the database with id = {0} and a "
+              "'run_command'.".format(db_id))
+        exit(1)
     if n_tasks == None:
         n_tasks = n_tasks_database
 
