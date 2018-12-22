@@ -8,6 +8,8 @@ The format of the parameter file is for each parameter as following:
 parameter_name (type): parameter_value
 'type' can be int, float, string, bool or int/float/string/bool array.
 Lines without any colon is ignored.
+Aliases can also be defined as:
+string_to_replace (alias): string_to_replace with
 
 The database used is the one which path given in 'settings.txt', closest 
 matches the currect directory.
@@ -250,6 +252,39 @@ def add_included_parameter_files(sim_params_file_lines):
                 sim_params_file_lines)
     return sim_params_file_lines
 
+    
+def add_if_alias(line, aliases):
+    line_have_type = True
+    try: 
+        type_name = line.split(':', 1)[0].split('(', 1)[1].split(')', 1)[0]
+        type_name = type_name.strip()
+    except IndexError:
+        return False
+    if type_name == 'alias':
+        string_to_replace = line.split('(', 1)[0].strip()
+        replacement_string = line.split(':', 1)[1].strip()
+        if ((replacement_string[0] == '"' and replacement_string[-1] == '"') 
+             or (replacement_string[0] == "'" 
+                 and replacement_string[-1] == "'")):
+            replacement_string = replacement_string[1:-1]
+        for alias, replacement in aliases:
+            replacement_string = replacement_string.replace(alias, replacement)
+        aliases.append((string_to_replace, replacement_string))
+        return True
+    else:
+        return False
+
+
+def replace_aliases(sim_params_file_lines):
+    aliases = []
+    new_sim_params_file_lines = []
+    for line in sim_params_file_lines:
+        if not add_if_alias(line, aliases):
+            for alias, replacement in aliases:
+                line = line.replace(alias, replacement)
+            new_sim_params_file_lines.append(line)
+    return new_sim_params_file_lines
+
 
 def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     db = helpers.connect_sim_db()
@@ -281,6 +316,7 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     sim_params_file.close()
 
     sim_params_file_lines = add_included_parameter_files(sim_params_file_lines)
+    sim_params_file_lines = replace_aliases(sim_params_file_lines)
 
     db_cursor = db.cursor()
     default_db_columns = ""
