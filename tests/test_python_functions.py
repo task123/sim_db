@@ -27,7 +27,7 @@ def __run_python_functions(capsys, store_metadata):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)

@@ -124,8 +124,8 @@ int main() {
     }
     int output_length = 80;
     char output[output_length];
-    run_shell_command("sim_db add -f root/tests/sim_params_c_program.txt",
-                      output, output_length);
+    run_shell_command("sim_db add -f root/tests/params_c_program.txt", output,
+                      output_length);
     char* id_str_added = strchr(output, ':') + 2;
     *(strchr(id_str_added, '\n')) = '\0';
     int id_added = atoi(id_str_added);

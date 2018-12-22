@@ -91,7 +91,7 @@ def add_new_column(db_cursor, i, param_type, param_name, value, column_names,
                   "type of array.".format(i))
         if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
             print("Parameter on line no. {0} in the parameter file has "
-                  "INCORRECT format for arrays. Square bracets missing."
+                  "INCORRECT format for arrays. Square brackets missing."
                   .format(i))
             exit(1)
         column_names.append(param_name)
@@ -121,7 +121,7 @@ def check_type_matches(param_type, column_type, value, i):
                 correct_type = True
             if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
                 print("Parameter on line no. {0} in the parameter file has "
-                      "INCORRECT format for arrays. Square bracets missing."
+                      "INCORRECT format for arrays. Square brackets missing."
                       .format(i))
                 exit(1)
     if not correct_type:
@@ -253,16 +253,20 @@ def add_included_parameter_files(sim_params_file_lines):
     return sim_params_file_lines
 
     
-def add_if_alias(line, aliases):
+def add_if_alias(line, aliases, i):
     line_have_type = True
-    try: 
-        type_name = line.split(':', 1)[0].split('(', 1)[1].split(')', 1)[0]
-        type_name = type_name.strip()
-    except IndexError:
+    if ':' in line: 
+        string_to_replace, param_type, replacement_string = (
+            split_parameter_line(line, i))
+    else:
         return False
-    if type_name == 'alias':
-        string_to_replace = line.split('(', 1)[0].strip()
-        replacement_string = line.split(':', 1)[1].strip()
+    if param_type == 'alias':
+        if (len(string_to_replace) < 2 
+            or string_to_replace[0] != '{' or string_to_replace[-1] != '}'):
+            print("ERROR: Alias name on line no. {0} in the parameter file " 
+                  "MUST start and end with curly brackets.".format(i))
+            print("E.g.: '{string_to_replace} (alias): replacement_string'")
+            exit(1)
         if ((replacement_string[0] == '"' and replacement_string[-1] == '"') 
              or (replacement_string[0] == "'" 
                  and replacement_string[-1] == "'")):
@@ -278,8 +282,8 @@ def add_if_alias(line, aliases):
 def replace_aliases(sim_params_file_lines):
     aliases = []
     new_sim_params_file_lines = []
-    for line in sim_params_file_lines:
-        if not add_if_alias(line, aliases):
+    for i, line in enumerate(sim_params_file_lines):
+        if not add_if_alias(line, aliases, i):
             for alias, replacement in aliases:
                 line = line.replace(alias, replacement)
             new_sim_params_file_lines.append(line)
@@ -300,10 +304,10 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_matching_settings()
         if sim_params_filename == None:
-            print("No parameter files in the current directory matches the ones "
-                    "under 'Parameter filenames'\nin settings.txt.\n"
-                    "\nAdd the '--filename' flag to specify the filename of "
-                    "the parameter file.")
+            print("No parameter files in the current directory matches the "
+                  "ones under 'Parameter filenames'\nin settings.txt.\n"
+                  "\nAdd the '--filename' flag to specify the filename of "
+                  "the parameter file.")
             exit(1)
 
     try:

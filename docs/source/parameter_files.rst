@@ -17,7 +17,7 @@ The format of the parameter file is for each parameter as following:
 
 *type* can be *int*, *float*, *string*, *bool* or *int*/*float*/*string*/*bool array*. Lines without any colon is ignored. This means that the parameter name, type, colon and value MUST all be on the same line and colons can ONLY be used on lines with parameters (except when including other parameter files).
 
-The '*run_command* (*string*): *command*' parameter need to be one of the parameters in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. The '*name* (*string*): *name_of_simulation*' stricly only needed if the *make_unique_subdir* function is used, but it is always recommeneded to include.
+The '*run_command* (*string*): *command*' parameter need to be one of the parameters in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. The '*name* (*string*): *name_of_simulation*' stricly only needed if the *unique_results_dir* function is used, but it is always recommeneded to include.
 
 The parameters from other parameter files can be included with a line like this:
 
@@ -27,7 +27,29 @@ The line is simply substituted with the contain of the file, and the included fi
 
 It is perfectly fine to have the same parameter name, with the same type, in multiple plasses in the parameter file. The previous parameter values will just be overwritten by the last one.
 
+It is also possible create an alias taking the follow format:
+
+*{string_to_replace}* (alias): *replacement_string*
+
+Any occurrence of *{string_to_replace}* on any line after a colon and below this alias definition, will be replaced by *replacement_string*. This also includes any parameter files included after the alias. It is required that the alias name starts and ends with curly brackets as in the above example. Aliases is powerful and can be very useful if a parameter or part of a parameter appear in multiple parameters. It also allows for a layer of abstraction. But be careful as this can cause unintended replacements and can easily make the parameter file harder to read. Avoid excessive use and use unique alias names.
+
 The format is very flexible, as the parameters can be in any order and lines without colons can be used freely to comment, describe and organise (with blank lines and indents) the parameters. This makes it easy to make the parameters of the simulation well understood. It is also very fast to change any number of parameters as it is only a text file that need to be edited. The parameters can also be organised in different files using ``include_parameter_file:``. 
+
+run_command
+===========
+A couple words about how the 'run_command' is treated by **sim_db** can be helpful. The ``run_sim``, ``add_and_run`` and ``submit_sim`` commands uses the 'run_command' parameter (given as ``run_command (string): command``) to run the simultion. Before the 'run_command' is run a couple things are done to it. It is split at all semicolons into multiple commands, all occurrences of 'root/' will be replaced with the path to the root directory of the project and ' # ' will be replaced with the ' *n_tasks* ', where *n_tasks* is a parameter passed to one of the commands that uses the run_command. As an example let's say a project with root directory, ``/path/root/dir``, have a run_command defined as: 
+
+``run_command (string): make -C root/example; mpirun # root/example/program``
+
+in ``sim_params.txt``. Running ``$ sim_db add_and_run -f sim_params.txt -n 4`` will then in turn run the commands:
+
+.. code-block:: console
+
+    $ make -C /path/root/dir/example
+    $ mpirun 4 /path/root/dir/example/program
+
+(If your run_command contain a 'root/' that your don't want to be replaced, you should substitute it with an alias.) 
+
 
 Example
 =======
@@ -45,7 +67,7 @@ The line in the parameter file starting with *include_parameter_file:* will be s
 Filename
 ========
 
-The filename of the text file with the parameters can be anything (to describe what simulation it is used for) and just passed to the ``add_sim`` and ``add_and_run`` commands with the ``--filename`` or ``-f`` option. That option can however be omitted be naming the parameter file *sim_params.txt* or any other name added under the *Parameter filenames* header in the *settings.txt* file in the *sim_db/* directory.
+The filename of the text file with the parameters can be anything (to describe what simulation it is used for) and just passed to the ``add_sim`` and ``add_and_run`` commands with the ``--filename`` or ``-f`` option. That option can however be omitted be naming the parameter file *sim_params.txt* or any other name added under the *Parameter filenames* header in the *settings.txt* file in the *.sim_db/* directory.
 
 Commands Realated to Parameters
 ===============================

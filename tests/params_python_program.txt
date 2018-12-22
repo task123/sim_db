@@ -4,14 +4,16 @@ run_command (string): python root/tests/program.py
 
 test_param1 (int): 3
 test_param2 (float): -0.5e10
-test_param3 (string): "hei"
+{replace_in_alias} (alias): e
+{replace_me} (alias): "h{replace_in_alias}i"
+test_param3 (string): "{replace_me}"
 test_param4 (bool): True
 test_param5 (int array): [1, 2, 3]
 test_param6 (float array): [1.5, 2.5, 3.5]
 test_param7 (string array): ["a", "b", "c"]
 test_param8 (bool array): [True, False, True]
 
-include_parameter_file: root/tests/sim_params_extra.txt
+include_parameter_file: root/tests/params_extra.txt
 test_param10 (int): 11
 
 test_param11 (int): 11

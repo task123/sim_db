@@ -8,6 +8,7 @@ import common_test_helpers
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import sim_db.src_command_line_tool.commands.helpers as helpers
 import os
+import pytest
 import subprocess
 import shutil
 
@@ -42,7 +43,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -94,7 +95,7 @@ def test_add_and_run(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_and_run", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -124,6 +125,24 @@ def test_add_and_run(capsys):
     common_test_helpers.assert_output_python_program(output_program, db_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim_after_run_sim, True)
+
+
+def test_add_sim_with_alias_error(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        command_line_tool(
+                "sim_db", [
+                        "add_sim", "--filename",
+                        "{0}/params_alias_error.txt".format(
+                                common_test_helpers.get_test_dir())
+                ],
+                print_ids_added=False)
+    output_sim_add, err = capsys.readouterr()
+    with capsys.disabled():
+        print("\nTest that add_sim catches alias error...")
+    assert pytest_wrapped_e.type == SystemExit
+    assert (output_sim_add.splitlines()[0] == "ERROR: Alias name on line no. 0 "
+        "in the parameter file MUST start and end with curly brackets.")
 
 
 def test_list_commands(capsys):
@@ -182,7 +201,7 @@ def test_extract_params(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -215,7 +234,7 @@ def test_update_sim(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -241,7 +260,7 @@ def test_add_comment(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -266,7 +285,7 @@ def test_get_and_cd_results(capsys):
     common_test_helpers.skip_if_outside_sim_db()
     db_id = command_line_tool("sim_db", [
             "add_and_run", "--filename",
-            "{0}/sim_params_python_program.txt".format(
+            "{0}/params_python_program.txt".format(
                     common_test_helpers.get_test_dir())
     ])
     output_program, err_program = capsys.readouterr()
@@ -301,7 +320,7 @@ def test_submit_sim(capsys):
         db_id = command_line_tool(
                 "sim_db", [
                         "add_sim", "--filename",
-                        "{0}/sim_params_python_program.txt".format(
+                        "{0}/params_python_program.txt".format(
                                 common_test_helpers.get_test_dir())
                 ],
                 print_ids_added=False)
@@ -372,7 +391,7 @@ def test_add_and_submit(capsys):
         db_id, job_script_name, job_id = command_line_tool(
                 "sim_db", [
                         "add_and_submit", "--filename",
-                        "{0}/sim_params_python_program.txt".format(
+                        "{0}/params_python_program.txt".format(
                                 common_test_helpers.get_test_dir()),
                         "--n_nodes", "2", "--max_walltime", "03:34:00",
                         "--do_not_submit_job_script"
@@ -453,7 +472,7 @@ def test_add_range_sim(capsys):
     db_ids = command_line_tool(
             "sim_db",
             "add_range_sim --filename".split() + [
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ] +
             "--columns test_param1 test_param2 --lin_steps 0 2 --exp_steps "
@@ -505,21 +524,21 @@ def test_run_serial_sims(capsys):
             "sim_db", [
                     "add_sim", "--filename",
                     common_test_helpers.get_test_dir() +
-                    "/sim_params_python_program.txt"
+                    "/params_python_program.txt"
             ],
             print_ids_added=False)
     id_2 = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
                     common_test_helpers.get_test_dir() +
-                    "/sim_params_c_program.txt"
+                    "/params_c_program.txt"
             ],
             print_ids_added=False)
     id_3 = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
                     common_test_helpers.get_test_dir() +
-                    "/sim_params_cpp_program.txt"
+                    "/params_cpp_program.txt"
             ],
             print_ids_added=False)
     command_line_tool(
@@ -562,7 +581,7 @@ def test_duplicate_sim(capsys):
             "sim_db", [
                     "add_sim", "--filename",
                     common_test_helpers.get_test_dir() +
-                    "/sim_params_python_program.txt"
+                    "/params_python_program.txt"
             ],
             print_ids_added=False)
     command_line_tool("sim_db", [
@@ -603,7 +622,7 @@ def test_duplicate_and_run(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)
@@ -647,7 +666,7 @@ def test_duplicate_delete_and_run(capsys):
     db_id = command_line_tool(
             "sim_db", [
                     "add_sim", "--filename",
-                    "{0}/sim_params_python_program.txt".format(
+                    "{0}/params_python_program.txt".format(
                             common_test_helpers.get_test_dir())
             ],
             print_ids_added=False)

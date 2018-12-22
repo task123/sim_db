@@ -75,7 +75,7 @@ sim_database.delete_from_database()
 sim_database.close()
 
 db_id = add_sim.add_sim(
-        argv="-f root/tests/sim_params_python_program.txt".split(' '))
+        argv="-f root/tests/params_python_program.txt".split(' '))
 pool = mp.Pool(processes=n_programs_in_parallel)
 processes = []
 for i in range(n_programs_in_parallel):
