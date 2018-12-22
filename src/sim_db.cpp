@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
-#include "../include/sim_db.hpp"
+#include "sim_db.hpp"
 #include <iostream>
 
 SimDB* call_c_sim_db_add_empty_sim(bool store_metadata) {

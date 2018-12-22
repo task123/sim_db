@@ -3,6 +3,7 @@
 
 #ifndef SIM_DB_HPP
 #define SIM_DB_HPP
+#pragma once
 
 extern "C" {
 #include "sim_db.h"

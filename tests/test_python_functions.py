@@ -57,8 +57,6 @@ def __run_python_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-        for i in output_print_sim.splitlines():
-            print(i.strip())
     common_test_helpers.assert_output_python_program(output_program, db_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)

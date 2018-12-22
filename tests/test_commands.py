@@ -590,7 +590,6 @@ def test_duplicate_sim(capsys):
              str(db_id_duplicated), "--no_checks"])
     with capsys.disabled():
         print("\nTest duplicate_sim...")
-        print(output_duplicated_sim)
     assert (output_original_sim.split('\n')[0].strip() !=
             output_duplicated_sim.split('\n')[0].strip())
     assert output_duplicated_sim.split('\n')[2].strip() == 'new'

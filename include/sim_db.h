@@ -6,6 +6,8 @@
 
 #ifndef SIM_DB_H
 #define SIM_DB_H
+#pragma once
+
 #include <stdbool.h>
 #include <stdlib.h>  // To get definition of size_t.
 

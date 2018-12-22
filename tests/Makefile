@@ -1,6 +1,6 @@
 CC = cc
 CXX = c++
-CFLAGS_DEBUG = -std=c99 -Wall -Wextra -Wfloat-equal
+CFLAGS_DEBUG = -std=c99 -Wall -Wextra
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CXXFLAGS_DEBUG = -Wall -Wextra 
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
@@ -14,17 +14,19 @@ export CC CXX CFLAGS CXXFLAGS
 
 .PHONY: all c_program_updated cpp_program_updated clean clean_except_third_party clean_etp
 
+LIB_OUTPUT_DIR=../build
+
 all:
 	$(MAKE) c_program_updated
 	$(MAKE) cpp_program_updated
 	$(MAKE) c_mtap_updated
 
 c_program_updated:
-	$(MAKE) -C ../lib libsimdbc.a
+	$(MAKE) -C ../src clib
 	$(MAKE) c_program
 	
 cpp_program_updated:
-	$(MAKE) -C ../lib libsimdbcpp.a
+	$(MAKE) -C ../src cpplib
 	$(MAKE) cpp_program
 
 c_mtap_updated:
@@ -32,16 +34,16 @@ c_mtap_updated:
 	$(MAKE) c_mtap
 
 # Use target c_program_updated instead as it check libsimdbc.a's dependencies.
-c_program: program.c ../lib/libsimdbc.a
-	$(CC) $(CFLAGS) -o c_program -I../include program.c -L../lib -lsimdbc $(LDFLAGS) 
+c_program: program.c $(LIB_OUTPUT_DIR)/libsimdbc.a
+	$(CC) $(CFLAGS) -o c_program -I../include program.c -L$(LIB_OUTPUT_DIR) -lsimdbc  
 
 # Use target cpp_program_updated instead as it check libsimdbcpp.a's dependencies.
-cpp_program: program.cpp ../lib/libsimdbcpp.a
-	$(CXX) $(CXXFLAGS) -o cpp_program -I../include program.cpp -L../lib -lsimdbcpp $(LDFLAGS)
+cpp_program: program.cpp $(LIB_OUTPUT_DIR)/libsimdbcpp.a
+	$(CXX) $(CXXFLAGS) -o cpp_program -I../include program.cpp -L$(LIB_OUTPUT_DIR) -lsimdbcpp 
 
 # Use target c_mtap_updated instead as it check libsimdbc.a's dependencies.
-c_mtap: multithreading_and_processing.c ../lib/libsimdbc.a
-	$(CC) $(CFLAGS) -o c_mtap multithreading_and_processing.c -I../include -L../lib -lsimdbc $(LDFLAGS)
+c_mtap: multithreading_and_processing.c $(LIB_OUTPUT_DIR)/libsimdbc.a
+	$(CC) $(CFLAGS) -o c_mtap multithreading_and_processing.c -I../include -L$(LIB_OUTPUT_DIR) -lsimdbc 
 
 c_program_run: c_program_updated
 	./c_program --id ${ID} --path_proj_root ${PATH_SIM_DB}
@@ -60,7 +62,7 @@ clean:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
-	$(MAKE) -C ../lib clean
+	$(MAKE) -C ../src clean
 
 clean_except_third_party:
 	rm -f c_program
@@ -70,7 +72,7 @@ clean_except_third_party:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
-	$(MAKE) -C ../lib clean_except_third_party
+	$(MAKE) -C ../src clean_except_third_party
 
 clean_etp:
 	$(MAKE) clean_except_third_party

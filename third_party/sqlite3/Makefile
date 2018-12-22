@@ -1,4 +1,6 @@
-CFLAGS = -std=c99 -O2 -DNDEBUG
+CFLAGS_RELEASE = -std=c99 -O2 -DNDEBUG
+CFLAGS := $(if $(CFLAGS), $(CFLAGS), $(CFLAGS_RELEASE))
+
 CC := $(if $(CC), $(CC), cc)
 
 sqlite3.o: sqlite3.c sqlite3.h

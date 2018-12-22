@@ -1,5 +1,5 @@
-CC = cc
-CXX = c++
+CC = gcc
+CXX = g++
 CFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS_DEBUG = -std=c99 -Wall -Wextra
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
@@ -9,10 +9,10 @@ CXXFLAGS = $(CXXFLAGS_DEBUG)
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all install include add_to_path libs libsimdb libsimdbcpp clean clean_except_third_party clean_etp
+.PHONY: all install include add_to_path libs clean clean_except_third_party clean_etp
 
 all:
-	$(MAKE) install 
+	$(MAKE) libs
 
 install:
 	$(MAKE) libs
@@ -26,14 +26,13 @@ add_to_path:
 	python sim_db/src_command_line_tool/add_command_line_tool_to_path.py
 
 libs:
-	$(MAKE) libsimdbc
-	$(MAKE) libsimdbcpp
+	$(MAKE) -C src libs
 
-libsimdbc:
-	$(MAKE) -C lib libsimdbc.a
+clib:
+	$(MAKE) -C src clib
 
-libsimdbcpp:
-	$(MAKE) -C lib libsimdbcpp.a
+cpplib:
+	$(MAKE) -C src cpplib
 
 build_dist:
 	python setup.py sdist bdist_wheel
@@ -42,7 +41,7 @@ clean:
 	rm -fr build
 	rm -fr dist
 	rm -fr sim_db.egg-info
-	$(MAKE) -C lib clean
+	$(MAKE) -C src clean
 	$(MAKE) -C tests clean
 	$(MAKE) -C examples clean
 
@@ -50,7 +49,7 @@ clean_except_third_party:
 	rm -fr build
 	rm -fr dist
 	rm -fr sim_db.egg-info
-	$(MAKE) -C lib clean_except_third_party
+	$(MAKE) -C src clean_except_third_party
 	$(MAKE) -C tests clean_except_third_party
 	$(MAKE) -C examples clean_except_third_party
 

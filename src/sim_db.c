@@ -3,7 +3,7 @@
 
 #define _XOPEN_SOURCE 500
 
-#include <assert.h>
+#include "sim_db.h"
 
 #include <ctype.h>
 #include <float.h>
@@ -17,8 +17,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-#include "../include/sim_db.h"
-#include "../third_party/sqlite3/sqlite3.h"
+#include "sqlite3.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
