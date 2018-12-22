@@ -51,8 +51,9 @@ def split_parameter_line(line, i):
         param_name = param_name.strip()
         param_type = param_type.split(')')[0].strip()
     except ValueError:
-        raise ValueError("Parameter on line no. {0} in the parameter ".format(i) \
-                       + "file has INCORRECT format of type and parentheses.")
+        print("Parameter on line no. {0} in the parameter file has INCORRECT "
+              "format of type and parentheses.".format(i))
+        exit(1)
     return param_name, param_type, value
 
 
@@ -84,17 +85,19 @@ def add_new_column(db_cursor, i, param_type, param_name, value, column_names,
         array_type = param_type[:-5].strip()
         if array_type != 'int' and array_type != 'float' \
                 and array_type != 'string' and array_type != 'bool':
-            raise ValueError("Parameter on line no. {0} in ".format(i) \
-                           + "parameter file has INVALID type of array.")
+            print("Parameter on line no. {0} in parameter file has INVALID "
+                  "type of array.".format(i))
         if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
-            raise ValueError("Parameter on line no. {0} in the ".format(i) \
-                           + "parameter file has INCORRECT format for " \
-                           + "arrays. Square bracets missing.")
+            print("Parameter on line no. {0} in the parameter file has "
+                  "INCORRECT format for arrays. Square bracets missing."
+                  .format(i))
+            exit(1)
         column_names.append(param_name)
         column_types.append("TEXT")
     else:
-        raise ValueError("Parameter on line no. {0} in the parameter".format(i) \
-                       + "file has an INVALID type.")
+        print("Parameter on line no. {0} in the parameter file has an "
+              "INVALID type.".format(i))
+        exit(1)
 
 
 def check_type_matches(param_type, column_type, value, i):
@@ -115,12 +118,14 @@ def check_type_matches(param_type, column_type, value, i):
                     or array_type == 'string' or array_type == 'bool':
                 correct_type = True
             if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
-                raise ValueError("Parameter on line no. {0} in the ".format(i) \
-                               + "parameter file has INCORRECT format for " \
-                               + "arrays. Square bracets missing.")
+                print("Parameter on line no. {0} in the parameter file has "
+                      "INCORRECT format for arrays. Square bracets missing."
+                      .format(i))
+                exit(1)
     if not correct_type:
-        raise ValueError("Parameter on line no. {0} in the parameter".format(i) \
-                       + "file has an INVALID type.")
+        print("Parameter on line no. {0} in the parameter file has an "
+              "INVALID type.".format(i))
+        exit(1)
 
 
 def standardize_value(value, param_type):
@@ -264,7 +269,7 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
                     "under 'Parameter filenames'\nin settings.txt.\n"
                     "\nAdd the '--filename' flag to specify the filename of "
                     "the parameter file.")
-            exit()
+            exit(1)
 
     try:
         sim_params_file = open(sim_params_filename, 'r')
