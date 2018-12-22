@@ -1,6 +1,8 @@
+# Creates the sim_db libraries simdbc and simdbcpp for C and C++ respectfully.
+
 cmake_minimum_required(VERSION 3.0.0)
 
-project(sim_db)
+project(sim_db VERSION 0.1.3)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -9,18 +11,14 @@ endif()
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
-add_library(simdbc 
-            src_c_and_cpp/sim_db.c 
-            third_party/sqlite3/sqlite3.c)
-target_include_directories(simdbc PUBLIC include)
+add_subdirectory(src)
 
-add_library(simdbcpp 
-            src_c_and_cpp/sim_db.cpp 
-            src_c_and_cpp/sim_db.c 
-            third_party/sqlite3/sqlite3.c)
-target_include_directories(simdbcpp PUBLIC include)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("${CMAKE_BINARY_DIR}/sim_dbConfigVersion.cmake"
+    VERSION ${sim_db_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
 
-install(TARGETS simdbc simdbcpp
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    INCLUDES DESTINATION include)
+install(FILES "${PROJECT_SOURCE_DIR}/cmake/sim_dbConfig.cmake" "${CMAKE_BINARY_DIR}/sim_dbConfigVersion.cmake"
+    DESTINATION lib/cmake/sim_db
+)
