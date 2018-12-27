@@ -1,8 +1,9 @@
 name (string): minimal_c_example
 
-{cmake_build} (alias): cmake -Hroot/ -Broot/examples/build; cmake --build root/examples/build --target minimal_c_example
+{cmake_config} (alias): cmake -Hroot/ -Broot/examples/build
+{cmake_build} (alias): {cmake_config}; cmake --build root/examples/build --target
 
-run_command (string): {cmake_build}; root/examples/build/minimal_c_example
+run_command (string): {cmake_build} minimal_c_example; root/examples/build/minimal_c_example
 
 param1 (string): "Minimal C example is running."
 

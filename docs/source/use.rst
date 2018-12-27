@@ -81,11 +81,11 @@ If the filename passed to either the ``add_sim`` or ``add_and_run`` commands sta
 
 It is, as the name suggest, the *run_command* parameter that is used to run the simulation. And it need to included in the parameter file for the ``run_sim``, ``add_and_run`` and ``submit_sim`` commands to work. (The *name* parameter is needed for the *unique_results_dir* function to work, but is always recommended to included reguardless of whether that function is used or not.)
 
-Notice that when it is run, it first call ``make`` to compile the code if needed. What ``make`` does is equvalient to the following command called from *sim_db/examples/* (given that the static C++ library are compiled):
+Notice that when it is run, it first call two ``cmake`` commands to compile the code if needed. What ``cmake`` does is equvalient to the following command called from *sim_db/examples/* (given that the static C++ library are compiled and located in *sim_db/build/*):
 
 .. code-block:: console
 
-    $ c++ -o extensive_cpp_example extensive_example.cpp -lsimdbcpp -I../include -L../lib -std=c++11 -lm -lpthread -ldl
+    $ c++ -std=c++11 -o build/extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp
 
 If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in *.sim_db/settings.txt* and add and run the first match. The command is often divided into adding the simulations parameters to the database with:
 

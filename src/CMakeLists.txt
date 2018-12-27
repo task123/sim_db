@@ -11,6 +11,11 @@ target_include_directories(simdbc
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
 )
+set_target_properties(simdbc 
+    PROPERTIES 
+        ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+)
 set(simdbc_REQUIRED_HEADERS ${INCLUDE_DIR}/sim_db.h)
 
 
@@ -23,6 +28,11 @@ target_include_directories(simdbcpp
     PUBLIC 
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
+)
+set_target_properties(simdbcpp 
+    PROPERTIES 
+        ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 set(simdbcpp_REQUIRED_HEADERS ${INCLUDE_DIR}/sim_db.hpp ${INCLUDE_DIR}/sim_db.hpp)
 

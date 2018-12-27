@@ -25,13 +25,13 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
     $ sim_db add_and_run -f params_minimal_c_example.txt
 
-Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/examples/* (given that the static C library are compiled):
+Notice that when it is run, it first call two ``cmake`` commands to compile the code if needed. What ``cmake`` does is equvalient to the following command called from *sim_db/examples/* (given that the static C library are compiled and located in *sim_db/build/*):
 
 .. code-block:: console
 
-    $ cc -o minimal_c_example minimal_example.c -lsimdbc -I../include -L../lib -lm -lpthread -ldl
+    $ cc -o build/minimal_c_example minimal_example.c -I../include -L../build -lsimdbc
 
-If you already have compiled your program into a executable called ``program`` located in the current directory, the ``run_command`` can be simpy ``run_command (string): ./program``.
+The example is not really a minimal one. If you already have compiled your program into a executable called ``program`` located in the current directory, the lines starting with ``{...} (alias):`` can be removed and the ``run_command`` can be replaced with simpy ``run_command (string): ./program``.
 
 Extensive Example using C
 =========================
@@ -57,11 +57,11 @@ Add the those simulations parameters to the **sim_db** database and run the simu
 
     $ sdb add_and_run -f params_extensive_c_example.txt
 
-Notice that when it is run, it first call `make` to compile the code if needed. What `make` does is equvalient to the following command called from *sim_db/examples/* (given that the static C library are compiled):
+Notice that when it is run, it first call ``cmake`` to compile the code if needed. What ``cmake`` does is equvalient to the following command called from *sim_db/examples/* (given that the static C library are compiled and located in *sim_db/build/*):
 
 .. code-block:: console
 
-    $ cc -o extensive_c_example extensive_example.c -lsimdbc -I../include -L../lib -lm -lpthread -ldl
+    $ cc -o build/extensive_c_example extensive_example.c -I../include -L../build -lsimdbc
 
 C API Referance
 ====================

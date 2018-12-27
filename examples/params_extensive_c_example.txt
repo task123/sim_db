@@ -9,8 +9,8 @@ name (string): extensive_c_example
 description (string): Extensive C example to demonstrate most features in sim_db.
 
 # Aliases for cmake commands for compiling the example. 
-{cmake_generate} (alias): cmake -Hroot/ -Broot/examples/build
-{cmake_build} (alias): {cmake_generate}; cmake --build root/examples/build --target
+{cmake_config} (alias): cmake -Hroot/ -Broot/examples/build
+{cmake_build} (alias): {cmake_config}; cmake --build root/examples/build --target
 
 # This 'run_command' starts with an alias that is replaced with the above two cmake 
 # commands that compile the extensitve example if needed. The last part of the 

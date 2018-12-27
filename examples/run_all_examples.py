@@ -58,7 +58,7 @@ id_for_minimal_cpp_example = run(
 "sim_db print -n 1 --columns id --no_headers")
 
 run(
-"# Run minima_example.cpp (after compiling it with make command).",
+"# Run minimal_example.cpp (after compiling it with make command).",
 "sim_db run --id {0}".format(id_for_minimal_cpp_example))
 
 run(
