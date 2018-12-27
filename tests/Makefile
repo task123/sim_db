@@ -1,8 +1,8 @@
 CC = cc
 CXX = c++
 CFLAGS_DEBUG = -std=c99 -Wall -Wextra
-CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CXXFLAGS_DEBUG = -Wall -Wextra 
+CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_DEBUG)
 CXXFLAGS = $(CXXFLAGS_DEBUG)
@@ -62,6 +62,7 @@ clean:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
+	rm -fr build/
 	$(MAKE) -C ../src clean
 
 clean_except_third_party:
@@ -72,6 +73,7 @@ clean_except_third_party:
 	rm -fr cpp_program.dSYM
 	rm -fr c_mtap.dSYM
 	rm -fr results/*
+	rm -fr build/
 	$(MAKE) -C ../src clean_except_third_party
 
 clean_etp:

@@ -12,9 +12,18 @@ def test_c_multithreading(capsys):
     common_test_helpers.skip_if_outside_sim_db()
     with capsys.disabled():
         print("\nTest C multithreading and processing...")
-    output = subprocess.check_output(
-            ["make", "-C", common_test_helpers.get_test_dir(), "c_mtap_run"],
-            universal_newlines=True)
+    space_escape = " "
+    if os.sep == "\\":
+        space_escape = "\ "
+    path_tests_dir = common_test_helpers.get_test_dir().replace(" ", 
+                                                               space_escape)
+    path_sim_db_root = os.path.join(path_tests_dir, os.pardir)
+    path_build = os.path.join(path_tests_dir, "build")
+    path_c_mtap = os.path.join(os.path.join(path_tests_dir, "build"), "c_mtap")
+    subprocess.call(["cmake", "-H{0}".format(path_sim_db_root), 
+                     "-B{0}".format(path_build)])
+    subprocess.call(["cmake", "--build", path_build, "--target", "c_mtap"])
+    output = subprocess.check_output([path_c_mtap], universal_newlines=True)
     last_line = output.splitlines()[-1]
     assert last_line.strip() == "finished"
 

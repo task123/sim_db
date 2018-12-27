@@ -27,6 +27,18 @@ def get_test_dir():
     return os.path.dirname(os.path.abspath(__file__))
 
 
+def remove_cmake_output(output):
+    new_output = ""
+    for line in output.split('\n'):
+        if (not line[0:3] == '-- '
+            and not line[0:21] == 'Scanning dependencies'
+            and not line[7:15] == 'Building'
+            and not line[7:14] == 'Linking'
+            and not line[7:19] == 'Built target'):
+            new_output = new_output + line + "\n"
+    return new_output
+
+
 def assert_output_python_program(output_program, db_id):
     printed_params = output_program.split('\n')
     assert printed_params[0] == "3"

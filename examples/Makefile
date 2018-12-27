@@ -72,6 +72,7 @@ clean:
 	rm -f extensive_c_example
 	rm -f extensive_cpp_example
 	rm -fr results/*
+	rm -fr build
 	$(MAKE) -C ../src clean
 
 clean_except_third_party:
@@ -80,6 +81,7 @@ clean_except_third_party:
 	rm -f extensive_c_example
 	rm -f extensive_cpp_example
 	rm -fr results/*
+	rm -fr build
 	$(MAKE) -C ../src clean_except_third_party
 
 clean_etp:

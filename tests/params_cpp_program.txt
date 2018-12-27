@@ -1,12 +1,14 @@
 name (string): test_sim
 description (string): A simulation parameter file used for testing.
-run_command (string): make -s -C root/tests cpp_program_updated; root/tests/cpp_program
+
+{cmake_config} (alias): cmake -Hroot/ -Broot/tests/build
+{cmake_build} (alias): {cmake_config}; cmake --build root/tests/build --target 
+
+run_command (string): {cmake_build} cpp_program; root/tests/build/cpp_program
 
 test_param1 (int): 3
 test_param2 (float): -0.5e10
-{replace_in_alias} (alias): e
-{replace_me} (alias): "h{replace_in_alias}i"
-test_param3 (string): "{replace_me}"
+test_param3 (string): "hei"
 test_param4 (bool): True
 test_param5 (int array): [1, 2, 3]
 test_param6 (float array): [1.5, 2.5, 3.5]

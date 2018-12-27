@@ -8,10 +8,15 @@ name (string): extensive_c++_example
 # the simulation.
 description (string): Extensive C++ example to demonstrate most features in sim_db.
 
-# Here the the 'run_command' consists of two commands separeated with semi colon.
-# The first call make to compile the code and the second run the compiled example.
-# It is import that they are both on the same line.
-run_command (string): make -s -C root/examples extensive_cpp_example_updated; root/examples/extensive_cpp_example
+# Aliases for cmake commands for compiling the example. 
+{cmake_generate} (alias): cmake -Hroot/ -Broot/examples/build
+{cmake_build} (alias): {cmake_generate}; cmake --build root/examples/build --target
+
+# This 'run_command' starts with an alias that is replaced with the above two cmake 
+# commands that compile the extensitve example if needed. The last part of the 
+# 'run_command' then run the compiled example. Each command is seperated by a 
+# semicolon, but they all need to be on the same line.
+run_command (string): {cmake_build} extensive_cpp_example; root/examples/build/extensive_cpp_example
 
 # A parameter is added for each of the avaiable types.
 param1_extensive (int): 3

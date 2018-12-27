@@ -1,6 +1,10 @@
 name (string): test_sim
 description (string): A simulation parameter file used for testing.
-run_command (string): make -s -C root/tests c_program_updated; root/tests/c_program
+
+{cmake_config} (alias): cmake -Hroot/ -Broot/tests/build
+{cmake_build} (alias): {cmake_config}; cmake --build root/tests/build --target 
+
+run_command (string): {cmake_build} c_program; root/tests/build/c_program
 
 test_param1 (int): 3
 test_param2 (float): -0.5e10

@@ -35,6 +35,7 @@ def __c_functions(capsys, store_metadata):
         __add_no_metadata_flag_to_run_command(capsys, db_id)
     command_line_tool("sim_db", "run_sim --id {0}".format(db_id).split())
     output_program, err_program = capsys.readouterr()
+    output_program = common_test_helpers.remove_cmake_output(output_program)
     command_line_tool(
             "sim_db",
             "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "
@@ -84,6 +85,7 @@ def __cpp_functions(capsys, store_metadata):
         __add_no_metadata_flag_to_run_command(capsys, db_id)
     command_line_tool("sim_db", "run_sim --id {0}".format(db_id).split())
     output_program, err_program = capsys.readouterr()
+    output_program = common_test_helpers.remove_cmake_output(output_program)
     command_line_tool(
             "sim_db",
             "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "

@@ -21,13 +21,17 @@ examples/results/*
 !examples/results/.keep
 
 # Directories in doc/
-docs/build/
 docs/html/
 docs/latex/
 docs/xml/
 
-# Distribution files
+# Build directories
 build/*
+docs/build/*
+examples/build/*
+tests/build/*
+
+# Distribution files
 dist/*
 sim_db.egg-info/*
 
@@ -40,6 +44,7 @@ sim_db.egg-info/*
 # Temporary files
 *.pyc
 *.swp
+*.swo
 
 # Other
 .DS_Store
