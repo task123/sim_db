@@ -443,6 +443,7 @@ SimDB* sim_db_ctor_without_search(const char* path_proj_root, int id,
     sim_db->column_names.array = NULL;
 
     if (store_metadata) {
+        sim_db_update(sim_db, "status", "running", true);
         char time_started[80];
         sim_db_get_time_string(time_started);
         sim_db_update(sim_db, "time_started", time_started, true);
@@ -1231,6 +1232,7 @@ void sim_db_dtor(SimDB* self) {
                 (int) used_time / 60, fmod(used_time, 60));
         self->allow_timeouts = true;
         sim_db_update(self, "used_walltime", used_time_string, true);
+        sim_db_update(sim_db, "status", "finished", true);
     }
     for (size_t i = 0; i < self->n_pointers; i++) {
         free(self->pointers_to_free[i]);

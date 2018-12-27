@@ -49,11 +49,14 @@ class SimDB:
         if self.store_metadata:
             try:
                 self.write(
+                        'status',
+                        'running',
+                        only_if_empty=True)
+                self.write(
                         'time_started',
                         self.__get_date_and_time_as_string(),
                         only_if_empty=True)
             except sqlite3.OperationalError:
-                self.init_timeout += 1
                 pass
 
         if self.store_metadata and self.__is_a_git_project():
@@ -73,7 +76,6 @@ class SimDB:
                         value=out.decode('ascii', 'replace'),
                         only_if_empty=True)
             except sqlite3.OperationalError:
-                self.init_timeout += 1
                 pass
 
             proc = subprocess.Popen(
@@ -91,7 +93,6 @@ class SimDB:
                         value=out.decode('ascii', 'replace'),
                         only_if_empty=True)
             except sqlite3.OperationalError:
-                self.init_timeout += 1
                 pass
 
             proc = subprocess.Popen(
@@ -106,7 +107,6 @@ class SimDB:
                         value=out.decode('ascii', 'replace'),
                         only_if_empty=True)
             except sqlite3.OperationalError:
-                self.init_timeout += 1
                 pass
 
             proc = subprocess.Popen(
@@ -122,7 +122,6 @@ class SimDB:
             try:
                 self.write(column="git_diff", value=out, only_if_empty=True)
             except sqlite3.OperationalError:
-                self.init_timeout += 1
                 pass
 
     def read(self, column, check_type_is=''):
@@ -370,8 +369,8 @@ class SimDB:
             used_time = time.time() - self.start_time
             used_walltime = "{0}h {1}m {2}s".format(
                     int(used_time / 3600), int(used_time / 60), used_time % 60)
-            self.write('used_walltime', used_walltime, only_if_empty=True)
             try:
+                self.write('used_walltime', used_walltime, only_if_empty=True)
                 self.write('status', 'finished')
             except sqlite3.OperationalError:
                 pass
