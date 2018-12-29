@@ -44,10 +44,6 @@ def run_multiple_threads(n_threads, process_identifier, db_id):
         sim_database.close()
 
 def run_program(db_id, path_proj_root):
-    if os.sep == '/':
-        space_escaped = '\ '
-    else:
-        space_escaped = ' '
     command = ["python", "{0}/tests/program.py".format(path_proj_root), 
                "--id", str(db_id), "running_in_parallel"]
     output = subprocess.check_output(command, universal_newlines=True)

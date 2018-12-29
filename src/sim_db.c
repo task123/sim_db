@@ -1232,7 +1232,7 @@ void sim_db_dtor(SimDB* self) {
                 (int) used_time / 60, fmod(used_time, 60));
         self->allow_timeouts = true;
         sim_db_update(self, "used_walltime", used_time_string, true);
-        sim_db_update(sim_db, "status", "finished", true);
+        sim_db_update(self, "status", "finished", true);
     }
     for (size_t i = 0; i < self->n_pointers; i++) {
         free(self->pointers_to_free[i]);

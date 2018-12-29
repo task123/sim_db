@@ -2,7 +2,7 @@ name (string): test_sim
 description (string): A simulation parameter file used for testing.
 
 {cmake_config} (alias): cmake -Hroot/ -Broot/tests/build
-{cmake_build} (alias): {cmake_config}; cmake --build root/tests/build --target 
+{cmake_build} (alias): {cmake_config}; cmake --build "root/tests/build" --target 
 
 run_command (string): {cmake_build} c_program; root/tests/build/c_program
 

@@ -85,8 +85,8 @@ def add_new_column(db_cursor, i, param_type, param_name, value, column_names,
         db_cursor.execute("ALTER TABLE runs ADD COLUMN {0} TEXT"
                           .format(param_name))
         array_type = param_type[:-5].strip()
-        if array_type != 'int' and array_type != 'float' \
-                and array_type != 'string' and array_type != 'bool':
+        if (array_type != 'int' and array_type != 'float'
+                and array_type != 'string' and array_type != 'bool'):
             print("Parameter on line no. {0} in parameter file has INVALID "
                   "type of array.".format(i))
         if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
@@ -116,8 +116,8 @@ def check_type_matches(param_type, column_type, value, i):
             correct_type = True
         elif len(param_type) > 5 and param_type[-5:] == 'array':
             array_type = param_type[:-5].strip()
-            if array_type == 'int' or array_type == 'float' \
-                    or array_type == 'string' or array_type == 'bool':
+            if (array_type == 'int' or array_type == 'float' 
+                    or array_type == 'string' or array_type == 'bool'):
                 correct_type = True
             if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
                 print("Parameter on line no. {0} in the parameter file has "
@@ -162,7 +162,7 @@ def standardize_value(value, param_type):
                 i += 1
                 string += string[i]
             string = string.strip()
-            if ((string[0] == '"' and string[-1] == '"') \
+            if ((string[0] == '"' and string[-1] == '"') 
                 or (string[0] == "'" and string[-1] == "'")):
                 string = string[1:-1]
             value += string + ', '
@@ -170,7 +170,7 @@ def standardize_value(value, param_type):
             value = value[:-2] + ']'
     if len(type_split) > 1 and type_split[1] == 'array' and len(value) > 0:
         value = type_split[0] + value
-    if (param_type == 'string' or param_type == 'bool' \
+    if (param_type == 'string' or param_type == 'bool'
             or (len(param_type) > 5 and param_type[-5:] == 'array')):
         if len(value) > 0:
             if not ((value[0] == "'" and value[-1] == "'") or
@@ -182,10 +182,10 @@ def standardize_value(value, param_type):
 
 def insert_value(db_cursor, param_name, last_row_id, value):
     if last_row_id:
-        db_cursor.execute("UPDATE runs SET {0} = {1} WHERE id = {2};" \
+        db_cursor.execute("UPDATE runs SET {0} = {1} WHERE id = {2};"
                           .format(param_name, value, last_row_id))
     else:
-        db_cursor.execute("INSERT INTO runs (status, {0}) VALUES ('new', {1});" \
+        db_cursor.execute("INSERT INTO runs (status, {0}) VALUES ('new', {1});"
                           .format(param_name, value))
         last_row_id = db_cursor.lastrowid
     return last_row_id

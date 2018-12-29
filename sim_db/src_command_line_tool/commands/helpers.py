@@ -189,6 +189,30 @@ def get_db_column_names_and_types(db_cursor):
     return column_names, column_types
 
 
+def replace_root_with_path(run_command, path):
+    """Replaces '"root/' with '"path_to_root/' and 'root/' with 
+    '"path_to_root"/.
+    """
+    len_path = len(path)
+    i = 0
+    k = 0
+    l = 0
+    while k != -1: 
+        l += 1
+        j = run_command[i:].find('"root/')
+        k = run_command[i:].find('root/')
+        if j < k and j != -1:
+            run_command = (run_command[:i + j] + '"' + path + '/' 
+                           + run_command[i + j + 6:])
+            i = i + j + len_path + 2
+        elif k != -1:
+            run_command = (run_command[:i + k] + '"' + path + '"/' 
+                           + run_command[i + k + 5:])
+            i = i + k + len_path + 3
+
+    return run_command
+
+
 def get_run_command(db_cursor, db_id, n_tasks=None):
     db_cursor.execute(
             "SELECT run_command, n_tasks FROM runs WHERE id={0};".format(
@@ -212,12 +236,7 @@ def get_run_command(db_cursor, db_id, n_tasks=None):
 
     proj_root_dir = os.path.abspath(
             os.path.join(get_dot_sim_db_dir_path(), os.pardir))
-    if os.sep == '/':
-        space_escaped = '\ '
-    else:
-        space_escaped = ' '
-    run_command = run_command.replace(
-            'root/', proj_root_dir.replace(' ', space_escaped) + '/')
+    run_command = replace_root_with_path(run_command, proj_root_dir)
     run_command = run_command.replace(' # ', " {0} ".format(n_tasks))
     run_command = run_command + " --id {0}".format(db_id)
     run_command = run_command + ' --path_proj_root "{0}"'.format(proj_root_dir)
