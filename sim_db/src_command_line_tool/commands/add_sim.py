@@ -116,7 +116,7 @@ def check_type_matches(param_type, column_type, value, i):
             correct_type = True
         elif len(param_type) > 5 and param_type[-5:] == 'array':
             array_type = param_type[:-5].strip()
-            if (array_type == 'int' or array_type == 'float' 
+            if (array_type == 'int' or array_type == 'float'
                     or array_type == 'string' or array_type == 'bool'):
                 correct_type = True
             if len(value) > 0 and (value[0] != '[' or value[-1] != ']'):
@@ -162,7 +162,7 @@ def standardize_value(value, param_type):
                 i += 1
                 string += string[i]
             string = string.strip()
-            if ((string[0] == '"' and string[-1] == '"') 
+            if ((string[0] == '"' and string[-1] == '"')
                 or (string[0] == "'" and string[-1] == "'")):
                 string = string[1:-1]
             value += string + ', '
@@ -252,23 +252,23 @@ def add_included_parameter_files(sim_params_file_lines):
                 sim_params_file_lines)
     return sim_params_file_lines
 
-    
+
 def add_if_alias(line, aliases, i):
     line_have_type = True
-    if ':' in line: 
+    if ':' in line:
         string_to_replace, param_type, replacement_string = (
             split_parameter_line(line, i))
     else:
         return False
     if param_type == 'alias':
-        if (len(string_to_replace) < 2 
+        if (len(string_to_replace) < 2
             or string_to_replace[0] != '{' or string_to_replace[-1] != '}'):
-            print("ERROR: Alias name on line no. {0} in the parameter file " 
+            print("ERROR: Alias name on line no. {0} in the parameter file "
                   "MUST start and end with curly brackets.".format(i))
             print("E.g.: '{string_to_replace} (alias): replacement_string'")
             exit(1)
-        if ((replacement_string[0] == '"' and replacement_string[-1] == '"') 
-             or (replacement_string[0] == "'" 
+        if ((replacement_string[0] == '"' and replacement_string[-1] == '"')
+             or (replacement_string[0] == "'"
                  and replacement_string[-1] == "'")):
             replacement_string = replacement_string[1:-1]
         for alias, replacement in aliases:
@@ -296,11 +296,6 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
     args = command_line_arguments_parser(name_command_line_tool,
                                          name_command).parse_args(argv)
     sim_params_filename = args.filename
-    if (sim_params_filename != None and len(sim_params_filename) > 5
-                and sim_params_filename[0:5] == 'root/'):
-        sim_params_filename = os.path.join(
-                os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir),
-                sim_params_filename[5:])
     if sim_params_filename == None:
         sim_params_filename = search_for_parameter_file_matching_settings()
         if sim_params_filename == None:
@@ -309,6 +304,14 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
                   "\nAdd the '--filename' flag to specify the filename of "
                   "the parameter file.")
             exit(1)
+    elif (sim_params_filename[0:5] == 'root/'):
+        sim_params_filename = os.path.join(
+                os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir),
+                sim_params_filename[5:])
+    elif (sim_params_filename[0:6] == '"root/'):
+        sim_params_filename = '"' + os.path.join(
+                os.path.join(helpers.get_dot_sim_db_dir_path(), os.pardir),
+                sim_params_filename[6:])
 
     try:
         sim_params_file = open(sim_params_filename, 'r')
@@ -362,7 +365,7 @@ def add_sim(name_command_line_tool="sim_db", name_command="add", argv=None):
                 last_row_id = insert_value(db_cursor, param_name, last_row_id,
                                            value)
     initial_parameters = standardize_value(str(initial_parameters), "string array")
-    last_row_id = insert_value(db_cursor, 'initial_parameters', last_row_id, 
+    last_row_id = insert_value(db_cursor, 'initial_parameters', last_row_id,
                                initial_parameters)
 
     db.commit()
