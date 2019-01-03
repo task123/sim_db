@@ -73,21 +73,6 @@ bool sim_db_have_timed_out(SimDB* self) {
     return have_timed_out;
 }
 
-void sim_db_backslash_unslashed_spaces(char path[PATH_MAX + 1]) {
-    char path_backslashed[PATH_MAX + 1];
-    const int len_path = strlen(path);
-    int n_spaces = 0;
-    for (int i = 0; i < len_path + n_spaces + 1; i++) {
-        path_backslashed[i + n_spaces] = path[i];
-        if (path[i] == ' ' && i > 0 && path[i - 1] != '\\') {
-            path_backslashed[i + n_spaces] = '\\';
-            path_backslashed[i + n_spaces + 1] = ' ';
-            n_spaces++;
-        }
-    }
-    strcpy(path, path_backslashed);
-}
-
 void sim_db_get_time_string(char time_string[]) {
     time_t now = time(NULL);
     char local_time[26];
@@ -454,32 +439,29 @@ SimDB* sim_db_ctor_without_search(const char* path_proj_root, int id,
     char command[4200];
 
     if (store_metadata && sim_db_is_a_git_project(sim_db->path_proj_root)) {
-        char path_proj_root_backslashed[PATH_MAX + 1];
-        strcpy(path_proj_root_backslashed, sim_db->path_proj_root);
-        sim_db_backslash_unslashed_spaces(path_proj_root_backslashed);
-        sprintf(command, "cd %s && git rev-parse HEAD",
-                path_proj_root_backslashed);
+        sprintf(command, "cd \"%s\" && git rev-parse HEAD",
+                sim_db->path_proj_root);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             sim_db_update(sim_db, "git_hash", output, true);
         }
 
-        sprintf(command, "cd %s && git log -n --format=%%B HEAD",
-                path_proj_root_backslashed);
+        sprintf(command, "cd \"%s\" && git log -n --format=%%B HEAD",
+                sim_db->path_proj_root);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             char* escaped_string = sim_db_escape_quote_with_two_quotes(output);
             sim_db_update(sim_db, "commit_message", output, true);
             free(escaped_string);
         }
 
-        sprintf(command, "cd %s && git diff HEAD --stat",
-                path_proj_root_backslashed);
+        sprintf(command, "cd \"%s\" && git diff HEAD --stat",
+                sim_db->path_proj_root);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             char* escaped_string = sim_db_escape_quote_with_two_quotes(output);
             sim_db_update(sim_db, "git_diff_stat", escaped_string, true);
             free(escaped_string);
         }
 
-        sprintf(command, "cd %s && git diff HEAD", path_proj_root_backslashed);
+        sprintf(command, "cd \"%s\" && git diff HEAD", sim_db->path_proj_root);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             if (strlen(output) >= len_output) {
                 char warning[100];
@@ -1179,8 +1161,7 @@ void sim_db_update_sha1_executables(SimDB* self, char** paths_executables,
     char path_exec[PATH_MAX + 1];
     for (size_t i = 0; i < len; i++) {
         strcpy(path_exec, paths_executables[i]);
-        sim_db_backslash_unslashed_spaces(path_exec);
-        sprintf(command, "git hash-object %s", path_exec);
+        sprintf(command, "git hash-object \"%s\"", path_exec);
         sim_db_run_shell_command(command, tmp, len_sha1);
         for (size_t j = 0; j < len_sha1; j++) {
             sha1[j] = sha1[j] ^ tmp[j];
