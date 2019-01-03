@@ -52,8 +52,8 @@ clean:
 clean_except_third_party:
 	rm -f $(LIB_OUTPUR_DIR)/libsimdbc.a
 	rm -f $(LIB_OUTPUR_DIR)/libsimdbcpp.a
-	rm -f sim_db.o
-	rm -f sim_db_cpp.o
+	rm -f sim_db.c.o
+	rm -f sim_db.cpp.o
 
 clean_etp:
 	$(MAKE) clean_except_third_party

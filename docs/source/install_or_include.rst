@@ -51,14 +51,26 @@ If one are going to use in the C or C++ version of **sim_db**, one also have to 
 
     $ git submodule add https://github.com/task123/sim_db
 
-The C and C++ libraries now needs to by complied and this is done with:
+The C and C++ libraries now needs to by complied and this can be done either with CMake or just with Make. To compile and install the libraries with CMake run these commands:
+
+.. code-block:: console
+
+    $ cd sim_db
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ cmake --build . --target install
+
+To compile the libraries using just Make run these commands:
 
 .. code-block:: console
 
     $ cd sim_db
     $ make
 
-If **sim_db** haven't already been install with ``pip``, it will be installed now. The libraries should now be available in *sim_db/lib/* as *libsimdb.a* and *libsimdbcpp.a* with headers *sim_db/include/sim_db.h* and *sim_db/include/sim_db.hpp* respectfully.
+(If **sim_db** haven't already been install with ``pip`` and you are running just make, it will be installed now.) 
+
+The libraries should now be available in *sim_db/build/* as *libsimdb.a* and *libsimdbcpp.a* with headers *sim_db/include/sim_db.h* and *sim_db/include/sim_db.hpp* respectfully.
 
 Include in Your Project
 =======================
@@ -74,16 +86,26 @@ It is recommended to add **sim_db** as a git submodule in your project by (insid
 
 (Otherwise it can taken from `github <https://github.com/task123/sim_db>`_ and just copied into your project in a directory called '`sim_db`'.)
 
-Then go into the *sim_db/* directory and run:
+If Make is available run the following commands:
 
 .. code-block:: console
 
     $ cd sim_db
     $ make include
 
-Answer yes when asked to add *sim_db/command_line_tool* to your *PATH* in *~/.bashrc* or *~/.bash_profile* and remember to source it.
+Answer yes when asked to add *sim_db/sim_db* to your *PATH* in *~/.bashrc* or *~/.bash_profile* and remember to source it.
 
-All **sim_db** commands should now be available and the C and C++ libraries should be compiled. Test the following command:
+If Make is not available, include *sim_db/sim_db* to your *PATH* and if the C and C++ libraries are needed compile them with CMake by running these commands:
+
+.. code-block:: console
+
+    $ cd sim_db
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ cmake --build .
+
+All **sim_db** commands should now be available and the C and C++ libraries should be compiled and found in the *build/* directory with the headers in *include/*. Test the following command:
 
 .. code-block:: console
 

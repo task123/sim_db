@@ -11,6 +11,7 @@ target_include_directories(simdbc
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
 )
+target_compile_features(simdbc PRIVATE c_std_99)
 set_target_properties(simdbc 
     PROPERTIES 
         ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
