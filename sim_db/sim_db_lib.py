@@ -60,12 +60,8 @@ class SimDB:
                 pass
 
         if self.store_metadata and self.__is_a_git_project():
-            if os.sep == '/':
-                path_proj_root = self.path_proj_root.replace(' ', '\ ')
-            else:
-                path_proj_root = self.path_proj_root
             proc = subprocess.Popen(
-                    ["cd {0}; git rev-parse HEAD".format(path_proj_root)],
+                    ['cd "{0}"; git rev-parse HEAD'.format(self.path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -80,8 +76,8 @@ class SimDB:
 
             proc = subprocess.Popen(
                     [
-                            "cd {0}; git log -n 1 --format=%B HEAD".format(
-                                    path_proj_root)
+                            'cd "{0}"; git log -n 1 --format=%B HEAD'.format(
+                                    self.path_proj_root)
                     ],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
@@ -96,7 +92,7 @@ class SimDB:
                 pass
 
             proc = subprocess.Popen(
-                    ["cd {0}; git diff HEAD --stat".format(path_proj_root)],
+                    ['cd "{0}"; git diff HEAD --stat'.format(self.path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -110,7 +106,7 @@ class SimDB:
                 pass
 
             proc = subprocess.Popen(
-                    ["cd {0}; git diff HEAD".format(path_proj_root)],
+                    ['cd "{0}"; git diff HEAD'.format(self.path_proj_root)],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
