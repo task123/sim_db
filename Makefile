@@ -37,6 +37,9 @@ cpplib:
 build_dist:
 	python setup.py sdist bdist_wheel
 
+upload_pypi:
+	twine upload dist/*
+
 clean:
 	rm -fr build
 	rm -fr dist
