@@ -4,24 +4,6 @@
 #include "sim_db.hpp"
 #include <iostream>
 
-SimDB* call_c_sim_db_add_empty_sim(bool store_metadata) {
-    return sim_db_add_empty_sim(store_metadata);
-}
-
-SimDB* call_c_sim_db_add_empty_sim_without_search(std::string path_proj_root,
-                                                  bool store_metadata) {
-    return sim_db_add_empty_sim_without_search(path_proj_root.c_str(),
-                                               store_metadata);
-}
-
-/*
-bool call_c_sim_db_have_timed_out(SimDB* sim_db) {
-    return sim_db_have_timed_out(sim_db);
-}
-*/
-
-void call_c_sim_db_dtor(SimDB* sim_db) { sim_db_dtor(sim_db); }
-
 namespace sim_db {
 Connection::Connection(int argc, char** argv, bool store_metadata) {
     if (store_metadata) {
@@ -103,26 +85,26 @@ void Connection::delete_from_database() {
 Connection::~Connection() { sim_db_dtor(sim_db); }
 
 Connection add_empty_sim(bool store_metadata) {
-    SimDB* sim_db = call_c_sim_db_add_empty_sim(store_metadata);
+    SimDB* sim_db = sim_db_add_empty_sim(store_metadata);
     if (sim_db_have_timed_out(sim_db)) {
-        call_c_sim_db_dtor(sim_db);
+        sim_db_dtor(sim_db);
         throw TimeoutError();
     }
     int id = sim_db_get_id(sim_db);
     std::string path_proj_root(sim_db_get_path_proj_root(sim_db));
-    call_c_sim_db_dtor(sim_db);
+    sim_db_dtor(sim_db);
     return Connection(path_proj_root, id, store_metadata);
 }
 
 Connection add_empty_sim(std::string path_proj_root, bool store_metadata) {
-    SimDB* sim_db = call_c_sim_db_add_empty_sim_without_search(
-            path_proj_root.c_str(), store_metadata);
+    SimDB* sim_db = sim_db_add_empty_sim_without_search(path_proj_root.c_str(),
+                                                        store_metadata);
     if (sim_db_have_timed_out(sim_db)) {
-        call_c_sim_db_dtor(sim_db);
+        sim_db_dtor(sim_db);
         throw TimeoutError();
     }
     int id = sim_db_get_id(sim_db);
-    call_c_sim_db_dtor(sim_db);
+    sim_db_dtor(sim_db);
     return Connection(path_proj_root, id, store_metadata);
 }
 
