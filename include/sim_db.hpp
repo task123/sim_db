@@ -5,16 +5,17 @@
 #define SIM_DB_HPP
 #pragma once
 
+// Outside namespace to make documentation generation work.
+extern "C" {
+#include "sim_db.h"
+}
+
 #include <cstring>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 namespace sim_db {
-
-extern "C" {
-#include "sim_db.h"
-}
 
 /// To interact with the **sim_db** database.
 //
