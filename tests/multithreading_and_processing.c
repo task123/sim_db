@@ -63,21 +63,6 @@ int run_shell_command(const char* command, char* output, size_t len_output) {
     }
 }
 
-void backslash_unslashed_spaces(char path[PATH_MAX + 1]) {
-    char path_backslashed[PATH_MAX + 1];
-    const int len_path = strlen(path);
-    int n_spaces = 0;
-    for (int i = 0; i < len_path + n_spaces + 1; i++) {
-        path_backslashed[i + n_spaces] = path[i];
-        if (path[i] == ' ' && i > 0 && path[i - 1] != '\\') {
-            path_backslashed[i + n_spaces] = '\\';
-            path_backslashed[i + n_spaces + 1] = ' ';
-            n_spaces++;
-        }
-    }
-    strcpy(path, path_backslashed);
-}
-
 int main() {
     int n_processes = 2;  // Can NOT be too high.
     int n_threads_per_process = 2;
@@ -137,8 +122,7 @@ int main() {
     }
     if (child_pid == 0) {
         char command[PATH_MAX + 100];
-        backslash_unslashed_spaces(path_proj_root);
-        sprintf(command, "%s/tests/c_program --id %d running_in_parallel",
+        sprintf(command, "\"%s/tests/c_program\" --id %d running_in_parallel",
                 path_proj_root, id_added);
         int output_program_length = 300;
         char output_program[output_program_length];

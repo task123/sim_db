@@ -28,6 +28,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    printf("%s\n", SIM_DB_VERSION);
+
     SimDB* sim_db;
     if (store_metadata) {
         sim_db = sim_db_ctor(argc, argv);

@@ -9,6 +9,7 @@ external code for to interact with the database.
 
 import add_package_root_to_path
 import common_test_helpers
+import sim_db
 from sim_db.src_command_line_tool.command_line_tool import command_line_tool
 import os
 
@@ -117,37 +118,38 @@ def ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=False):
     printed_lines = output_program.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
         printed_lines = output_program.split('\n')[3:]
-    assert printed_lines[0] == "3"
-    assert printed_lines[1] == printed_lines[0]
-    abs(float(printed_lines[2]) - -5000000000.0) < 0.001
-    assert printed_lines[3] == printed_lines[2]
-    assert printed_lines[4] == "hei"
-    assert printed_lines[5] == printed_lines[4]
-    assert printed_lines[6] == "1"
-    assert printed_lines[7] == printed_lines[6]
-    assert printed_lines[8:11] == ['1', '2', '3']
-    assert printed_lines[8:11] == printed_lines[11:14]
-    abs(float(printed_lines[14]) - 1.5) < 0.001
-    abs(float(printed_lines[15]) - 2.5) < 0.001
-    abs(float(printed_lines[16]) - 3.5) < 0.001
-    assert printed_lines[14:17] == printed_lines[17:20]
-    assert printed_lines[20:23] == ['a', 'b', 'c']
-    assert printed_lines[20:23] == printed_lines[23:26]
-    assert printed_lines[26:29] == ['1', '0', '1']
-    assert printed_lines[26:29] == printed_lines[29:32]
-    assert printed_lines[32] == "9"
-    assert printed_lines[33] == printed_lines[32]
-    assert printed_lines[34] == "11"
-    assert printed_lines[35] == printed_lines[34]
-    assert printed_lines[36] == "0"
-    assert printed_lines[37] == "1"
+    assert printed_lines[0] == sim_db.__version__
+    assert printed_lines[1] == "3"
+    assert printed_lines[2] == printed_lines[1]
+    assert abs(float(printed_lines[3]) - -5000000000.0) < 0.001
+    assert abs(float(printed_lines[4]) - float(printed_lines[3])) < 0.001
+    assert printed_lines[5] == "hei"
+    assert printed_lines[6] == printed_lines[5]
+    assert printed_lines[7] == "1"
+    assert printed_lines[8] == printed_lines[7]
+    assert printed_lines[9:12] == ['1', '2', '3']
+    assert printed_lines[9:12] == printed_lines[12:15]
+    abs(float(printed_lines[15]) - 1.5) < 0.001
+    abs(float(printed_lines[16]) - 2.5) < 0.001
+    abs(float(printed_lines[17]) - 3.5) < 0.001
+    assert printed_lines[15:18] == printed_lines[18:21]
+    assert printed_lines[21:24] == ['a', 'b', 'c']
+    assert printed_lines[21:24] == printed_lines[24:27]
+    assert printed_lines[27:30] == ['1', '0', '1']
+    assert printed_lines[27:30] == printed_lines[30:33]
+    assert printed_lines[33] == "9"
+    assert printed_lines[34] == printed_lines[33]
+    assert printed_lines[35] == "11"
+    assert printed_lines[36] == printed_lines[35]
+    assert printed_lines[37] == "0"
     assert printed_lines[38] == "1"
-    assert printed_lines[39] == "0"
+    assert printed_lines[39] == "1"
+    assert printed_lines[40] == "0"
     if is_cpp:
-        assert printed_lines[40] == "threw exception"
-        assert printed_lines.pop(40)
-    assert printed_lines[40] == str(db_id + 1)
-    assert printed_lines[41] == "7"
+        assert printed_lines[41] == "threw exception"
+        assert printed_lines.pop(41)
+    assert printed_lines[41] == str(db_id + 1)
+    assert printed_lines[42] == "7"
 
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):

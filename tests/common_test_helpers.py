@@ -41,36 +41,37 @@ def remove_cmake_output(output):
 
 def assert_output_python_program(output_program, db_id):
     printed_params = output_program.split('\n')
-    assert printed_params[0] == "3"
-    assert printed_params[1] == printed_params[0]
-    assert printed_params[2] == "-5000000000.0"
-    assert printed_params[3] == printed_params[2]
-    assert printed_params[4] == "hei"
-    assert printed_params[5] == printed_params[4]
-    assert printed_params[6] == "True"
-    assert printed_params[7] == printed_params[6]
-    assert printed_params[8] == "[1, 2, 3]"
-    assert printed_params[9] == printed_params[8]
-    assert printed_params[10] == "[1.5, 2.5, 3.5]"
-    assert printed_params[11] == printed_params[10]
-    assert printed_params[12] == "['a', 'b', 'c']"
-    assert printed_params[13] == printed_params[12]
-    assert printed_params[14] == "[True, False, True]"
-    assert printed_params[15] == printed_params[14]
-    assert printed_params[16] == "9"
-    assert printed_params[17] == printed_params[16]
-    assert printed_params[18] == "11"
-    assert printed_params[19] == printed_params[18]
-    assert printed_params[20] == "None"
+    assert printed_params[0] == '0.1.4'
+    assert printed_params[1] == "3"
+    assert printed_params[2] == printed_params[1]
+    assert printed_params[3] == "-5000000000.0"
+    assert printed_params[4] == printed_params[3]
+    assert printed_params[5] == "hei"
+    assert printed_params[6] == printed_params[5]
+    assert printed_params[7] == "True"
+    assert printed_params[8] == printed_params[7]
+    assert printed_params[9] == "[1, 2, 3]"
+    assert printed_params[10] == printed_params[9]
+    assert printed_params[11] == "[1.5, 2.5, 3.5]"
+    assert printed_params[12] == printed_params[11]
+    assert printed_params[13] == "['a', 'b', 'c']"
+    assert printed_params[14] == printed_params[13]
+    assert printed_params[15] == "[True, False, True]"
+    assert printed_params[16] == printed_params[15]
+    assert printed_params[17] == "9"
+    assert printed_params[18] == printed_params[17]
+    assert printed_params[19] == "11"
+    assert printed_params[20] == printed_params[19]
     assert printed_params[21] == "None"
-    assert printed_params[22] == "[1, 2, 3]"
-    assert printed_params[23] == "False"
-    assert printed_params[24] == "True"
+    assert printed_params[22] == "None"
+    assert printed_params[23] == "[1, 2, 3]"
+    assert printed_params[24] == "False"
     assert printed_params[25] == "True"
-    assert printed_params[26] == "False"
-    assert printed_params[27] == "raised ColumnError"
-    assert printed_params[28] == str(db_id + 1)
-    assert printed_params[29] == "7"
+    assert printed_params[26] == "True"
+    assert printed_params[27] == "False"
+    assert printed_params[28] == "raised ColumnError"
+    assert printed_params[29] == str(db_id + 1)
+    assert printed_params[30] == "7"
 
 
 def assert_output_print_sim_after_run_sim(output_print_sim, store_metadata):

@@ -11,6 +11,7 @@ Finally add empty simulation, write to it and read from it and then delete it.
 
 import add_package_root_to_path
 import sim_db.sim_db_lib as sim_db_lib
+import sim_db.__init__ 
 import argparse
 import os.path
 import sys
@@ -25,6 +26,8 @@ if 'running_in_parallel' in sys.argv:
     running_in_parallel = True
 else:
     running_in_parallel = False
+
+print(sim_db.__init__.__version__)
 
 sim_database = sim_db_lib.SimDB(store_metadata=store_metadata)
 

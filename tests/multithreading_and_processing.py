@@ -48,7 +48,7 @@ def run_program(db_id, path_proj_root):
                "--id", str(db_id), "running_in_parallel"]
     output = subprocess.check_output(command, universal_newlines=True)
     lines = output.splitlines()
-    if (lines[0].strip() == "3" and lines[-1] == "raised ColumnError"):
+    if (lines[1].strip() == "3" and lines[-1] == "raised ColumnError"):
         return "ran_correctly"
     else:
         return "ran_incorrectly"

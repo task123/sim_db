@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
         }
     }
 
+    std::cout << SIM_DB_VERSION << std::endl;
+
     sim_db::Connection sim_db(argc, argv, store_metadata);
 
     int param1 = sim_db.read<int>("test_param1");
