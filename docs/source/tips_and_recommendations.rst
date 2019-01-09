@@ -24,7 +24,7 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * The ``cd_results`` command call a bash script to change the directory to the '*result_dir*' and then replace the currect shell process with this new one.
 
-* The command line tool can be called with ``python sim_db/src/command_line_tool/command_line_tool.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable or on windows without Cygwin or MinGW.
+* The command line tool can be called with ``python sim_db/__main__.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable.
 
 * Multiple default names for the parameter files can be added in prioritized order in *settings.txt* to replace or in addition to *sim_params.txt*.
 

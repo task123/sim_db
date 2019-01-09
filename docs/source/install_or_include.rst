@@ -24,7 +24,9 @@ The command line tool and the python package should now be available. If one are
 
     $ sim_db list_commands
 
-How to use any of them can be found either by running the with the ``--help`` or ``-h`` flag or reading the documentation of the :ref:`commands <Commands>`. Most of the commands need to have some sets of simulation parameters added to the database to work, so read the examples below to see how to do that.
+(This should also work on Windows as long as your Python directory and its *Scripts/* subdirectory is added to the *%PATH%*.)
+
+How to use any of them can be found either by running the with the ``--help`` or ``-h`` flag or reading the documentation of the :ref:`commands <Commands>`. Most of the commands need to have some sets of simulation parameters added to the database to work, so read the examples below to see how to do that. (The command line tool can also be invoked by running ``$ python -m sim_db``.)
 
 Testing the import of the python package can be done with:
 
@@ -76,7 +78,7 @@ Include in Your Project
 =======================
 (Skip to this section of one have choosen to install **sim_db**.)
 
-**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum. It therefore does not itself **need** to be installed, just included. (The command_line_tool is just python scripts (except the ``cd_results`` command), so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/src_command_line_tool/commands_line_tool.py`. It is however much more convenient to just add the command line tool to your *PATH*.)
+**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum. It therefore does not itself **need** to be installed, just included. (The command_line_tool is just python scripts (except the ``cd_results`` command), so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/__main__.py`. It is however much more convenient to just add the command line tool to your *PATH*.)
 
 It is recommended to add **sim_db** as a git submodule in your project by (inside your project) running:
 
@@ -132,3 +134,31 @@ Since **sim_db** is just included, it will manually need to be added to the *PYT
     import sim_db
 
 The python package should now behave as if it was installed. For files in subdirectories, just add more ``os.path.dirname`` calls round the path.
+
+Dependencies
+============
+The dependencies for **sim_db** is tried to keep at a minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.
+
+* **SQLite** - **sim_db** uses a SQLite database, so it need to be installed on the system. Almost all the flavours of Linux OS are being shipped with SQLite and MacOS comes pre-installed with SQLite. The SQLite Amalgamation (source code of SQLite in C) is even included to provide a painfree compilation of the C and C++ libraries.
+
+* **Python 2.6 or greater** - A Python interpreter of version 2.6 or greater (that means that is also does work with Python 3) is needed as all the commands are written in Python. Pre-installed on almost all Linux distros and on MacOS.
+
+* **C and C++ compiler** - C99 and C++98 compilers are need for using **sim_db** with C or C++ code, but in that case these compilers are of couse needed anyways. Only the examples need a C++11 compiler.
+
+Recommended:
+
+* **Git** - Your project must use Git to get the full range of metadata. If Git is not used, metadata from Git (and the executable's SHA1 hash) is not collected. (So, there is no dramatic difference if it not used. It might, however, be useful.)
+
+* **CMake** or just **Make** - Makes the build process much easier.
+
+* **pytest** - `Python framework <https://docs.pytest.org/en/latest/index.html>`_ used to run the tests and nothing else. Installed with :code:`$ pip install -U pytest`.
+
+For Windows:
+
+* **Cygwin/MinGW** - The the C and C++ libraries relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
+
+(Not propery tested on windows yet.)
+
+License
+=======
+The project is licensed under the MIT license. A copy of the license is provided `here <https://github.com/task123/sim_db/blob/master/LICENSE>`_.

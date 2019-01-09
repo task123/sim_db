@@ -2,7 +2,7 @@
 Purpose and Features
 ====================
 
-If you have already decided to use **sim_db**, then skip right ahead to :ref:`use`.
+If you have already decided to use **sim_db**, then skip right ahead to :ref:`install_or_include`.
 
 Purpose
 =======
@@ -41,7 +41,7 @@ Python, C and C++
 
 Thread Safe
 +++++++++++
-**sim_db** is thread safe with the exceptiong of the ``make_unique_subdir`` functions that should only be called from a single thread.
+**sim_db** is thread safe and intended to be used in programs running on hundreds of CPUs. Read more about use in multithreading and multiprocessing applications :ref:`here. <Multithreading and Multiprocessing>`
 
 Built to Run on both Local Machine and Super Computers/Clusters
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -95,6 +95,8 @@ The default columns in the database contain the metadata of the simulations run 
 * ``git_diff`` - Show the explicit difference between the working directory and the current commit at the time when the simulation is run.
 
 * ``sha1_executables`` - To tell exacetly which executable that was used to run the simulation. Useful to check that it have been compiled after any changes. Is the sha1 of any files in the ``run_command``.
+
+* ``initial_parameters`` - To distinguage between parameters used to run the simulation and results produced by the simulation.
 
 
 
