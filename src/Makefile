@@ -34,10 +34,10 @@ $(LIB_OUTPUR_DIR)/libsimdbcpp.a: $(LIB_OUTPUR_DIR) sim_db.cpp.o sim_db.c.o $(SQL
 	ar -r $@ sim_db.cpp.o sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
 
 sim_db.c.o: sim_db.c $(INCLUDE_DIR)/sim_db.h
-	$(CC) $(CFLAGS) -c -o $@ sim_db.c -I$(INCLUDE_DIR)
+	$(CC) $(CFLAGS) -c -o $@ sim_db.c -I$(INCLUDE_DIR) -I$(SQLITE3_DIR)
 
 sim_db.cpp.o: sim_db.cpp $(INCLUDE_DIR)/sim_db.hpp $(INCLUDE_DIR)/sim_db.h
-	$(CXX) $(CXXFLAGS) -c -o $@ sim_db.cpp -I$(INCLUDE_DIR)
+	$(CXX) $(CXXFLAGS) -c -o $@ sim_db.cpp -I$(INCLUDE_DIR) -I$(SQLITE3_DIR)
 
 $(SQLITE3_DIR)/sqlite3.o:
 	$(MAKE) -C $(SQLITE3_DIR)/ sqlite3.o

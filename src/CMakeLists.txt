@@ -10,6 +10,8 @@ target_include_directories(simdbc
     PUBLIC 
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
+    PRIVATE
+        $<BUILD_INTERFACE:${SQLITE_DIR}>
 )
 target_compile_features(simdbc PRIVATE c_std_99)
 set_target_properties(simdbc 
@@ -29,6 +31,8 @@ target_include_directories(simdbcpp
     PUBLIC 
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
+    PRIVATE
+        $<BUILD_INTERFACE:${SQLITE_DIR}>
 )
 set_target_properties(simdbcpp 
     PROPERTIES 
