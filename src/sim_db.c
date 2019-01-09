@@ -1041,6 +1041,21 @@ void sim_db_set_empty(SimDB* self, const char* column) {
     sim_db_update(self, column, NULL, false);
 }
 
+/* Return pthread_self() as a string of hexadecimals too be able to print it
+ * in a portaple way. (Its type pthread_t can be anything depending on impl.)*/
+char* sim_db_hexadecimal_thread_id(SimDB* self) {
+    pthread_t thread_self = pthread_self();
+    unsigned char* thread_id = (unsigned char*) (void*) (&thread_self);
+    char* hexadecimal_thread_id =
+            malloc((2 * sizeof(thread_id) + 1) * sizeof(char));
+    sim_db_add_pointer_to_free(self, hexadecimal_thread_id);
+    for (size_t i = 0; i < sizeof(thread_id); i++) {
+        sprintf(hexadecimal_thread_id, "%s%02x", hexadecimal_thread_id,
+                (unsigned) thread_id[i]);
+    }
+    return hexadecimal_thread_id;
+}
+
 char* sim_db_unique_results_dir_abs_path(SimDB* self,
                                          const char* abs_path_dir) {
     char* path_results_dir;
@@ -1054,8 +1069,9 @@ char* sim_db_unique_results_dir_abs_path(SimDB* self,
 
     char unique_thread_process_name[200];
     strcpy(unique_thread_process_name, "results_dir_is_currently_made_by_");
+
     sprintf(unique_thread_process_name + strlen(unique_thread_process_name),
-            "%u_%p", getpid(), pthread_self());
+            "%u_%s", getpid(), sim_db_hexadecimal_thread_id(self));
     sim_db_write_string(self, "results_dir", unique_thread_process_name, true);
 
     if (strcmp(unique_thread_process_name,
