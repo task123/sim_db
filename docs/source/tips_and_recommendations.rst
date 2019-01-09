@@ -8,17 +8,17 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * If the *sim_db/* directory is empty after having cloned a projet that uses **sim_db**, go into the *sim_db/* directory and run these two commands; ``$ git submodule init`` and ``$ git submodule update``.
 
-* For C++ the instance of ``SimDB`` must be initialized at the beginning of the simulation and kept to the end. This is because its initializer and destructor take the time of the simulation as well as writing a number of thing to the database, including the simulations status. The same is true for Python, but in addition the ``end()`` method need to be called. For C ``sim_db_start()`` and ``sim_db_end()`` must for the same reason, be called at the beginning and end of the simulation. ``sim_db_end()`` also does clean up and must be called to avoid memory leaks.
+* For C++ the instance of ``SimDB`` must be initialized at the beginning of the simulation and kept to the end. This is because its initializer and destructor take the time of the simulation as well as writing a number of thing to the database, including the simulations status. The same is true for Python, but in addition the ``close()`` method need to be called. For C ``sim_db_ctor()`` and ``sim_db_dtor()`` must for the same reason, be called at the beginning and end of the simulation. ``sim_db_dtor()`` also does clean up and must be called to avoid memory leaks.
 
 * It is recommended to add a '*name* (string): *name of simulation run*' and a '*describtion* (string): *describtion of simulation*' to explain which simulation it is and the intent of the simulation. This makes it much easier to navigate all the simulations that accumulates at a later time.
 
 * The ``run`` and ``add_and_run`` commands will print the output from the *run_command* to the terminal while the program runs, but it may take some time before start printing the output.
 
-* It is recommended to use '*root/*' or '*./*' in the *run_command* to give the path to the *executable_program* relative to the project's root directory or the directory of *sim_params.txt*. This is because the '*root/*' or '*./*' will be replaced with the full path to the file when running the simulation, which may be necessary when running on a cluster or supercomputer.
+* It is recommended to use '*root/*' in the *run_command* to give the path to the *executable_program* relative to the project's root directory. This is because the '*root/*' will be replaced with the full path to the file when running the simulation, which may be necessary when running on a cluster or supercomputer.
 
 * Any stand alone hashtages, ``#``, that occure in the *run_command* will be replaced with the number passed after the ``-n`` flag in the ``run`` command. Ex. : ``mpirun -n # python program.py``.
 
-* Small results can be written to the database, but large results are recommended to be saved in a subdirectory in a result made by ``make_subdir_result`` inside a result directory.
+* Small results can be written to the database, but large results are recommended to be saved in a subdirectory in a result made by ``unique_results_dir`` inside a result directory.
 
 * For all commands that end with *_sim*, this ending can be omitted. ``add`` can for instance be used instead of ``add_sim``.
 
