@@ -9,7 +9,7 @@ CXXFLAGS = $(CXXFLAGS_RELEASE)
 
 export CC CXX CFLAGS CXXFLAGS
 
-.PHONY: all install include add_to_path libs clean clean_except_third_party clean_etp
+.PHONY: all install include add_to_path libs clib cpplib build_dist upload_pypi clean clean_except_third_party clean_etp
 
 all:
 	$(MAKE) libs
