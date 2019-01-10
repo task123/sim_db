@@ -29,7 +29,7 @@ Notice that when it is run, it first call two ``cmake`` commands to compile the 
 
 .. code-block:: console
 
-    $ c++ -o build/minimal_cpp_example minimal_example.cpp -I../include -L../build -lsimdbcpp
+    $ c++ -o build/minimal_cpp_example minimal_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl -m
 
 The example is not really a minimal one. If you already have compiled your program into a executable called ``program`` located in the current directory, the lines starting with ``{...} (alias):`` can be removed and the ``run_command`` can be replaced with simpy ``run_command (string): ./program``.
 
@@ -61,7 +61,7 @@ Notice that when it is run, it first call ``cmake`` to compile the code if neede
 
 .. code-block:: console
 
-    $ cc -o build/extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp
+    $ cc -o build/extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl -m
 
 C++ API Referance
 ====================

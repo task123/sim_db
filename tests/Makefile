@@ -1,7 +1,7 @@
 CC = cc
 CXX = c++
-CFLAGS_DEBUG = -std=c99 -Wall -Wextra
-CXXFLAGS_DEBUG = -Wall -Wextra 
+CFLAGS_DEBUG = -std=c99 -Wall
+CXXFLAGS_DEBUG = -Wall 
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
 CFLAGS = $(CFLAGS_DEBUG)
@@ -35,15 +35,15 @@ c_mtap_updated:
 
 # Use target c_program_updated instead as it check libsimdbc.a's dependencies.
 c_program: program.c $(LIB_OUTPUT_DIR)/libsimdbc.a
-	$(CC) $(CFLAGS) -o c_program -I../include program.c -L$(LIB_OUTPUT_DIR) -lsimdbc  
+	$(CC) $(CFLAGS) -o c_program -I../include program.c -L$(LIB_OUTPUT_DIR) -lsimdbc $(LDFLAGS)
 
 # Use target cpp_program_updated instead as it check libsimdbcpp.a's dependencies.
 cpp_program: program.cpp $(LIB_OUTPUT_DIR)/libsimdbcpp.a
-	$(CXX) $(CXXFLAGS) -o cpp_program -I../include program.cpp -L$(LIB_OUTPUT_DIR) -lsimdbcpp 
+	$(CXX) $(CXXFLAGS) -o cpp_program -I../include program.cpp -L$(LIB_OUTPUT_DIR) -lsimdbcpp $(LDFLAGS)
 
 # Use target c_mtap_updated instead as it check libsimdbc.a's dependencies.
 c_mtap: multithreading_and_processing.c $(LIB_OUTPUT_DIR)/libsimdbc.a
-	$(CC) $(CFLAGS) -o c_mtap multithreading_and_processing.c -I../include -L$(LIB_OUTPUT_DIR) -lsimdbc 
+	$(CC) $(CFLAGS) -o c_mtap multithreading_and_processing.c -I../include -L$(LIB_OUTPUT_DIR) -lsimdbc $(LDFLAGS) 
 
 c_program_run: c_program_updated
 	./c_program --id ${ID} --path_proj_root ${PATH_SIM_DB}

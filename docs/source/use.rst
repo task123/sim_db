@@ -85,7 +85,7 @@ Notice that when it is run, it first call two ``cmake`` commands to compile the 
 
 .. code-block:: console
 
-    $ c++ -std=c++11 -o build/extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp
+    $ c++ -std=c++11 -o build/extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl -m
 
 If the :code:`add_and_run` command is run without any flags, it will look for any files in the current directory matching the ones `Parameter filenames` in *.sim_db/settings.txt* and add and run the first match. The command is often divided into adding the simulations parameters to the database with:
 

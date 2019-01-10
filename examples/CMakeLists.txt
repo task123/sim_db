@@ -5,18 +5,30 @@ link_directories(${CMAKE_BINDARY_DIR})
 
 add_executable(minimal_c_example minimal_example.c)
 target_link_libraries(minimal_c_example simdbc)
-set_target_properties(minimal_c_example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build)
+set_target_properties(minimal_c_example 
+    PROPERTIES 
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build
+)
 
 add_executable(minimal_cpp_example minimal_example.cpp)
 target_link_libraries(minimal_cpp_example simdbcpp)
-target_compile_features(minimal_cpp_example PRIVATE cxx_std_11)
-set_target_properties(minimal_cpp_example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build)
+set_target_properties(minimal_cpp_example 
+    PROPERTIES 
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build
+        CXX_STANDARD 11
+)
 
 add_executable(extensive_c_example extensive_example.c)
 target_link_libraries(extensive_c_example simdbc)
-set_target_properties(extensive_c_example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build)
+set_target_properties(extensive_c_example 
+    PROPERTIES 
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build
+)
 
 add_executable(extensive_cpp_example extensive_example.cpp)
 target_link_libraries(extensive_cpp_example simdbcpp)
-target_compile_features(extensive_cpp_example PRIVATE cxx_std_11)
-set_target_properties(extensive_cpp_example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build)
+set_target_properties(extensive_cpp_example 
+    PROPERTIES 
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/examples/build
+        CXX_STANDARD 11
+)

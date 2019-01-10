@@ -137,9 +137,7 @@ The python package should now behave as if it was installed. For files in subdir
 
 Dependencies
 ============
-The dependencies for **sim_db** is tried to keep at a minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.
-
-* **SQLite** - **sim_db** uses a SQLite database, so it need to be installed on the system. Almost all the flavours of Linux OS are being shipped with SQLite and MacOS comes pre-installed with SQLite. The SQLite Amalgamation (source code of SQLite in C) is even included to provide a painfree compilation of the C and C++ libraries.
+The dependencies for **sim_db** is tried to keep at a absolute minimum and it is overwhelming likely that everything is available if on a Linux machine or a Mac. The reason for the minimal dependencies and the detailed list of actual dependencies, is that the it is expected to use in project using clusers and super computers. On these clusters and super computers one typically don't have root access and only limited ability to install the dependencies.
 
 * **Python 2.6 or greater** - A Python interpreter of version 2.6 or greater (that means that is also does work with Python 3) is needed as all the commands are written in Python. Pre-installed on almost all Linux distros and on MacOS.
 
@@ -158,6 +156,9 @@ For Windows:
 * **Cygwin/MinGW** - The the C and C++ libraries relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
 
 (Not propery tested on windows yet.)
+
+SQLite:
+**sim_db** uses a SQLite database, so a few word to explain why it is NOT listed as a dependency is probably not out of place. The sqlite3 Python module used in **sim_db's** command line tool and Python module is part of the Python Standard Library, and therefor included with Python. For the C and C++ libraries the SQLite Amalgamation (source code of SQLite in C) is included to remove it as a dependence and too provide a painfree compilation of the libraries.
 
 License
 =======

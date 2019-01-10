@@ -6,10 +6,12 @@
 CC = cc
 CXX = c++
 
-CFLAGS = -O0 -Wall -Wextra
-CXXFLAGS = -O0 -Wall -Wextra
+CFLAGS = -O0 -Wall
+CXXFLAGS = -O0 -Wall
 
 export CC CXX CFLAGS CXXFLAGS
+
+.PHONY: all minimal_c_example_updated minimal_cpp_example_updated extensive_c_example_updated extensive_cpp_example_updated minimal_c_example_run minimal_cpp_example_run clean clean_except_third_party clean_etp
 
 all:
 	$(MAKE) minimal_c_example_updated
@@ -35,27 +37,27 @@ extensive_cpp_example_updated:
 
 # Use target minimal_c_example_updated instead as it check libsimdbc.a's dependencies.
 minimal_c_example: minimal_example.c ../build/libsimdbc.a
-	$(CC) -o minimal_c_example minimal_example.c -I../include -L../build -lsimdbc
+	$(CC) -o minimal_c_example minimal_example.c -I../include -L../build -lsimdbc -lpthread -ldl -lm
 
 # Use target minimal_c_example_updated instead as it check libsimdbcpp.a's dependencies.
 minimal_cpp_example: minimal_example.cpp ../build/libsimdbcpp.a
-	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp -I../include -L../build -lsimdbcpp
+	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl
 
 # Use target extensive_c_example_updated instead as it check libsimdbc.a's dependencies.
 extensive_c_example: extensive_example.c ../build/libsimdbc.a
-	$(CC) -o extensive_c_example extensive_example.c -I../include -L../build -lsimdbc
+	$(CC) -o extensive_c_example extensive_example.c -I../include -L../build -lsimdbc -lpthread -ldl -lm
 
 # Use target extensive_c_example_updated instead as it check libsimdbcpp.a's dependencies.
 extensive_cpp_example: extensive_example.cpp ../build/libsimdbcpp.a
-	$(CXX) -std=c++11 -o extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp
+	$(CXX) -std=c++11 -o extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl
 
 minimal_c_example_without_lib: minimal_example.cpp ../src/sim_db.c ../include/sim_db.h
-	$(CC) -o minimal_c_example minimal_example.c ../src/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/
+	$(CC) -o minimal_c_example minimal_example.c ../src/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/ -I../third_party/sqlite3/ -lpthread -ldl -lm
 
 minimal_cpp_example_without_lib: minimal_example.cpp ../src/sim_db.cpp ../include/sim_db.hpp ../src/sim_db.c ../include/sim_db.h
-	$(CC) -c -o sim_db.o ../src/sim_db.c  -I../include
+	$(CC) -c -o sim_db.o ../src/sim_db.c  -I../include -I../third_party/sqlite3/
 	$(CC) -c -o sqlite3.o ../third_party/sqlite3/sqlite3.c
-	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp ../src/sim_db.cpp -I../include sim_db.o sqlite3.o 
+	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp ../src/sim_db.cpp -I../include sim_db.o sqlite3.o -lpthread -ldl
 	rm -f sim_db.o sqlite3.o
 
 # $ make minimal_c_example_run ID='ID'

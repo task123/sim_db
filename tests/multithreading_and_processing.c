@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 2
+
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -6,8 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include "sim_db.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 void print_array(int* array, int length) {
     for (int i = 0; i < length; i++) {

@@ -494,7 +494,7 @@ def print_sim(name_command_line_tool="sim_db",
     type_dict = dict(zip(column_names, column_types))
 
     selected_output, column_names = select_command(name_command_line_tool,
-        name_command_line_tool, db_cursor, args, column_names)
+        name_command, db_cursor, args, column_names)
 
     if args.diff:
         selected_output, column_names = remove_columns_with_only_same_values(

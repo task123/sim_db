@@ -1,11 +1,13 @@
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(SQLITE_DIR ${PROJECT_SOURCE_DIR}/third_party/sqlite3)
 
+find_package(Threads REQUIRED)
 
 add_library(simdbc 
             sim_db.c 
             ${SQLITE_DIR}/sqlite3.c
 )
+target_link_libraries(simdbc Threads::Threads ${CMAKE_DL_LIBS} m)
 target_include_directories(simdbc 
     PUBLIC 
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
@@ -13,11 +15,11 @@ target_include_directories(simdbc
     PRIVATE
         $<BUILD_INTERFACE:${SQLITE_DIR}>
 )
-target_compile_features(simdbc PRIVATE c_std_99)
 set_target_properties(simdbc 
     PROPERTIES 
         ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
         LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+        C_STANDARD 99
 )
 set(simdbc_REQUIRED_HEADERS ${INCLUDE_DIR}/sim_db.h)
 
@@ -27,6 +29,7 @@ add_library(simdbcpp
             sim_db.c 
             ${SQLITE_DIR}/sqlite3.c
 )
+target_link_libraries(simdbcpp Threads::Threads ${CMAKE_DL_LIBS} m)
 target_include_directories(simdbcpp 
     PUBLIC 
         $<BUILD_INTERFACE:${INCLUDE_DIR}>
@@ -39,7 +42,7 @@ set_target_properties(simdbcpp
         ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
         LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
 )
-set(simdbcpp_REQUIRED_HEADERS ${INCLUDE_DIR}/sim_db.hpp ${INCLUDE_DIR}/sim_db.hpp)
+set(simdbcpp_REQUIRED_HEADERS ${INCLUDE_DIR}/sim_db.hpp ${INCLUDE_DIR}/sim_db.h)
 
 
 install(TARGETS simdbc simdbcpp

@@ -11,6 +11,7 @@ import time
 import hashlib
 import threading
 import os
+import sys
 
 
 class SimDB:
@@ -495,6 +496,8 @@ class SimDB:
     def __convert_to_value_string(self, value, type_of_value):
         if type(value) == int or type(value) == float or type(value) == str:
             return str(value)
+        elif sys.version_info[0] < 3 and type(value) == unicode:
+            return value.encode('ascii', 'replace')
         elif type(value) == bool:
             if value:
                 return "True"
@@ -502,13 +505,13 @@ class SimDB:
                 return "False"
         elif type(value) == list:
             if len(value) > 0:
-                if type(value[0]) == int:
+                if type_of_value == 'int array' or type(value[0]) == int:
                     value_string = "int["
-                elif type(value[0]) == float:
+                elif type_of_value == 'float array' or type(value[0]) == float:
                     value_string = "float["
-                elif type(value[0]) == str:
+                elif type_of_value == 'string array' or type(value[0]) == str:
                     value_string = "string["
-                elif type(value[0]) == bool:
+                elif type_of_value == 'bool array' or type(value[0]) == bool:
                     value_string = "bool["
                 for element in value:
                     if type(value[0]) == bool:

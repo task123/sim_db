@@ -33,7 +33,7 @@ Stores a lot of Metadata Automatically
 
 Few Dependencies
 ++++++++++++++++
-Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`this minimum <dependencies>`.
+Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`a minimum <dependencies>` requiring essentially only a Python interpreter.
 
 Python, C and C++
 +++++++++++++++++
