@@ -41,7 +41,7 @@ def remove_cmake_output(output):
 
 def assert_output_python_program(output_program, db_id):
     printed_params = output_program.split('\n')
-    assert printed_params[0] == '0.2.2'
+    assert printed_params[0] == '0.2.3'
     assert printed_params[1] == "3"
     assert printed_params[2] == printed_params[1]
     assert printed_params[3] == "-5000000000.0"

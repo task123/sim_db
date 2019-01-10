@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(sim_db VERSION 0.2.2)
+project(sim_db VERSION 0.2.3)
 
 add_subdirectory(src)
 add_subdirectory(examples EXCLUDE_FROM_ALL)
