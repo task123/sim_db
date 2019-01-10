@@ -85,8 +85,8 @@ def add_path_to_bash_file(where_to_add_path, sim_db_sim_db_dir):
 
 
 def main():
-    sim_db_sim_db_dir = os.path.abspath(
-            os.path.dirname(os.path.dirname(__file__)))
+    sim_db_sim_db_dir = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
 
     where_to_add_path = None
     home = os.path.expanduser("~")

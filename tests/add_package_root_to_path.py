@@ -1,8 +1,9 @@
 import os
 import sys
-sys.path.insert(0,
-        os.path.abspath(
-                os.path.join(
+sys.path.insert(
+        0,
+        os.path.join(
+                os.path.dirname(
                         os.path.dirname(
-                                os.path.dirname(os.path.dirname(__file__))),
-                        "sim_db")))
+                                os.path.dirname(os.path.abspath(__file__)))),
+                        "sim_db"))

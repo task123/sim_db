@@ -10,7 +10,7 @@ Usage: 'add_and_run --filename sim_params_minimal_python_example.txt'
 
 # Include the 'sim_db/' directory to path.
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import sim_db # 'sim_db/src/' have been include in the path.
 

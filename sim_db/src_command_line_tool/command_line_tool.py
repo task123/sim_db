@@ -9,7 +9,7 @@ parameters, results and metadata.
 
 Usage: 'python command_line_tool.py <command> <args>'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018, 2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':
@@ -17,9 +17,9 @@ if __name__ == '__main__':
     import os.path
     sys.path.insert(
             0,
-            os.path.abspath(
+            os.path.dirname(
                     os.path.dirname(
-                            os.path.dirname(os.path.dirname(__file__)))))
+                            os.path.dirname(os.path.abspath(__file__)))))
 
 import sim_db.src_command_line_tool.commands.add_and_run as add_and_run
 import sim_db.src_command_line_tool.commands.add_and_submit as add_and_submit
@@ -44,37 +44,55 @@ import sim_db.src_command_line_tool.commands.run_sim as run_sim
 import sim_db.src_command_line_tool.commands.settings as settings
 import sim_db.src_command_line_tool.commands.submit_sim as submit_sim
 import sim_db.src_command_line_tool.commands.update_sim as update_sim
+import sim_db.__init__
 import argparse
 import sys
 import os.path
 
 
 def command_line_arguments_parser(program='sim_db'):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="For running simulations and keeping track of its "
-            "parameters, results and metadata.",
-        usage="{0} [-h] <command> [<args>]\n\nSome common sim_db commands:\n\n"
-            "init           Initialise 'sim_db' for use in project.\n"
-            "add            Add set of simulation parameters to database.\n"
-            "print          Print parameters in database.\n"
-            "run            Run simulation with parameters from database.\n"
-            "list_commands  List all available commands.\n \n".format(program))
-    parser.add_argument('command', type=str, help="The command, 'list_commands', will print all available commands.")
-    # yapf: enable
+            description=("For running simulations and keeping track of its "
+                         "parameters, results and metadata."),
+            usage=
+            ("{0} [--help] [--version] <command> [<args>]\n\nSome common "
+             "sim_db commands:\n\n"
+             "init           Initialise 'sim_db' for use in project.\n"
+             "add            Add set of simulation parameters to database.\n"
+             "print          Print parameters in database.\n"
+             "run            Run simulation with parameters from database.\n"
+             "list_commands  List all available commands.\n \n".format(program)
+             ))
+    parser.add_argument(
+            '--version',
+            action='store_true',
+            help=("Print version of {0}. Must be passed as the only "
+                  "parameter.".format(program)))
+    parser.add_argument(
+            'command',
+            type=str,
+            help=
+            "The command, 'list_commands', will print all available commands.")
 
     return parser
 
 
 def cd_results_command_line_arguments_parser(name_command_line_tool="sim_db",
                                              name_command="cd_results"):
-    # yapf: disable
     parser = argparse.ArgumentParser(
-        description="Change directory to the 'results_dir' directory of the simulation specified or last entry if not specified.",
-        prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument('--id', '-i', type=int, help="'ID' of the simulation in the 'sim.db' database.")
-    parser.add_argument('-n', type=int, help="n'th last entry in the 'sim.db' database. (zero indexed)")
-    # yapf: enable
+            description=(
+                    "Change directory to the 'results_dir' directory of the "
+                    "simulation specified or last entry if not specified."),
+            prog="{0} {1}".format(name_command_line_tool, name_command))
+    parser.add_argument(
+            '--id',
+            '-i',
+            type=int,
+            help="'ID' of the simulation in the 'sim.db' database.")
+    parser.add_argument(
+            '-n',
+            type=int,
+            help="n'th last entry in the 'sim.db' database. (zero indexed)")
 
     return parser
 
@@ -95,6 +113,12 @@ def command_line_tool(name_command_line_tool="sim_db",
                                 from get). If 'False' and a non valid command 
                                 is passed, a 'ValueError' is raised.
     """
+    if argv[0:1] == ['--version']:
+        if print_ids_added:
+            print("{0} version: {1}".format(name_command_line_tool,
+                  sim_db.__init__.__version__))
+        return sim_db.__init__.__version__
+
     args = command_line_arguments_parser(name_command_line_tool).parse_args(
             argv[0:1])
     command = args.command
@@ -131,9 +155,9 @@ def command_line_tool(name_command_line_tool="sim_db",
         # Test if the specified simulation (or last entry) have a 'results_dir'.
         # Will exit if it doesn't.
         get.get(name_command_line_tool, command, ["results_dir"] + argv[1:])
-        path_sim_db_cd = os.path.abspath(
-                os.path.join(
-                        os.path.dirname(os.path.dirname(__file__)),
+        path_sim_db_cd = os.path.join(
+                os.path.dirname(
+                        os.path.dirname(os.path.abspath(__file__)),
                         'sim_db_cd.sh'))
         if os.sep == '/':
             path_sim_db_cd = path_sim_db_cd.replace(" ", "\ ")
