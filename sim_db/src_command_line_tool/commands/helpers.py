@@ -314,9 +314,19 @@ def get_cpu_and_mem_info():
 def user_input(message):
     """Call raw_input for python 2 and input for python 3."""
     if version_info[0] < 3:
-        return raw_input(message)
+        try:
+            answer = raw_input(message)
+        except EOFError:
+            print("\nEOFError raised, so is using empty string as input.")
+            answer = ""
+        return answer
     else:
-        return input(message)
+        try:
+            answer = input(message)
+        except EOFError:
+            print("\nEOFError raised, so is using empty string as input.")
+            answer = ""
+        return answer
 
 
 def if_unicode_convert_to_str(value):

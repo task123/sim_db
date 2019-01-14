@@ -175,9 +175,11 @@ def get_initial_parameters_columns(db_cursor, args):
         db_cursor.execute("SELECT initial_parameters FROM runs WHERE id={0}"
                           .format(i))
         initial_parameters = db_cursor.fetchone()[0]
-        initial_parameters, correct_type = helpers.convert_text_to_correct_type(
-                                             initial_parameters, 'string array')
-        all_initial_parameters = all_initial_parameters + initial_parameters
+        if initial_parameters != None:
+            initial_parameters, correct_type = (
+                    helpers.convert_text_to_correct_type(
+                            initial_parameters, 'string array'))
+            all_initial_parameters = all_initial_parameters + initial_parameters
     all_initial_parameters = list(set(all_initial_parameters))
 
     return all_initial_parameters
@@ -288,7 +290,7 @@ def select_command(name_command_line_tool, name_command, db_cursor, args,
 def remove_empty_columns(selected_output, column_names, args):
     columns_not_to_remove = []
     if args.columns != None:
-        columns_not_to_remove = args.columns 
+        columns_not_to_remove = args.columns
     if args.col_by_num != None:
         columns_by_num = [all_column_names[i] for i in args.col_by_num]
         columns_not_to_remove = columns_not_to_remove + columns_by_num
