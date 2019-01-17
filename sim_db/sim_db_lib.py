@@ -421,13 +421,21 @@ class SimDB:
         type_of_value = type_dict[column]
 
         if ((check_type_is == 'int' or check_type_is == int)
-                    and type_of_value == 'INTEGER'
-                    and (value == None or type(value) == int)):
+                    and type_of_value == 'INTEGER'):
             correct_type = True
+            if value != None:
+                try:
+                    int(value)
+                except:
+                    correct_type = False
         elif ((check_type_is == 'float' or check_type_is == float)
-              and type_of_value == 'REAL'
-              and (value == None or type(value) == float)):
+              and type_of_value == 'REAL'):
             correct_type = True
+            if value != None:
+                try:
+                    float(value)
+                except:
+                    correct_type = False
         elif (type_of_value == 'TEXT' and value != None):
             value, correct_type = self.__convert_text_to_correct_type(
                     value, check_type_is)
@@ -496,7 +504,10 @@ class SimDB:
                         correct_type = False
                     value.append(element)
             else:
-                correct_type = False
+                if (check_type_is == 'string' or check_type_is == str):
+                    correct_type = True
+                else:
+                    correct_type = False
         return value, correct_type
 
     def __convert_to_value_string(self, value, type_of_value):
@@ -585,13 +596,13 @@ class SimDB:
                                                   value):
         if column in self.column_names:
             self.__check_type(type_of_value, column, self.column_names,
-                              self.column_types)
+                              self.column_types, value=value)
         else:
             self.column_names, self.column_types = (
                     helpers.get_db_column_names_and_types(self.db_cursor))
             if column in self.column_names:
                 self.__check_type(type_of_value, column, self.column_names,
-                                  self.column_types)
+                                  self.column_types, value=value)
             else:
                 self.__check_type(
                         type_of_value,
