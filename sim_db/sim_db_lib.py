@@ -46,13 +46,10 @@ class SimDB:
         self.db_cursor = self.db.cursor()
         self.column_names = []
         self.column_types = []
-    
+
         if self.store_metadata:
             try:
-                self.write(
-                        'status',
-                        'running',
-                        only_if_empty=True)
+                self.write('status', 'running', only_if_empty=True)
                 self.write(
                         'time_started',
                         self.__get_date_and_time_as_string(),
@@ -62,7 +59,10 @@ class SimDB:
 
         if self.store_metadata and self.__is_a_git_project():
             proc = subprocess.Popen(
-                    ['cd "{0}"; git rev-parse HEAD'.format(self.path_proj_root)],
+                    [
+                            'cd "{0}"; git rev-parse HEAD'.format(
+                                    self.path_proj_root)
+                    ],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -93,7 +93,10 @@ class SimDB:
                 pass
 
             proc = subprocess.Popen(
-                    ['cd "{0}"; git diff HEAD --stat'.format(self.path_proj_root)],
+                    [
+                            'cd "{0}"; git diff HEAD --stat'.format(
+                                    self.path_proj_root)
+                    ],
                     stdout=subprocess.PIPE,
                     stderr=open(os.devnull, 'w'),
                     shell=True)
@@ -142,7 +145,7 @@ class SimDB:
 
         if column not in self.column_names:
             self.column_names, self.column_types = (
-                helpers.get_db_column_names_and_types(self.db_cursor))
+                    helpers.get_db_column_names_and_types(self.db_cursor))
             if column not in self.column_names:
                 raise ColumnError("Column, {0}, is NOT a column in the "
                                   "database.".format(column))
@@ -183,7 +186,8 @@ class SimDB:
             design error in the user program.
         """
 
-        self.__add_column_if_not_exists_and_check_type(column, type_of_value)
+        self.__add_column_if_not_exists_and_check_type(column, type_of_value,
+                                                       value)
 
         value_string = self.__convert_to_value_string(value, type_of_value)
         value_string = self.__escape_quote_with_two_quotes(value_string)
@@ -417,10 +421,12 @@ class SimDB:
         type_of_value = type_dict[column]
 
         if ((check_type_is == 'int' or check_type_is == int)
-                    and type_of_value == 'INTEGER'):
+                    and type_of_value == 'INTEGER'
+                    and (value == None or type(value) == int)):
             correct_type = True
         elif ((check_type_is == 'float' or check_type_is == float)
-              and type_of_value == 'REAL'):
+              and type_of_value == 'REAL'
+              and (value == None or type(value) == float)):
             correct_type = True
         elif (type_of_value == 'TEXT' and value != None):
             value, correct_type = self.__convert_text_to_correct_type(
@@ -558,10 +564,12 @@ class SimDB:
                                     column))
                 elif type_of_value == 'float' or type_of_value == float:
                     self.db_cursor.execute(
-                            "ALTER TABLE runs ADD COLUMN {0} REAL".format(column))
+                            "ALTER TABLE runs ADD COLUMN {0} REAL".format(
+                                    column))
                 else:
                     self.db_cursor.execute(
-                            "ALTER TABLE runs ADD COLUMN {0} TEXT".format(column))
+                            "ALTER TABLE runs ADD COLUMN {0} TEXT".format(
+                                    column))
                 self.db.commit()
             except sqlite3.OperationalError as e:
                 if str(e)[0:12] == "duplicate column name:":
@@ -573,8 +581,8 @@ class SimDB:
                     raise
         self.db_cursor.execute("PRAGMA busy_timeout=5000")
 
-
-    def __add_column_if_not_exists_and_check_type(self, column, type_of_value):
+    def __add_column_if_not_exists_and_check_type(self, column, type_of_value,
+                                                  value):
         if column in self.column_names:
             self.__check_type(type_of_value, column, self.column_names,
                               self.column_types)
@@ -585,6 +593,10 @@ class SimDB:
                 self.__check_type(type_of_value, column, self.column_names,
                                   self.column_types)
             else:
+                self.__check_type(
+                        type_of_value,
+                        column, [column], [type_of_value],
+                        value=value)
                 self.__add_column(column, type_of_value)
                 self.column_names, self.column_types = (
                         helpers.get_db_column_names_and_types(self.db_cursor))
