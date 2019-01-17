@@ -192,7 +192,10 @@ class SimDB:
         value_string = self.__convert_to_value_string(value, type_of_value)
         value_string = self.__escape_quote_with_two_quotes(value_string)
         type_dict = dict(zip(self.column_names, self.column_types))
-        if type_dict[column] == 'TEXT' and value != None:
+        # 'and type(value != None) != bool' allow numpy arrays to be check
+        # without importing numpy and thereby relying on it being availble.
+        if (type_dict[column] == 'TEXT' 
+                and (type(value != None) != bool or value != None)):
             value_string = "'{0}'".format(value_string)
         if only_if_empty:
             is_busy = True
@@ -436,10 +439,31 @@ class SimDB:
                     float(value)
                 except:
                     correct_type = False
-        elif (type_of_value == 'TEXT' and value != None):
-            value, correct_type = self.__convert_text_to_correct_type(
-                    value, check_type_is)
-        elif (type_of_value == 'TEXT' and value == None
+        # 'type(value != None) != bool' allow numpy arrays to be check
+        # without importing numpy and thereby relying on it being availble.
+        elif (type_of_value == 'TEXT'
+              and (type(value != None) != bool or value != None)):
+            if type(value) == str:
+                value, correct_type = self.__convert_text_to_correct_type(
+                        value, check_type_is)
+            elif type(value) == bool:
+                correct_type = True
+            elif check_type_is == 'bool' or check_type_is == bool:
+                try:
+                    value = bool(value)
+                    correct_type = True
+                except ValueError:
+                    correct_type = False
+            else:
+                try:
+                    value = list(value)
+                    correct_type = True
+                except ValueError:
+                    correct_type = False
+        # 'and type(value != None) == bool' allow numpy arrays to be check
+        # without importing numpy and thereby relying on it being availble.
+        elif (type_of_value == 'TEXT' 
+              and (type(value == None) == bool and value == None)
               and (check_type_is == 'string' or check_type_is == str
                    or check_type_is == 'bool' or check_type_is == bool
                    or check_type_is == list or check_type_is == 'int array'
@@ -511,16 +535,27 @@ class SimDB:
         return value, correct_type
 
     def __convert_to_value_string(self, value, type_of_value):
-        if type(value) == int or type(value) == float or type(value) == str:
-            return str(value)
-        elif sys.version_info[0] < 3 and type(value) == unicode:
+        if sys.version_info[0] < 3 and type(value) == unicode:
             return value.encode('ascii', 'replace')
+        elif (type(value) == int or type(value) == float or type(value) == str
+                or type_of_value == 'int' or type_of_value == int
+                or type_of_value == 'float' or type_of_value == float
+                or type_of_value == 'string' or type_of_value == str):
+            return str(value)
         elif type(value) == bool:
             if value:
                 return "True"
             else:
                 return "False"
-        elif type(value) == list:
+        # 'type(value == None) == bool' allow numpy arrays to be check
+        # without importing numpy and thereby relying on it being availble.
+        elif (type(value == None) == bool and value == None):
+            return "NULL"
+        else:
+            try:
+                value = list(value)
+            except ValueError:
+                raise ValueError("'value' have invalid type.")
             if len(value) > 0:
                 if type_of_value == 'int array' or type(value[0]) == int:
                     value_string = "int["
@@ -554,8 +589,6 @@ class SimDB:
                             "'float array', 'string array' or 'bool array' "
                             "when a empty list is passed to SimDB.write().")
                 return value_string
-        elif value == None:
-            return "NULL"
 
     def __add_column(self, column, type_of_value):
         if type_of_value == '':
@@ -604,9 +637,15 @@ class SimDB:
                 self.__check_type(type_of_value, column, self.column_names,
                                   self.column_types, value=value)
             else:
+                if (type_of_value == 'int' or type_of_value == int):
+                    column_type = 'INTEGER'
+                elif (type_of_value == 'float' or type_of_value == float):
+                    column_type = 'REAL'
+                else:
+                    column_type = 'TEXT'
                 self.__check_type(
                         type_of_value,
-                        column, [column], [type_of_value],
+                        column, [column], [column_type],
                         value=value)
                 self.__add_column(column, type_of_value)
                 self.column_names, self.column_types = (
