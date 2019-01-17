@@ -26,6 +26,8 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * The command line tool can be called with ``python sim_db/__main__.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable.
 
+* Numpy arrays can be passed to the Python write method as long as type_of_value is set.
+
 * Multiple default names for the parameter files can be added in prioritized order in *settings.txt* to replace or in addition to *sim_params.txt*.
 
 * If add error message occur during the simulation, consider adding the error message as a comment, ``add_comment --id 'ID' --filename 'standard_error.out'``. An explaination may be appended in addition.

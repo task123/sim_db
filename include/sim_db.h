@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include <stdlib.h>  // To get definition of size_t.
 
-#define SIM_DB_VERSION "0.2.4"
-#define SIM_DB_VERSION_NUMBER 204
+#define SIM_DB_VERSION "0.2.5"
+#define SIM_DB_VERSION_NUMBER 205
 #define SIM_DB_MAJOR_VERSION_NUMBER SIM_DB_VERSION_NUMBER / 10000
 #define SIM_DB_MINOR_VERSION_NUMBER (SIM_DB_VERSION_NUMBER / 100) % 100
 #define SIM_DB_PATCH_VERSION_NUMBER SIM_DB_VERSION_NUMBER % 100

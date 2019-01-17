@@ -458,7 +458,7 @@ class SimDB:
                 try:
                     value = list(value)
                     correct_type = True
-                except ValueError:
+                except TypeError:
                     correct_type = False
         # 'and type(value != None) == bool' allow numpy arrays to be check
         # without importing numpy and thereby relying on it being availble.
@@ -554,7 +554,7 @@ class SimDB:
         else:
             try:
                 value = list(value)
-            except ValueError:
+            except TypeError:
                 raise ValueError("'value' have invalid type.")
             if len(value) > 0:
                 if type_of_value == 'int array' or type(value[0]) == int:
