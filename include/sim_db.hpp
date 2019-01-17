@@ -152,7 +152,7 @@ private:
 /// database because other threads/processes are busy writing to it. Way too
 /// much concurrent writing is done and indicates an design error in the user
 /// program.
-Connection add_empty_sim(bool store_metadata = true);
+Connection add_empty_sim(bool store_metadata = false);
 
 /// Add empty simulation to database and return Connection connected to it.
 //
@@ -166,7 +166,7 @@ Connection add_empty_sim(bool store_metadata = true);
 /// much concurrent writing is done and indicates an design error in the user
 /// program.
 Connection add_empty_sim(std::string path_proj_root,
-                         bool store_metadata = true);
+                         bool store_metadata = false);
 
 class TimeoutError : public std::runtime_error {
 public:

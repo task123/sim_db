@@ -617,7 +617,7 @@ class ColumnError(Exception):
     pass
 
 
-def add_empty_sim(store_metadata):
+def add_empty_sim(store_metadata=False):
     """Add an empty entry into the database and SimDB connected to it.
 
     :param store_metadata: If False, no metadata is added to the database.
