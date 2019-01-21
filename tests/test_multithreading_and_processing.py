@@ -17,7 +17,7 @@ def test_c_multithreading(capsys):
     path_build = os.path.join(path_tests_dir, "build")
     path_c_mtap = os.path.join(os.path.join(path_tests_dir, "build"), "c_mtap")
     subprocess.call(["cmake", "-H{0}".format(path_sim_db_root), 
-                     "-B{0}".format(path_build)])
+                     "-B{0}".format(path_build),"-DCMAKE_BUILD_TYPE=Debug"])
     subprocess.call(["cmake", "--build", path_build, "--target", "c_mtap"])
     output = subprocess.check_output([path_c_mtap], universal_newlines=True)
     last_line = output.splitlines()[-1]

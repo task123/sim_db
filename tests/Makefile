@@ -1,9 +1,9 @@
 CC = cc
 CXX = c++
-CFLAGS_DEBUG = -std=c99 -Wall
-CXXFLAGS_DEBUG = -Wall 
+CFLAGS_DEBUG = -std=c99 -Wall -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
+CXXFLAGS_DEBUG = -Wall -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
-CXXFLAGS_RELEASE = -O3 -DNDEBUG
+CXXFLAGS_RELEASE = -O3 -DNDEBUG 
 CFLAGS = $(CFLAGS_DEBUG)
 CXXFLAGS = $(CXXFLAGS_DEBUG)
 LDFLAGS = -lm -lpthread -ldl

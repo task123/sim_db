@@ -60,7 +60,7 @@ The C and C++ libraries now needs to by complied and this can be done either wit
     $ cd sim_db
     $ mkdir build
     $ cd build
-    $ cmake ..
+    $ cmake .. -DCMAKE_BUILD_TYPE=Release
     $ cmake --build . --target install
 
 To compile the libraries using just Make run these commands:
