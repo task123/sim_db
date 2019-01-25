@@ -20,11 +20,13 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * Small results can be written to the database, but large results are recommended to be saved in a subdirectory in a result made by ``unique_results_dir`` inside a result directory.
 
+* If **sim_db** is not working as expected, it might be because **sim_db** is both included and installed (usually not done on purpose) and an unexpected version of **sim_db** is therefore used. So, if **sim_db** is not working as expected  run ``sim_db --version`` and ``which sim_db`` to check that you are using the expected version and that it is located in the expected directory (will indirectly tell you if it is installed or included).
+
 * For all commands that end with *_sim*, this ending can be omitted. ``add`` can for instance be used instead of ``add_sim``.
 
 * The ``cd_results`` command call a bash script to change the directory to the '*result_dir*' and then replace the currect shell process with this new one.
 
-* The command line tool can be called with ``python sim_db/__main__.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable.
+* The command line tool can be called with ``python sim_db/sim_db/__main__.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable.
 
 * Numpy arrays can be passed to the Python write method as long as type_of_value is set.
 
