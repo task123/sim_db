@@ -9,7 +9,7 @@ parameters, results and metadata.
 
 Usage: 'python command_line_tool.py <command> <args>'
 """
-# Copyright (C) 2018, 2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':
@@ -157,14 +157,12 @@ def command_line_tool(name_command_line_tool="sim_db",
         get.get(name_command_line_tool, command, ["results_dir"] + argv[1:])
         path_sim_db_cd = os.path.join(
                 os.path.dirname(
-                        os.path.dirname(os.path.abspath(__file__)),
-                        'sim_db_cd.sh'))
-        if os.sep == '/':
-            path_sim_db_cd = path_sim_db_cd.replace(" ", "\ ")
-        arguments_sim_db_cd = "results_dir"
+                        os.path.dirname(os.path.abspath(__file__))),
+                        'sim_db_cd.sh')
+        arguments_sim_db_cd = " results_dir"
         for arg in argv[1:]:
             arguments_sim_db_cd = arguments_sim_db_cd + " " + arg
-        os.system(path_sim_db_cd + arguments_sim_db_cd)
+        os.system('"' + path_sim_db_cd + '"' + arguments_sim_db_cd)
     elif command == 'combine_dbs':
         combine_dbs.combine_dbs(name_command_line_tool, command, argv[1:])
     elif command == 'delete_empty_columns':
