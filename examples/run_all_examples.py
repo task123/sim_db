@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Example of how to use sim_db's 'add' and 'run' commands to run the examples 
 # for python, C and C++.
