@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Test commands of 'sim_db' command line tool."""
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import add_package_root_to_path

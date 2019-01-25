@@ -6,7 +6,7 @@ subdirectory for results and save 'results.txt' in this directory.
 
 Finally add empty simulation, write to it and read from it and then delete it.
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import add_package_root_to_path

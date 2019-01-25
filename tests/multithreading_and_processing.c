@@ -1,3 +1,8 @@
+/// Testing multithreading and multiprocessing for C verison of 'sim_db'.
+
+// Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Licensed under the MIT License.
+
 #define _POSIX_C_SOURCE 2
 
 #include <assert.h>

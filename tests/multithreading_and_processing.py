@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+""" Testing multithreading and processing for python version of 'sim_db'. """
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Licenced under the MIT License.
+
 import multiprocessing as mp
 from threading import Thread
 import subprocess

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Helper functions for used by both test_commands and test_function."""
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import os.path
@@ -41,7 +41,7 @@ def remove_cmake_output(output):
 
 def assert_output_python_program(output_program, db_id):
     printed_params = output_program.split('\n')
-    assert printed_params[0] == '0.2.5'
+    assert printed_params[0] == '0.2.6'
     assert printed_params[1] == "3"
     assert printed_params[2] == printed_params[1]
     assert printed_params[3] == "-5000000000.0"

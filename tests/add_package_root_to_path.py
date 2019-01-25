@@ -1,3 +1,6 @@
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Licenced under the MIT License.
+
 import os
 import sys
 sys.path.insert(

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(sim_db VERSION 0.2.5)
+project(sim_db VERSION 0.2.6)
 
 # Add sanitizer for debug mode if the compiler is GCC or Clang.
 set(WHICH_SANITIZER "address") # address, thread or memory

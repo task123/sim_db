@@ -4,7 +4,7 @@
 Test the python, C and C++ version of the functions and methods used in 
 external code for to interact with the database.
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import add_package_root_to_path
