@@ -39,7 +39,7 @@ struct SimDB {
     SimDBStringVec column_names;
 };
 
-void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
+static void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
     if (self->n_pointers >= self->buffer_size_pointers) {
         self->buffer_size_pointers *= 2;
         self->pointers_to_free =
@@ -50,7 +50,7 @@ void sim_db_add_pointer_to_free(SimDB* self, void* pointer) {
     self->n_pointers++;
 }
 
-void sim_db_free(SimDB* self, void* pointer) {
+static void sim_db_free(SimDB* self, void* pointer) {
     int pointer_pos = -1;
     for (size_t i = 0; i < self->n_pointers; i++) {
         if (pointer_pos > 0) {
@@ -73,7 +73,7 @@ bool sim_db_have_timed_out(SimDB* self) {
     return have_timed_out;
 }
 
-void sim_db_get_time_string(char time_string[]) {
+static void sim_db_get_time_string(char time_string[]) {
     time_t now = time(NULL);
     char local_time[26];
     strcpy(local_time, asctime(localtime(&now)));
@@ -96,8 +96,8 @@ void sim_db_get_time_string(char time_string[]) {
 }
 
 /* Return EXIT_SUCCESS if database is NOT busy. */
-bool sim_db_busy_database(SimDB* self, int sqlite_return_code,
-                          const char* function_name, int line_number) {
+static bool sim_db_busy_database(SimDB* self, int sqlite_return_code,
+                                 const char* function_name, int line_number) {
     if (sqlite_return_code != SQLITE_BUSY) {
         return EXIT_SUCCESS;
     } else {
@@ -156,8 +156,8 @@ bool sim_db_is_empty(SimDB* self, const char* column) {
     return is_empty;
 }
 
-void sim_db_update(SimDB* self, const char* column, const char* value,
-                   bool only_if_empty) {
+static void sim_db_update(SimDB* self, const char* column, const char* value,
+                          bool only_if_empty) {
     bool set_to_empty = false;
     if (value == NULL) {
         set_to_empty = true;
@@ -216,8 +216,8 @@ void sim_db_update(SimDB* self, const char* column, const char* value,
 }
 
 // Return EXIT_SUCCESS if file can be opened
-int sim_db_run_shell_command(const char* command, char* output,
-                             size_t len_output) {
+static int sim_db_run_shell_command(const char* command, char* output,
+                                    size_t len_output) {
     FILE* file;
     file = popen(command, "r");
     size_t i = 0;
@@ -235,7 +235,8 @@ int sim_db_run_shell_command(const char* command, char* output,
     }
 }
 
-bool sim_db_is_a_git_project(char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
+static bool sim_db_is_a_git_project(
+        char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
     char path_in_project[PATH_MAX + 1];
     strcpy(path_in_project, path_dot_sim_db_parent_dir);
     strcat(path_in_project, "/");
@@ -254,7 +255,7 @@ bool sim_db_is_a_git_project(char path_dot_sim_db_parent_dir[PATH_MAX + 1]) {
     return false;
 }
 
-char* sim_db_escape_quote_with_two_quotes(const char* string) {
+static char* sim_db_escape_quote_with_two_quotes(const char* string) {
     char* escaped_string = malloc(2 * (strlen(string) + 1) * sizeof(char));
     int j = 0;
     for (int i = 0; i < (int) strlen(string) + 1; i++) {
@@ -268,7 +269,7 @@ char* sim_db_escape_quote_with_two_quotes(const char* string) {
     return escaped_string;
 }
 
-void sim_db_find_path_proj_root(char* path_proj_root, int buffer_size) {
+static void sim_db_find_path_proj_root(char* path_proj_root, int buffer_size) {
     if (getcwd(path_proj_root, sizeof(char) * (buffer_size))) {
         strcat(path_proj_root, "/");
         char settings[30] = "/.sim_db/settings.txt";
@@ -302,7 +303,7 @@ void sim_db_find_path_proj_root(char* path_proj_root, int buffer_size) {
     }
 }
 
-SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
+static SimDB* sim_db_ctor_metadata(int argc, char** argv, bool store_metadata) {
     char path_proj_root[PATH_MAX + 1];
     bool is_path_proj_root_found = false;
     bool is_id_found = false;
@@ -491,8 +492,8 @@ SimDB* sim_db_ctor_without_search(const char* path_proj_root, int id,
 }
 
 /* MUST call sqlite3_finalize on return value. */
-sqlite3_stmt* sim_db_select_prepare_step(SimDB* self, const char* column,
-                                         int sqlite_return_type) {
+static sqlite3_stmt* sim_db_select_prepare_step(SimDB* self, const char* column,
+                                                int sqlite_return_type) {
     char query[256];
     sprintf(query, "SELECT %s FROM runs WHERE \"id\" = %d", column, self->id);
     sqlite3_stmt* stmt = NULL;
@@ -772,14 +773,14 @@ SimDBBoolVec sim_db_read_bool_vec(SimDB* self, const char* column) {
     return bool_vec;
 }
 
-void sim_db_free_column_names(SimDBStringVec column_names) {
+static void sim_db_free_column_names(SimDBStringVec column_names) {
     for (size_t i = 0; i < column_names.size; i++) {
         free(column_names.array[i]);
     }
     free(column_names.array);
 }
 
-void sim_db_update_column_names(SimDB* self) {
+static void sim_db_update_column_names(SimDB* self) {
     char query[100];
     sprintf(query, "SELECT * FROM runs WHERE \"id\" = %d;", self->id);
     sqlite3_stmt* stmt = NULL;
@@ -843,8 +844,8 @@ bool sim_db_column_exists(SimDB* self, const char* column) {
     return false;
 }
 
-void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
-                                     const char* type) {
+static void sim_db_add_column_if_not_exists(SimDB* self, const char* column,
+                                            const char* type) {
     char* query = malloc(sizeof(char) * (strlen(column) + 100));
     sprintf(query, "ALTER TABLE runs ADD COLUMN \"%s\" %s", column, type);
 
@@ -1043,7 +1044,7 @@ void sim_db_set_empty(SimDB* self, const char* column) {
 
 /* Return pthread_self() as a string of hexadecimals too be able to print it
  * in a portaple way. (Its type pthread_t can be anything depending on impl.)*/
-char* sim_db_hexadecimal_thread_id(SimDB* self) {
+static char* sim_db_hexadecimal_thread_id(SimDB* self) {
     pthread_t thread_self = pthread_self();
     unsigned char* thread_id = (unsigned char*) (void*) (&thread_self);
     char* hexadecimal_thread_id =
@@ -1239,7 +1240,7 @@ void sim_db_dtor(SimDB* self) {
     sqlite3_close(self->db);
 }
 
-const char* sim_db_get_create_table_query() {
+static const char* sim_db_get_create_table_query() {
     return "CREATE TABLE IF NOT EXISTS runs (id INTEGER PRIMARY KEY, "
            "status TEXT, name TEXT, description TEXT, run_command TEXT, "
            "comment TEXT, results_dir TEXT, add_to_job_script TEXT, "
