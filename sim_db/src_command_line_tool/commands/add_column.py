@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Add a new column to the database.
 
@@ -5,7 +6,7 @@ If the column already exists, then nothing happens.
 
 Usage: 'python add_column.py -column NAME'
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

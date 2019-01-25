@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Run a simulation, by running the 'run_command' with 'ID' in database.
 
 Usage: 'python run_sim.py --id ID'
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

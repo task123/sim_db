@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """sim_db command line tool entry points"""
 # Copyright (C) 2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>

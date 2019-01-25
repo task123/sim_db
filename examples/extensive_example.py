@@ -5,7 +5,7 @@ Usage: 'add_and_run --filename sim_params_example_python_program.txt'
     or with parameter with id, ID, in database:
        'python example_program --id ID --path_sim_db ".."'
 """
-# Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import numpy as np

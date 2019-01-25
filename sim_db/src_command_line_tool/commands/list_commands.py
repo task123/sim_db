@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Print a list of all the commands.
 
 These are the commands available after running: 'python generate_commands.py'.
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import os

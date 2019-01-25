@@ -5,7 +5,7 @@
 //        'make extensive_cpp_example_updated'
 //      + './extensive_c_example --id ID --path_sim_db ".."
 
-// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
 #include <limits.h>
@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #ifndef PATH_MAX
-#define PATH_MAX
+#define PATH_MAX 4096
 #endif
 
 #include "sim_db.h"  // Parts from the standard library is also included.

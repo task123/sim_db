@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
 #define _XOPEN_SOURCE 500

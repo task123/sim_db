@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Add simulation parameters to a sqlite3 database from a text file.
 
@@ -16,7 +17,7 @@ matches the currect directory.
 
 Usage: 'python add_sim.py' or 'python add_sim.py -filename name_param_file.txt'
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

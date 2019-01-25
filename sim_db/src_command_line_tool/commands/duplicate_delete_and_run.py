@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Duplicate simulation from database, delete old and run new.
 
@@ -11,7 +12,7 @@ be used to run a simulation.
 
 Usage: 'python duplicate_delete_and_run.py --id ID'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

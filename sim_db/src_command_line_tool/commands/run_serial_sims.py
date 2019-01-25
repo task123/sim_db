@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Run a multiple simulations in series.
 
@@ -6,7 +7,7 @@ the simulations with 'new' status is run.
 
 Usage: 'python run_serial_sims.py --id ID_1 ID_2 ID_3'
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Make a update in the database.
 
@@ -7,7 +8,7 @@ Usage:
                             --values 'NEW_VALUE_1' 'NEW_VALUE_2'
                             --where "'COLUMN_NAME_1' > 10"
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

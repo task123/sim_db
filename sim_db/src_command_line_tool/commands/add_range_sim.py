@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Add a range of simulation to the database.
 
@@ -18,7 +19,7 @@ the next value is PREV_VALUE * STEP.
 Usage: 'python add_and_run.py --filename NAME_PARAM_FILE.TXT --lin_steps STEP
             --n_steps N'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

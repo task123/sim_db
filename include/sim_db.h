@@ -1,7 +1,7 @@
 /// @file sim_db.h
 /// @brief All C functions to use ```sim_db```.
 
-// Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
 #ifndef SIM_DB_H

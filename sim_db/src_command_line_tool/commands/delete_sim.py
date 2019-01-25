@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Delete a row in the sim.db.
 
@@ -7,7 +8,7 @@ simulation parameters (rows) from the database.
 Usage: python delete_sim.py --id 'ID'
        python delete_sim.py --where 'CONDITION'
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

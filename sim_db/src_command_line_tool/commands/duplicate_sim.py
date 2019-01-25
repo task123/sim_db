@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Duplicate a set of simulation parameters found in s database.
 
@@ -8,7 +9,7 @@ parameters that are NOT identical is the 'id', which will be unique, and
 
 Usage: 'python duplicate_sim.py --id ID' or 'python add_sim.py -i ID'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

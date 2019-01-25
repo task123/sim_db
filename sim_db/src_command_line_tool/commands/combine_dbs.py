@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Combine two databases into one.
 
@@ -7,7 +8,7 @@ differnt places.
 Usage:
     python combine_dbs.py 'sim_database_1.db' 'sim_database_2.db' 'new_name.db'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

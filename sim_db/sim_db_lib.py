@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Read and write parameters, results and metadata to the 'sim_db' database."""
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import sim_db.src_command_line_tool.commands.helpers as helpers

@@ -6,7 +6,7 @@ be run from anywhere. For Linux and Mac this involes adding a line to
 ~/.bashrc and ~/.bash_profile respectfully, where for as Windows nothing is 
 done.
 """
-# Copyright (C) 2017, 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 from commands import helpers

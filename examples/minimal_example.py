@@ -5,7 +5,7 @@ Usage: 'add_and_run --filename sim_params_minimal_python_example.txt'
     or with parameter with id, ID, in database:
        'python minimal_example.py --id ID --path_sim_db ".."'
 """
-# Copyright (C) 2017 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 # Include the 'sim_db/' directory to path.

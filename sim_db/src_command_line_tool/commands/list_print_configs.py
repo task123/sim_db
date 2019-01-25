@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """ Print a list of all the personalized print configurations.
 
@@ -7,7 +8,7 @@ flags they are shortcuts for.
 
 Usage: 'python print_sim.py -p NAME_PERSONALIZED_PRINT_CONFIGURATION'
 """
-# Copyright (C) 2018 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':
