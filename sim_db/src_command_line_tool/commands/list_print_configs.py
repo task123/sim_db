@@ -30,8 +30,10 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
 
 
 def list_print_configs(name_command_line_tool="sim_db",
-                       name_command="list_print_configs"):
-    command_line_arguments_parser(name_command_line_tool, name_command)
+                       name_command="list_print_configs",
+                       argv=None):
+    command_line_arguments_parser(name_command_line_tool,
+                                  name_command).parse_args(argv)
     settings = helpers.Settings()
     print_configs = settings.read('print_config')
     for print_config in print_configs:

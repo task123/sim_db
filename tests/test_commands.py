@@ -61,7 +61,7 @@ def test_add_sim_print_sim_and_delete_sim(capsys):
     output_after_delete, err = capsys.readouterr()
     with capsys.disabled():
         print("\nTest add_sim, print_sim and delete_sim...")
-    
+
     __assert_output_print_sim_after_add_sim(output_print_sim)
 
     # Test that the added simulation parameters are deleted
@@ -177,6 +177,18 @@ def test_list_commands(capsys):
     assert output_lines[24] == "settings"
     assert output_lines[25] == "submit / submit_sim"
     assert output_lines[26] == "update / update_sim"
+
+
+def test_list_print_configs(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
+    command_line_tool("sim_db", ["list_print_configs"])
+    output_list_commands, err = capsys.readouterr()
+    with capsys.disabled():
+        print("\nTest list_print_configs...")
+    settings = helpers.Settings()
+    for print_config, output in zip(
+            settings.read('print_config'), output_list_commands.split('\n')):
+        assert print_config == output
 
 
 def test_add_column_and_delete_empty_columns(capsys):
