@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(sim_db VERSION 0.2.7)
+project(sim_db VERSION 0.2.7 LANGUAGES C CXX)
+
+option(Fortran "Enable Fortran version of sim_db." OFF)
+
+if(Fortran)
+    enable_language(Fortran)
+endif()
 
 # Add sanitizer for debug mode if the compiler is GCC or Clang.
 set(WHICH_SANITIZER "address") # address, thread or memory

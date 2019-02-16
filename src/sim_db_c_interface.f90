@@ -1,3 +1,8 @@
+! Interface to C function of sim_db, so they can be called from Fortran.
+!
+! Copyright (C) 2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+! Licensed under the MIT License.
+
 module sim_db_c_interface
 use, intrinsic :: iso_c_binding, only : c_size_t, c_ptr
 
@@ -296,21 +301,22 @@ interface ! Interface to sim_db C functions
         use, intrinsic :: iso_c_binding, only : c_ptr
         implicit none
         type(c_ptr), value, intent(in) :: sim_db_ptr
-    end subroutine
+    end subroutine sim_db_dtor_c
 
-    type(c_ptr) function sim_db_add_emtpy_sim(store_metadata)
+    type(c_ptr) function sim_db_add_empty_sim_c(store_metadata) &
+            bind(c, name="sim_db_add_empty_sim")
         use, intrinsic :: iso_c_binding, only : c_ptr, c_bool
         implicit none
         logical(c_bool), value, intent(in) :: store_metadata
-    end function
+    end function sim_db_add_empty_sim_c
 
-    type(c_ptr) function sim_db_add_emtpy_sim_without_search(path_proj_root, &
-            store_metadata)
+    type(c_ptr) function sim_db_add_empty_sim_without_search_c(path_proj_root, &
+            store_metadata) bind(c, name="sim_db_add_empty_sim_without_search")
         use, intrinsic :: iso_c_binding, only : c_ptr, c_bool
         implicit none
         type(c_ptr), value, intent(in) :: path_proj_root
         logical(c_bool), value, intent(in) :: store_metadata
-    end function
+    end function sim_db_add_empty_sim_without_search_c
 
 end interface ! Interface to sim_db C functions
 

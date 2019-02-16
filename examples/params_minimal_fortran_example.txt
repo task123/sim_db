@@ -1,0 +1,10 @@
+name (string): minimal_fortran_example
+
+{cmake_config} (alias): cmake -Hroot/ -Broot/examples/build -DFortran=ON
+{cmake_build} (alias): {cmake_config}; cmake --build root/examples/build --target
+
+run_command (string): {cmake_build} minimal_fortran_example; root/examples/build/minimal_fortran_example
+
+param1 (string): "Minimal Fortran example is running."
+
+param2 (int): 42
