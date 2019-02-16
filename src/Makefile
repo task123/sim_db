@@ -42,8 +42,8 @@ $(LIB_OUTPUR_DIR)/libsimdbc.a: $(LIB_OUTPUR_DIR) sim_db.c.o $(SQLITE3_DIR)/sqlit
 $(LIB_OUTPUR_DIR)/libsimdbcpp.a: $(LIB_OUTPUR_DIR) sim_db.cpp.o sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
 	ar -r $@ sim_db.cpp.o sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
 
-$(LIB_OUTPUR_DIR)/libsimdbf.a: $(LIB_OUTPUR_DIR) class_sim_db.o $(LIB_OUTPUR_DIR)/class_sim_db.mod sim_db_c_interface.o $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
-	ar -r $@ class_sim_db.o sim_db_c_interface.o sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
+$(LIB_OUTPUR_DIR)/libsimdbf.a: $(LIB_OUTPUR_DIR) sim_db_mod.o $(LIB_OUTPUR_DIR)/sim_db_mod.mod sim_db_c_interface.o $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
+	ar -r $@ sim_db_mod.o sim_db_c_interface.o sim_db.c.o $(SQLITE3_DIR)/sqlite3.o
 
 sim_db.c.o: sim_db.c $(INCLUDE_DIR)/sim_db.h
 	$(CC) $(CFLAGS) -c -o $@ sim_db.c -I$(INCLUDE_DIR) -I$(SQLITE3_DIR)
@@ -51,14 +51,14 @@ sim_db.c.o: sim_db.c $(INCLUDE_DIR)/sim_db.h
 sim_db.cpp.o: sim_db.cpp $(INCLUDE_DIR)/sim_db.hpp $(INCLUDE_DIR)/sim_db.h
 	$(CXX) $(CXXFLAGS) -c -o $@ sim_db.cpp -I$(INCLUDE_DIR) -I$(SQLITE3_DIR)
 
-class_sim_db.o:  $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod class_sim_db.f90
-	$(FC) $(FFLAGS) -c -o $@ class_sim_db.f90 -J$(LIB_OUTPUR_DIR)
+sim_db_mod.o:  $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod sim_db_mod.f90
+	$(FC) $(FFLAGS) -c -o $@ sim_db_mod.f90 -J$(LIB_OUTPUR_DIR)
 
 sim_db_c_interface.o: sim_db_c_interface.f90
 	$(FC) $(FFLAGS) -c -o $@ $^ -J$(LIB_OUTPUR_DIR)
 
-$(LIB_OUTPUR_DIR)/class_sim_db.mod: $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod
-	$(FC) $(FFLAGS) -c -o $(LIB_OUTPUR_DIR)/class_sim_db.o $^ -J$(LIB_OUTPUR_DIR)
+$(LIB_OUTPUR_DIR)/sim_db_mod.mod: $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod
+	$(FC) $(FFLAGS) -c -o $(LIB_OUTPUR_DIR)/sim_db_mod.o $^ -J$(LIB_OUTPUR_DIR)
 
 $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod:
 	$(FC) $(FFLAGS) -c -o $(LIB_OUTPUR_DIR)/sim_db_c_interface.o sim_db_c_interface.f90 -J$(LIB_OUTPUR_DIR)
@@ -77,12 +77,12 @@ clean_except_third_party:
 	rm -f $(LIB_OUTPUR_DIR)/libsimdbc.a
 	rm -f $(LIB_OUTPUR_DIR)/libsimdbcpp.a
 	rm -f $(LIB_OUTPUR_DIR)/libsimdbf.a
-	rm -f $(LIB_OUTPUR_DIR)/class_sim_db.mod
+	rm -f $(LIB_OUTPUR_DIR)/sim_db_mod.mod
 	rm -f $(LIB_OUTPUR_DIR)/sim_db_c_interface.mod
 	rm -f sim_db.c.o
 	rm -f sim_db.cpp.o
 	rm -f sim_db_c_interface.o
-	rm -f class_sim_db.o
+	rm -f sim_db_mod.o
 
 clean_etp:
 	$(MAKE) clean_except_third_party

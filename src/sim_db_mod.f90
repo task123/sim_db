@@ -1,7 +1,7 @@
 ! Copyright (C) 2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 ! Licensed under the MIT License.
 
-module class_sim_db !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+module sim_db_mod !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 use, intrinsic :: iso_c_binding, only : c_ptr, c_int, c_double, c_bool, &
     c_char, c_size_t, c_null_char, c_loc, c_f_pointer
@@ -748,4 +748,4 @@ subroutine c_string_dtor(self)
     deallocate(self%c_str)
 end subroutine c_string_dtor
 
-end module class_sim_db !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+end module sim_db_mod !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

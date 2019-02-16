@@ -13,7 +13,7 @@ FFLAGS = -Wall
 
 export CC CXX FC CFLAGS CXXFLAGS FFLAGS
 
-.PHONY: all minimal_c_example_updated minimal_cpp_example_updated minimal_fortran_example extensive_c_example_updated extensive_cpp_example_updated minimal_c_example_run minimal_cpp_example_run clean clean_except_third_party clean_etp
+.PHONY: all minimal_c_example_updated minimal_cpp_example_updated minimal_fortran_example extensive_c_example_updated extensive_cpp_example_updated extensive_fortran_example_updated minimal_c_example_run minimal_cpp_example_run minimal_fortran_example_run minimal_c_example_without_lib minimal_cpp_example_without_lib minimal_fortran_example_without_lib clean clean_except_third_party clean_etp
 
 all:
 	$(MAKE) minimal_c_example_updated
@@ -67,6 +67,10 @@ extensive_c_example: extensive_example.c ../build/libsimdbc.a
 extensive_cpp_example: extensive_example.cpp ../build/libsimdbcpp.a
 	$(CXX) -std=c++11 -o extensive_cpp_example extensive_example.cpp -I../include -L../build -lsimdbcpp -lpthread -ldl
 
+# Use target extensive_fortran_example_updated instead as it check libsimdbf.a's dependencies.
+extensive_fortran_example: extensive_example.f90 ../build/libsimdbf.a
+	$(FC) -o extensive_fortran_example extensive_example.f90 -I../build -L../build -lsimdbf -lpthread -ldl -lm
+
 minimal_c_example_without_lib: minimal_example.cpp ../src/sim_db.c ../include/sim_db.h
 	$(CC) -o minimal_c_example minimal_example.c ../src/sim_db.c ../third_party/sqlite3/sqlite3.c -I../include/ -I../third_party/sqlite3/ -lpthread -ldl -lm
 
@@ -76,9 +80,12 @@ minimal_cpp_example_without_lib: minimal_example.cpp ../src/sim_db.cpp ../includ
 	$(CXX) -std=c++11 -o minimal_cpp_example minimal_example.cpp ../src/sim_db.cpp -I../include sim_db.o sqlite3.o -lpthread -ldl
 	rm -f sim_db.o sqlite3.o
 
-# Use target extensive_fortran_example_updated instead as it check libsimdbf.a's dependencies.
-extensive_fortran_example: extensive_example.f90 ../build/libsimdbf.a
-	$(FC) -o extensive_fortran_example extensive_example.f90 -I../build -L../build -lsimdbf -lpthread -ldl -lm
+minimal_fortran_example_without_lib: minimal_example.f90 ../src/sim_db_mod.f90 ../src/sim_db_c_interface.f90 ../src/sim_db.c ../include/sim_db.h
+	$(CC) -c -o sim_db.o ../src/sim_db.c -I../include -I../third_party/sqlite3
+	$(CC) -c -o sqlite3.o ../third_party/sqlite3/sqlite3.c
+	$(FC) -c -o sim_db_c_interface.o -J. ../src/sim_db_c_interface.f90
+	$(FC) -c -o sim_db_mod.o -J. ../src/sim_db_mod.f90
+	$(FC) -o minimal_fortran_example minimal_example.f90 sim_db_mod.o sim_db_c_interface.o sim_db.o sqlite3.o
 
 # $ make minimal_c_example_run ID='ID'
 minimal_c_example_run: minimal_c_example_updated
@@ -93,14 +100,7 @@ minimal_fortran_example_run: minimal_fortran_example_updated
 	./minimal_fortran_example --id ${ID}
 
 clean:
-	rm -f minimal_c_example
-	rm -f minimal_cpp_example
-	rm -f minimal_fortran_example
-	rm -f extensive_c_example
-	rm -f extensive_cpp_example
-	rm -f extensive_fortran_example
-	rm -fr results/*
-	rm -fr build
+	$(MAKE) clean_except_third_party
 	$(MAKE) -C ../src clean
 
 clean_except_third_party:
@@ -112,6 +112,8 @@ clean_except_third_party:
 	rm -f extensive_fortran_example
 	rm -fr results/*
 	rm -fr build
+	rm -f *.o
+	rm -f *.mod
 	$(MAKE) -C ../src clean_except_third_party
 
 clean_etp:

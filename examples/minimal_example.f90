@@ -9,7 +9,7 @@
 ! Licensed under the MIT License.
 
 program minimal_example
-    use class_sim_db
+    use sim_db_mod
     implicit none
 
     type(sim_db) :: sim_database

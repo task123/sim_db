@@ -60,7 +60,7 @@ install(FILES ${simdbc_REQUIRED_HEADERS} ${simdbcpp_REQUIRED_HEADERS}
 if(${CMAKE_Fortran_COMPILER_LOADED})
     message("fortran loaded")
     add_library(simdbf
-                class_sim_db.f90
+                sim_db_mod.f90
                 sim_db_c_interface.f90
                 sim_db.c
                 ${SQLITE_DIR}/sqlite3.c
@@ -79,7 +79,7 @@ if(${CMAKE_Fortran_COMPILER_LOADED})
     )
     set(simdbf_REQUIRED_MODULES 
         ${PROJECT_BINARY_DIR}/sim_db_c_interface.mod 
-        ${PROJECT_BINARY_DIR}/class_sim_db.mod
+        ${PROJECT_BINARY_DIR}/sim_db_mod.mod
     )
 
 
