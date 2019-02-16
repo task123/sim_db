@@ -1,18 +1,16 @@
 # .sim_db directory
 .sim_db/sim.db
 
-# Static libraries
-lib/libsimdbc.a
-lib/libsimdbcpp.a
-
 # Executable test and example programs
 tests/c_program
 tests/cpp_program
 tests/c_mtap
 examples/minimal_c_example
 examples/minimal_cpp_example
+examples/minimal_fortran_example
 examples/extensive_c_example
 examples/extensive_cpp_example
+examples/extensive_fortran_example
 
 # Test and example results not deleted
 tests/results/*
@@ -37,6 +35,9 @@ sim_db.egg-info/*
 
 # Object files
 *.o
+
+# Fortran modules
+*.mod
 
 # Debug symbols
 *.dSYM/*

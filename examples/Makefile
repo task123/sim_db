@@ -83,7 +83,7 @@ minimal_cpp_example_without_lib: minimal_example.cpp ../src/sim_db.cpp ../includ
 minimal_fortran_example_without_lib: minimal_example.f90 ../src/sim_db_mod.f90 ../src/sim_db_c_interface.f90 ../src/sim_db.c ../include/sim_db.h
 	$(CC) -c -o sim_db.o ../src/sim_db.c -I../include -I../third_party/sqlite3
 	$(CC) -c -o sqlite3.o ../third_party/sqlite3/sqlite3.c
-	$(FC) -c -o sim_db_c_interface.o -J. ../src/sim_db_c_interface.f90
+	$(FC) -c -o sim_db_c_interface.o ../src/sim_db_c_interface.f90
 	$(FC) -c -o sim_db_mod.o -J. ../src/sim_db_mod.f90
 	$(FC) -o minimal_fortran_example minimal_example.f90 sim_db_mod.o sim_db_c_interface.o sim_db.o sqlite3.o
 
