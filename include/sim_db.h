@@ -350,9 +350,6 @@ SimDB* sim_db_add_empty_sim(bool store_metadata);
 
 /// Add empty simulation to database and return a SimDB connected to it.
 //
-/// The current working directory and its parent directories will be searched
-/// until *.sim_db/* is found.
-///
 /// @return SimDB of the added simulation.
 /// @param path_proj_root Path to root directory of the project, where
 /// *.sim_db/* is located.

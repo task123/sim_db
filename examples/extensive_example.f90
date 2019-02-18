@@ -85,6 +85,9 @@ program extensive_example
     ! Delete simulation from database.
     call sim_database_2%delete_from_database()
 
-    call sim_database % close()
-
+    ! Write final metadata to database and close connection.
+    ! (Final method (destructor) is not called at end of program, so close()
+    !  MUST be called manually. It is always recommended to call close()
+    !  explicitly to avoid unexpected, because of this.)
+    call sim_database%close()
 end program extensive_example

@@ -35,9 +35,9 @@ Few Dependencies
 ++++++++++++++++
 Few dependencies make your project easier to install and to get running, and **sim_db** keeps it to :ref:`a minimum <dependencies>` requiring essentially only a Python interpreter.
 
-Python, C and C++
-+++++++++++++++++
-**sim_db** exists for both Python, C and C++ and wrappers for languages that can call C functions are quite easy to add. It is also very useful that multiple programs of different languages can read the same parameters from the database. This does for example allows the plotting, visualization and after work can be seperated in a in a python program and the actual computational intensive simulation in a C++ program.
+Python, C, C++ and Fortran
+++++++++++++++++++++++++++
+**sim_db** exists for both Python, C, C++ and Fortran, and wrappers for languages that can call C functions are quite easy to add. It is also very useful that multiple programs of different languages can read the same parameters from the database. This does for example allows the plotting, visualization and after work can be seperated in a in a python program and the actual computational intensive simulation in a C++ program.
 
 Thread Safe
 +++++++++++

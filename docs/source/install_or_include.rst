@@ -44,16 +44,16 @@ Change directory to your projects root directory and initiate **sim_db** with th
 
 The command will add a *.sim_db/* directory.
 
-C and C++ versions
-------------------
+C, C++ or Fortran versions
+--------------------------
 
-If one are going to use in the C or C++ version of **sim_db**, one also have to download the source code from `github <https://github.com/task123/sim_db>`_. It is recommended to add **sim_db** as a git submodule of your project by (inside your project) running:
+If one are going to use in the C, C++ or Fortran version of **sim_db**, one also have to download the source code from `github <https://github.com/task123/sim_db>`_. It is recommended to add **sim_db** as a git submodule of your project by (inside your project) running:
 
 .. code-block:: console
 
     $ git submodule add https://github.com/task123/sim_db
 
-The C and C++ libraries now needs to by complied and this can be done either with CMake or just with Make. To compile and install the libraries with CMake run these commands:
+The C, C++ and Fortran libraries now needs to by complied and this can be done either with CMake or just with Make. To compile and install the libraries with CMake run these commands:
 
 .. code-block:: console
 
@@ -62,6 +62,8 @@ The C and C++ libraries now needs to by complied and this can be done either wit
     $ cd build
     $ cmake .. -DCMAKE_BUILD_TYPE=Release
     $ cmake --build . --target install
+
+(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran``.)
 
 To compile the libraries using just Make run these commands:
 
@@ -72,7 +74,7 @@ To compile the libraries using just Make run these commands:
 
 (If **sim_db** haven't already been install with ``pip`` and you are running just make, it will be installed now.) 
 
-The libraries should now be available in *sim_db/build/* as *libsimdb.a* and *libsimdbcpp.a* with headers *sim_db/include/sim_db.h* and *sim_db/include/sim_db.hpp* respectfully.
+The libraries should now be available in *sim_db/build/* as *libsimdb.a*, *libsimdbcpp.a* and *libsimdbf.a* (+ *sim_db_mod.mod*) with headers *sim_db/include/sim_db.h* and *sim_db/include/sim_db.hpp* respectfully.
 
 Include in Your Project
 =======================
@@ -97,17 +99,19 @@ If Make is available run the following commands:
 
 Answer yes when asked to add *sim_db/sim_db* to your *PATH* in *~/.bashrc* or *~/.bash_profile* and remember to source it.
 
-If Make is not available, include *sim_db/sim_db* to your *PATH* and if the C and C++ libraries are needed compile them with CMake by running these commands:
+If Make is not available, include *sim_db/sim_db* to your *PATH* and if the C, C++ or Fortran libraries are needed compile them with CMake by running these commands:
 
 .. code-block:: console
 
     $ cd sim_db
     $ mkdir build
     $ cd build
-    $ cmake ..
+    $ cmake .. -DCMAKE_BUILD_TYPE=Release
     $ cmake --build .
 
-All **sim_db** commands should now be available and the C and C++ libraries should be compiled and found in the *build/* directory with the headers in *include/*. Test the following command:
+(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran``.)
+
+All **sim_db** commands should now be available and the C, C++ and Fortran libraries should be compiled and found in the *build/* directory with the headers in *include/*. Test the following command:
 
 .. code-block:: console
 
@@ -141,7 +145,11 @@ The dependencies for **sim_db** is tried to keep at a absolute minimum and it is
 
 * **Python 2.6 or greater** - A Python interpreter of version 2.6 or greater (that means that is also does work with Python 3) is needed as all the commands are written in Python. Pre-installed on almost all Linux distros and on MacOS.
 
-* **C and C++ compiler** - C99 and C++98 compilers are need for using **sim_db** with C or C++ code, but in that case these compilers are of couse needed anyways. Only the examples need a C++11 compiler.
+* **C compiler** - A C99 compiler are needed for using **sim_db** with C, C++ or Fortran, but in that case a C compiler are usually need anyways. For C code it is of couse strictly necessary, and for C++ and Fortran its preprocessor are often used and almost always present if a C++ or Fortran compiler is present.
+
+* **C++ compiler** - A C++98 compilers are needed for using **sim_db** with C++ code, but in that case these the compiler is of couse needed anyways. Only the examples need a C++11 compiler.
+
+* **Fortran compiler** - A Fortran 2008 compiler are needed for using **sim_db** with Fortran code, but in that case a Fortran compiler is of course needed anyways.
 
 Recommended:
 

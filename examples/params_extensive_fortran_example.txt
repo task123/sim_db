@@ -16,7 +16,7 @@ description (string): Extensive Fortran example to demonstrate most features in 
 # commands that compile the extensitve example if needed. The last part of the 
 # 'run_command' then run the compiled example. Each command is seperated by a 
 # semicolon, but they all need to be on the same line.
-run_command (string): make extensive_fortran_example; root/examples/extensive_fortran_example
+run_command (string): {cmake_build} extensive_fortran_example; root/examples/build/extensive_fortran_example
 
 # A parameter is added for each of the avaiable types.
 param1_extensive (int): 3

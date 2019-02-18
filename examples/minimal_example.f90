@@ -25,4 +25,7 @@ program minimal_example
 
     ! Demonstrate that the simulation is running.
     print *, param1
+
+    ! Write final metadata to database and close connection.
+    call sim_database%close()
 end program minimal_example
