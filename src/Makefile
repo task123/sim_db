@@ -7,7 +7,7 @@ FFLAGS := $(if $(FFLAGS), $(FFLAGS), $(FFLAGS_RELEASE))
 
 CC := $(if $(CC), $(CC), cc)
 CXX := $(if $(CXX), $(CXX), c++)
-FC = gfortran
+FC := $(if $(FC), $(FC), gfortran)
 
 LDFLAGS = -I../build
 

@@ -4,6 +4,7 @@
 # Executable test and example programs
 tests/c_program
 tests/cpp_program
+tests/fortran_program
 tests/c_mtap
 examples/minimal_c_example
 examples/minimal_cpp_example

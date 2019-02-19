@@ -133,7 +133,7 @@ int main() {
         }
     }
     if (child_pid == 0) {
-        char command[PATH_MAX + 100];
+        char command[PATH_MAX + 150];
         sprintf(command, "\"%s/tests/c_program\" --id %d running_in_parallel",
                 path_proj_root, id_added);
         int output_program_length = 300;

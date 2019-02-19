@@ -59,7 +59,7 @@ def __c_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=False)
+    __assert_output_c_cpp_and_fortran_program(output_program, db_id)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
@@ -109,47 +109,100 @@ def __cpp_functions(capsys, store_metadata):
             if len(err_program) + len(err_print_sim) > 0:
                 print(err_program)
                 print(err_print_sim)
-    ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=True)
+    __assert_output_c_cpp_and_fortran_program(output_program, db_id, 
+        is_cpp=True)
     common_test_helpers.assert_output_print_sim_after_run_sim(
             output_print_sim, store_metadata)
 
+def test_fortran_functions(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
+    __fortran_functions(capsys, True)
 
-def ___assert_output_c_and_cpp_program(output_program, db_id, is_cpp=False):
+
+def test_fortran_functions_without_storing_metadata(capsys):
+    common_test_helpers.skip_if_outside_sim_db()
+    __fortran_functions(capsys, False)
+
+
+def __fortran_functions(capsys, store_metadata):
+    db_id = command_line_tool(
+            "sim_db", [
+                    "add_sim", "--filename",
+                    "{0}/params_fortran_program.txt".format(
+                            common_test_helpers.get_test_dir())
+            ],
+            print_ids_added=False)
+    if not store_metadata:
+        __add_no_metadata_flag_to_run_command(capsys, db_id)
+    command_line_tool("sim_db", "run_sim --id {0}".format(db_id).split())
+    output_program, err_program = capsys.readouterr()
+    output_program = common_test_helpers.remove_cmake_output(output_program)
+    command_line_tool(
+            "sim_db",
+            "print_sim --id {0} -v --columns new_test_param1 new_test_param2 "
+            "new_test_param3 new_test_param4 new_test_param5 new_test_param6 "
+            "new_test_param7 new_test_param8 new_test_param9 new_test_param10 "
+            "results_dir time_started used_walltime --no_headers"
+            .format(db_id).split())
+    output_print_sim, err_print_sim = capsys.readouterr()
+    command_line_tool("sim_db",
+                      ["delete_sim", "--id",
+                       str(db_id), "--no_checks"])
+    with capsys.disabled():
+        if store_metadata:
+            print("\nTest Fortran methods...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+        else:
+            print("\nTest Fortran methods without storing metadata...")
+            if len(err_program) + len(err_print_sim) > 0:
+                print(err_program)
+                print(err_print_sim)
+    __assert_output_c_cpp_and_fortran_program(output_program, db_id, 
+        is_fortran=True)
+    common_test_helpers.assert_output_print_sim_after_run_sim(
+            output_print_sim, store_metadata)
+
+def __assert_output_c_cpp_and_fortran_program(output_program, db_id, 
+        is_cpp=False, is_fortran=False):
     printed_lines = output_program.split('\n')
     if printed_lines[0] == "(May take 10-30 seconds.)":
         printed_lines = output_program.split('\n')[3:]
-    assert printed_lines[0] == sim_db.__version__
-    assert printed_lines[1] == "3"
-    assert printed_lines[2] == printed_lines[1]
-    assert abs(float(printed_lines[3]) - -5000000000.0) < 0.001
-    assert abs(float(printed_lines[4]) - float(printed_lines[3])) < 0.001
-    assert printed_lines[5] == "hei"
-    assert printed_lines[6] == printed_lines[5]
-    assert printed_lines[7] == "1"
-    assert printed_lines[8] == printed_lines[7]
-    assert printed_lines[9:12] == ['1', '2', '3']
-    assert printed_lines[9:12] == printed_lines[12:15]
-    abs(float(printed_lines[15]) - 1.5) < 0.001
-    abs(float(printed_lines[16]) - 2.5) < 0.001
-    abs(float(printed_lines[17]) - 3.5) < 0.001
-    assert printed_lines[15:18] == printed_lines[18:21]
-    assert printed_lines[21:24] == ['a', 'b', 'c']
-    assert printed_lines[21:24] == printed_lines[24:27]
-    assert printed_lines[27:30] == ['1', '0', '1']
-    assert printed_lines[27:30] == printed_lines[30:33]
-    assert printed_lines[33] == "9"
-    assert printed_lines[34] == printed_lines[33]
-    assert printed_lines[35] == "11"
-    assert printed_lines[36] == printed_lines[35]
-    assert printed_lines[37] == "0"
+    if not is_fortran:
+        assert printed_lines[0] == sim_db.__version__
+        printed_lines.pop(0)
+    assert printed_lines[0] == "3"
+    assert printed_lines[1] == printed_lines[0]
+    assert abs(float(printed_lines[2]) - -5000000000.0) < 0.001
+    assert abs(float(printed_lines[3]) - float(printed_lines[2])) < 0.001
+    assert printed_lines[4] == "hei"
+    assert printed_lines[5] == printed_lines[4]
+    assert printed_lines[6] == "1"
+    assert printed_lines[7] == printed_lines[6]
+    assert printed_lines[8:11] == ['1', '2', '3']
+    assert printed_lines[8:11] == printed_lines[11:14]
+    abs(float(printed_lines[14]) - 1.5) < 0.001
+    abs(float(printed_lines[15]) - 2.5) < 0.001
+    abs(float(printed_lines[16]) - 3.5) < 0.001
+    assert printed_lines[14:17] == printed_lines[17:20]
+    assert printed_lines[20:23] == ['a', 'b', 'c']
+    assert printed_lines[20:23] == printed_lines[23:26]
+    assert printed_lines[26:29] == ['1', '0', '1']
+    assert printed_lines[26:29] == printed_lines[29:32]
+    assert printed_lines[32] == "9"
+    assert printed_lines[33] == printed_lines[32]
+    assert printed_lines[34] == "11"
+    assert printed_lines[35] == printed_lines[34]
+    assert printed_lines[36] == "0"
+    assert printed_lines[37] == "1"
     assert printed_lines[38] == "1"
-    assert printed_lines[39] == "1"
-    assert printed_lines[40] == "0"
+    assert printed_lines[39] == "0"
     if is_cpp:
-        assert printed_lines[41] == "threw exception"
-        assert printed_lines.pop(41)
-    assert printed_lines[41] == str(db_id + 1)
-    assert printed_lines[42] == "7"
+        assert printed_lines[40] == "threw exception"
+        assert printed_lines.pop(40)
+    assert printed_lines[40] == str(db_id + 1)
+    assert printed_lines[41] == "7"
 
 
 def __add_no_metadata_flag_to_run_command(capsys, db_id):

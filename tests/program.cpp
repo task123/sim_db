@@ -1,4 +1,4 @@
-/// Testing 'sim_db' for C, that is 'sim_db.h' and 'sim_db.c'.
+/// Testing 'sim_db' for C++, that is 'sim_db.hpp' and 'sim_db.cpp'.
 ///
 /// Read in parameters from database, write parameters to database, make unique
 /// subdirectory for results and save 'results.txt' in this directory.

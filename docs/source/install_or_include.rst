@@ -63,7 +63,7 @@ The C, C++ and Fortran libraries now needs to by complied and this can be done e
     $ cmake .. -DCMAKE_BUILD_TYPE=Release
     $ cmake --build . --target install
 
-(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran``.)
+(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran=ON``.)
 
 To compile the libraries using just Make run these commands:
 
@@ -109,7 +109,7 @@ If Make is not available, include *sim_db/sim_db* to your *PATH* and if the C, C
     $ cmake .. -DCMAKE_BUILD_TYPE=Release
     $ cmake --build .
 
-(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran``.)
+(For Fortran ``$ cmake .. -DCMAKE_BUILD_TYPE=Release`` must be replaced with ``$ cmake .. -DCMAKE_BUILD_TYPE=Release -DFortran=ON``.)
 
 All **sim_db** commands should now be available and the C, C++ and Fortran libraries should be compiled and found in the *build/* directory with the headers in *include/*. Test the following command:
 
@@ -161,7 +161,7 @@ Recommended:
 
 For Windows:
 
-* **Cygwin/MinGW** - The the C and C++ libraries relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks.
+* **Linux Subsystem/Cygwin/MinGW** - The the C, C++ and Fortran libraries relie on Unix (POSIX) style paths, which Cygwin/MinGW/powershell mimicks and Linux subsystem for Windows (obviousely) gives you.
 
 (Not propery tested on windows yet.)
 

@@ -979,7 +979,7 @@ type(c_string) function c_string_ctor(f_string) result(obj)
 
     integer :: len_str
     len_str = len_trim(f_string)
-    allocate(character(len_str + 1) :: obj%c_str)
+    allocate(character(len=(len_str + 1), kind=c_char) :: obj%c_str)
     obj%c_str = f_string
     obj%c_str(len_str + 1:len_str + 1) = c_null_char
 end function c_string_ctor
