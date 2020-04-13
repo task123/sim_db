@@ -66,10 +66,10 @@ Notice that when it is run, it first call ``cmake`` to compile the code if neede
 C API Referance
 ====================
 
-.. doxygenfunction:: sim_db_ctor
+.. doxygenfunction:: sim_db_ctor(int, char **)
 .. doxygenfunction:: sim_db_ctor_no_metadata
-.. doxygenfunction:: sim_db_ctor_with_id
-.. doxygenfunction:: sim_db_ctor_without_search
+.. doxygenfunction:: sim_db_ctor_with_id(int, bool)
+.. doxygenfunction:: sim_db_ctor_without_search(const char *, int, bool)
 .. doxygenfunction:: sim_db_read_int
 .. doxygenfunction:: sim_db_read_double
 .. doxygenfunction:: sim_db_read_string
@@ -105,4 +105,4 @@ C API Referance
 .. doxygenfunction:: sim_db_delete_from_database
 .. doxygenfunction:: sim_db_dtor
 .. doxygenfunction:: sim_db_add_empty_sim
-.. doxygenfunction:: sim_db_add_empty_sim_without_search
+.. doxygenfunction:: sim_db_add_empty_sim_without_search(const char *, bool)

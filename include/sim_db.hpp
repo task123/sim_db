@@ -1,3 +1,6 @@
+/// @file sim_db.hpp
+/// @brief The C++ class and functions to use ```sim_db```.
+
 // Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
@@ -146,6 +149,9 @@ private:
 
 /// Add empty simulation to database and return Connection connected to it.
 //
+/// The current working directory and its parent directories will be searched
+/// until *.sim_db/* is found.
+///
 /// @param store_metadata Stores metadata to database if true. Set to
 /// 'false' for postprocessing (e.g. visualization) of data from simulation.
 /// @exception sim_db::TimeoutError Waited more than 5 seconds to write to the

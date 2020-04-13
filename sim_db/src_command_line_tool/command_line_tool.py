@@ -38,6 +38,7 @@ import sim_db.src_command_line_tool.commands.extract_params as extract_params
 import sim_db.src_command_line_tool.commands.get as get
 import sim_db.src_command_line_tool.commands.init as init
 import sim_db.src_command_line_tool.commands.list_commands as list_commands
+import sim_db.src_command_line_tool.commands.list_print_configs as list_print_configs
 import sim_db.src_command_line_tool.commands.print_sim as print_sim
 import sim_db.src_command_line_tool.commands.run_serial_sims as run_serial_sims
 import sim_db.src_command_line_tool.commands.run_sim as run_sim

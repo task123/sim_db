@@ -87,6 +87,27 @@ run(
 "sim_db delete --id {0} --no_checks".format(id_for_minimal_c_example))
 
 print("""
+######################## Run minimal Fortran example ###########################
+""")
+
+run(
+"# Add example parameters to database for minimal Fortran example.",
+"sim_db add --filename root/examples/params_minimal_fortran_example.txt")
+
+id_for_minimal_fortran_example = run(
+"# Get hold of the ID of the exampel parameters for minimal Fortran example.",
+"sim_db print -n 1 --columns id --no_headers")
+
+run(
+"# Run minimal_example.f90 (after compiling it with make command).",
+"sim_db run --id {0}".format(id_for_minimal_fortran_example))
+
+run(
+"# Delete example simulation from database.",
+"sim_db delete --id {0} --no_checks".format(id_for_minimal_fortran_example))
+
+
+print("""
 ######################## Run extensive python example ########################## 
 """)
 
@@ -145,3 +166,23 @@ run(
 run(
 "# Delete example simulation from database.",
 "sim_db delete --id {0} --no_checks".format(id_for_extensive_c_example))
+
+print("""
+########################## Run extensive Fortran example ############################# 
+""")
+
+run(
+"# Add example parameters to database for extensive Fortran example.",
+"sim_db add --filename root/examples/params_extensive_fortran_example.txt")
+
+id_for_extensive_fortran_example = run(
+"# Get hold of the ID of the exampel parameters for extensive Fortran example.",
+"sim_db print -n 1 --columns id --no_headers")
+
+run(
+"# Run extensive_example.f90 (after compiling it with make command).",
+"sim_db run --id {0}".format(id_for_extensive_fortran_example))
+
+run(
+"# Delete example simulation from database.",
+"sim_db delete --id {0} --no_checks".format(id_for_extensive_fortran_example))

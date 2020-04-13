@@ -446,11 +446,11 @@ SimDB* sim_db_ctor_without_search(const char* path_proj_root, int id,
             sim_db_update(sim_db, "git_hash", output, true);
         }
 
-        sprintf(command, "cd \"%s\" && git log -n --format=%%B HEAD",
+        sprintf(command, "cd \"%s\" && git log -n 1 --format=%%B HEAD",
                 sim_db->path_proj_root);
         if (sim_db_run_shell_command(command, output, len_output) == 0) {
             char* escaped_string = sim_db_escape_quote_with_two_quotes(output);
-            sim_db_update(sim_db, "commit_message", output, true);
+            sim_db_update(sim_db, "commit_message", escaped_string, true);
             free(escaped_string);
         }
 

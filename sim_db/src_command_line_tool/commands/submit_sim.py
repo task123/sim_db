@@ -93,7 +93,7 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
 
 
 def get_which_job_scheduler_from_settings():
-    which_job_scheduler = helpers.Settings.read('which_job_scheduler')
+    which_job_scheduler = helpers.Settings().read('which_job_scheduler')
     if (len(which_job_scheduler) == 0 or (which_job_scheduler[0] != 'SLURM' 
                 and which_job_scheduler[0] != 'PBS')):
         print("'Which job scheduler' in .sim_db/settings.txt is NOT one of the "

@@ -56,6 +56,44 @@ install(FILES ${simdbc_REQUIRED_HEADERS} ${simdbcpp_REQUIRED_HEADERS}
   DESTINATION include
 )
 
+
+if(${CMAKE_Fortran_COMPILER_LOADED})
+    add_library(simdbf
+                sim_db_mod.f90
+                sim_db_c_interface.f90
+                sim_db.c
+                ${SQLITE_DIR}/sqlite3.c
+    )
+    target_link_libraries(simdbf simdbc Threads::Threads ${CMAKE_DL_LIBS} m)            
+    set_target_properties(simdbf
+        PROPERTIES 
+            ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+            LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
+            Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+    target_include_directories(simdbf
+        PUBLIC
+            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+            $<INSTALL_INTERFACE:include>
+    )
+    set(simdbf_REQUIRED_MODULES 
+        ${PROJECT_BINARY_DIR}/sim_db_mod.mod
+    )
+
+
+    install(TARGETS simdbf
+        EXPORT sim_dbTargets
+        LIBRARY DESTINATION lib/sim_db
+        ARCHIVE DESTINATION lib/sim_db
+        RUNTIME DESTINATION bin/sim_db
+    )
+
+    install(FILES ${simdbf_REQUIRED_MODULES}
+      DESTINATION include
+    )
+endif()
+
+
 install(EXPORT sim_dbTargets
     NAMESPACE sim_db::
     DESTINATION lib/cmake/sim_db

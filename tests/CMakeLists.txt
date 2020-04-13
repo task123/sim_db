@@ -12,11 +12,19 @@ set_target_properties(c_program
 
 add_executable(cpp_program program.cpp)
 target_link_libraries(cpp_program simdbcpp)
-target_link_libraries(cpp_program simdbcpp)
 set_target_properties(cpp_program 
     PROPERTIES 
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/build
 )
+
+if(${CMAKE_Fortran_COMPILER_LOADED})
+    add_executable(fortran_program program.f90)
+    target_link_libraries(fortran_program simdbf)
+    set_target_properties(fortran_program
+        PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tests/build
+    )
+endif()
 
 find_package(Threads REQUIRED)
 

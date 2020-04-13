@@ -21,4 +21,5 @@ Welcome to sim_db's documentation!
    python_sim_db
    cpp_sim_db
    c_sim_db
+   fortran_sim_db
    tips_and_recommendations
