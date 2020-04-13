@@ -92,6 +92,16 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
     return parser
 
 
+def get_which_job_scheduler_from_settings():
+    which_job_scheduler = helpers.Settings.read('which_job_scheduler')
+    if (len(which_job_scheduler) == 0 or (which_job_scheduler[0] != 'SLURM' 
+                and which_job_scheduler[0] != 'PBS')):
+        print("'Which job scheduler' in .sim_db/settings.txt is NOT one of the "
+              "valid values: 'SLURM' or 'PBS'. Change with: '$ sim_db settings "
+              "<args>'")
+        exit(1)
+    return which_job_scheduler[0]
+
 def make_job_script(db_cursor, i, args, id_submit):
     try:
         db_cursor.execute("SELECT name, max_walltime, n_tasks FROM runs WHERE "
@@ -100,13 +110,7 @@ def make_job_script(db_cursor, i, args, id_submit):
         raise ValueError("ID {0} in the database is missing neccessary "
                          "parameters to submit job script.".format(id_submit))
     job_script_variables = db_cursor.fetchall()[0]
-    settings = helpers.Settings()
-    which_job_scheduler = settings.read('which_job_scheduler')[0]
-    if which_job_scheduler != 'SLURM' and which_job_scheduler != 'PBS':
-        print("'Which job scheduler' in .sim_db/settings.txt is NOT one of the "
-              "valid values: 'SLURM' or 'PBS'. Change with: '$ sim_db settings "
-              "<args>'")
-        exit(1)
+    which_job_scheduler = get_which_job_scheduler_from_settings()
 
     name = job_script_variables[0]
     if name != None:
@@ -142,6 +146,7 @@ def make_job_script(db_cursor, i, args, id_submit):
     elif which_job_scheduler == 'PBS':
         job_script_file.write("#PBS -l walltime={0}\n".format(max_walltime))
 
+    settings = helpers.Settings()
     n_cpus_per_node = settings.read('n_cpus_per_node')
     if len(n_cpus_per_node) > 0:
         n_cpus_per_node = int(n_cpus_per_node[0])
@@ -280,7 +285,8 @@ def submit_sim(name_command_line_tool="sim_db",
                       status))
                 exit()
 
-    which_job_scheduler = helpers.Settings().read('which_job_scheduler')[0]
+
+    which_job_scheduler = get_which_job_scheduler_from_settings()
     for i, id_submit in enumerate(ids):
         job_script_name = make_job_script(db_cursor, i, args, id_submit)
         if not args.do_not_submit_job_script:
