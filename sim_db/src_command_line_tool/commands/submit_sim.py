@@ -103,6 +103,7 @@ def get_which_job_scheduler_from_settings():
         exit(1)
     return which_job_scheduler[0]
 
+
 def make_job_script(db_cursor, i, args, id_submit):
     try:
         db_cursor.execute("SELECT name, max_walltime, n_tasks FROM runs WHERE "
@@ -231,7 +232,7 @@ def make_job_script(db_cursor, i, args, id_submit):
         job_script_file.write(line + '\n')
 
     for line in settings.read('add_to_job_script'):
-        job_script_file.write(line)
+        job_script_file.write(line + '\n')
 
     run_command = helpers.get_run_command(db_cursor, id_submit,
                                           job_script_variables[2])
@@ -242,6 +243,25 @@ def make_job_script(db_cursor, i, args, id_submit):
     job_script_file.close()
 
     return job_script_name
+
+
+def submit_job_script(name_job_script):
+    submit_command = ""
+    which_job_scheduler = get_which_job_scheduler_from_settings()
+    if which_job_scheduler == 'SLURM':
+        submit_command = "sbatch"
+    elif which_job_scheduler == 'PBS':
+        submit_command = "qsub"
+    p = subprocess.Popen(
+            [submit_command, name_job_script],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+    (job_id, err) = p.communicate()
+    for line in err:
+        print(line.decode('ascii', 'replace'))
+    job_id = job_id.split()[-1].decode('ascii', 'replace')
+
+    return job_id
 
 
 def submit_sim(name_command_line_tool="sim_db",
@@ -287,26 +307,10 @@ def submit_sim(name_command_line_tool="sim_db",
                 exit()
 
 
-    which_job_scheduler = get_which_job_scheduler_from_settings()
     for i, id_submit in enumerate(ids):
-        job_script_name = make_job_script(db_cursor, i, args, id_submit)
+        name_job_script = make_job_script(db_cursor, i, args, id_submit)
         if not args.do_not_submit_job_script:
-            if which_job_scheduler == 'SLURM':
-                p = subprocess.Popen(
-                        ["sbatch", job_script_name],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-                (job_id, err) = p.communicate()
-                print(err)
-                job_id = job_id.split()[-1]
-            elif which_job_scheduler == 'PBS':
-                p = subprocess.Popen(
-                        ["qsub", job_script_name],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE)
-                (job_id, err) = p.communicate()
-                print(err)
-                job_id = job_id.split()[-1]
+            job_id = submit_job_script(name_job_script) 
             db_cursor.execute("UPDATE runs SET status='submitted' WHERE id={0}" \
                               .format(id_submit))
             db_cursor.execute("UPDATE runs SET job_id={0} WHERE id={1}" \
@@ -317,7 +321,7 @@ def submit_sim(name_command_line_tool="sim_db",
     db.close()
 
     print("Job ID: {0}".format(job_id))
-    return (job_script_name, job_id)
+    return (name_job_script, job_id)
 
 
 if __name__ == '__main__':
