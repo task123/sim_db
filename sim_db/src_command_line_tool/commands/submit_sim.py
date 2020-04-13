@@ -97,7 +97,7 @@ def get_which_job_scheduler_from_settings():
     if (len(which_job_scheduler) == 0 or (which_job_scheduler[0] != 'SLURM' 
                 and which_job_scheduler[0] != 'PBS')):
         print("'Which job scheduler' in .sim_db/settings.txt is NOT one of the "
-              "valid values: 'SLURM' or 'PBS'. Change with: '$ sim_db settings "
+              "valid values: 'SLURM' or 'PBS'.\nChange with: '$ sim_db settings "
               "<args>'")
         exit(1)
     return which_job_scheduler[0]
