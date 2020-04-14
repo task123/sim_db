@@ -1,7 +1,7 @@
 /// @file sim_db.h
 /// @brief All C functions to use ```sim_db```.
 
-// Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+// Copyright (C) 2018-2020 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 // Licensed under the MIT License.
 
 #ifndef SIM_DB_H
@@ -11,8 +11,8 @@
 #include <stdbool.h>
 #include <stdlib.h>  // To get definition of size_t.
 
-#define SIM_DB_VERSION "0.2.7"
-#define SIM_DB_VERSION_NUMBER 207
+#define SIM_DB_VERSION "0.2.8"
+#define SIM_DB_VERSION_NUMBER 208
 #define SIM_DB_MAJOR_VERSION_NUMBER SIM_DB_VERSION_NUMBER / 10000
 #define SIM_DB_MINOR_VERSION_NUMBER (SIM_DB_VERSION_NUMBER / 100) % 100
 #define SIM_DB_PATCH_VERSION_NUMBER SIM_DB_VERSION_NUMBER % 100

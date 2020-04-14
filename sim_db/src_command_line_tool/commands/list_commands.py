@@ -4,7 +4,7 @@
 
 These are the commands available after running: 'python generate_commands.py'.
 """
-# Copyright (C) 2018-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2018-2020 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 import os

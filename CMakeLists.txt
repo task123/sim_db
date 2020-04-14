@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(sim_db VERSION 0.2.7 LANGUAGES C CXX)
+project(sim_db VERSION 0.2.8 LANGUAGES C CXX)
 
 option(Fortran "Enable Fortran version of sim_db." OFF)
 
