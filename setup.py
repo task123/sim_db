@@ -4,7 +4,7 @@ from sim_db import __version__
 setuptools.setup(
         name='sim_db',
         version=__version__,
-        scripts=['sim_db/sim_db', 'sim_db/sdb', 'sim_db/sim_db_cd.sh'],
+        scripts=['sim_db/sim_db', 'sim_db/sdb'],
         author='Hakon Austlid Tasken',
         author_email='hakon.tasken@gmail.com',
         description='A database for simulation parameters.',
