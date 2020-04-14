@@ -31,7 +31,7 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
     parser.add_argument(
             '-n',
             type=int,
-            help="n'th last entry in the 'sim.db' database. (zero indexed)")
+            help="n'th last entry in the 'sim.db' database.")
 
     return parser
 
@@ -42,7 +42,6 @@ def get(name_command_line_tool="sim_db", name_command="get", argv=None):
 
     db = helpers.connect_sim_db()
     db_cursor = db.cursor()
-
     if args.id != None:
         db_cursor.execute("SELECT {0} FROM runs WHERE id={1}".format(
                 args.column, args.id))
@@ -50,10 +49,10 @@ def get(name_command_line_tool="sim_db", name_command="get", argv=None):
     else:
         db_cursor.execute("SELECT {0} FROM runs".format(args.column))
         if args.n == None:
-            args.n = 0
+            args.n = 1
         value = db_cursor.fetchall()
         if len(value) > args.n:
-            value = value[len(value) - args.n - 1][0]
+            value = value[len(value) - args.n][0]
 
     db.commit()
     db_cursor.close()

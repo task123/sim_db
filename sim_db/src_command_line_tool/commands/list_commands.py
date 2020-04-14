@@ -32,7 +32,8 @@ def list_commands(name_command_line_tool="sim_db",
     programs.remove('helpers.py')
     programs.remove('__init__.py')
     programs.remove('add_package_root_to_path.py')
-    programs.append('cd_res / cd_results')
+    programs.remove('cd_results_dir.py')
+    programs.append('cd_res / cd_results_dir')
     programs.sort()
     print("All commands: ('command -h' will explain command and use.)\n")
     for program in programs:

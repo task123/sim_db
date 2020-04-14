@@ -6,7 +6,7 @@ Job scripts are added for either the list of ID's provided if provided, or all
 runs with status 'new'. A confirmation question is asked if no ID's are 
 provided.
 """
-# Copyright (C) 2017-2019 Håkon Austlid Taskén <hakon.tasken@gmail.com>
+# Copyright (C) 2017-2020 Håkon Austlid Taskén <hakon.tasken@gmail.com>
 # Licenced under the MIT License.
 
 if __name__ == '__main__':

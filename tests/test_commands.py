@@ -158,7 +158,7 @@ def test_list_commands(capsys):
     assert output_lines[5] == "add_comment"
     assert output_lines[6] == "add_range / add_range_sim"
     assert output_lines[7] == "add / add_sim"
-    assert output_lines[8] == "cd_res / cd_results"
+    assert output_lines[8] == "cd_res / cd_results_dir"
     assert output_lines[9] == "combine_dbs"
     assert output_lines[10] == "delete_empty_columns"
     assert output_lines[11] == "delete_results_dir"
@@ -293,7 +293,7 @@ def test_add_comment(capsys):
     assert output_print_sim.strip() == "This is a test comment."
 
 
-def test_get_and_cd_results(capsys):
+def test_get_and_cd_results_dir(capsys):
     common_test_helpers.skip_if_outside_sim_db()
     db_id = command_line_tool("sim_db", [
             "add_and_run", "--filename",
@@ -309,7 +309,7 @@ def test_get_and_cd_results(capsys):
                     db_id).split())
     output_print_sim, err_print_sim = capsys.readouterr()
     with capsys.disabled():
-        print("\nTest get and cd_results...")
+        print("\nTest get and cd_results_dir...")
     assert os.path.isdir(results_dir)
     command_line_tool("sim_db",
                       ["delete_sim", "--id",

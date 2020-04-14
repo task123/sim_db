@@ -27,6 +27,7 @@ import sim_db.src_command_line_tool.commands.add_column as add_column
 import sim_db.src_command_line_tool.commands.add_comment as add_comment
 import sim_db.src_command_line_tool.commands.add_range_sim as add_range_sim
 import sim_db.src_command_line_tool.commands.add_sim as add_sim
+import sim_db.src_command_line_tool.commands.cd_results_dir as cd_results_dir
 import sim_db.src_command_line_tool.commands.combine_dbs as combine_dbs
 import sim_db.src_command_line_tool.commands.delete_empty_columns as delete_empty_columns
 import sim_db.src_command_line_tool.commands.delete_results_dir as delete_results_dir
@@ -74,26 +75,6 @@ def command_line_arguments_parser(program='sim_db'):
             type=str,
             help=
             "The command, 'list_commands', will print all available commands.")
-
-    return parser
-
-
-def cd_results_command_line_arguments_parser(name_command_line_tool="sim_db",
-                                             name_command="cd_results"):
-    parser = argparse.ArgumentParser(
-            description=(
-                    "Change directory to the 'results_dir' directory of the "
-                    "simulation specified or last entry if not specified."),
-            prog="{0} {1}".format(name_command_line_tool, name_command))
-    parser.add_argument(
-            '--id',
-            '-i',
-            type=int,
-            help="'ID' of the simulation in the 'sim.db' database.")
-    parser.add_argument(
-            '-n',
-            type=int,
-            help="n'th last entry in the 'sim.db' database. (zero indexed)")
 
     return parser
 
@@ -150,20 +131,8 @@ def command_line_tool(name_command_line_tool="sim_db",
         if print_ids_added:
             print("ID of last added: {0}".format(last_id))
         res = last_id
-    elif command == 'cd_res' or command == 'cd_results':
-        cd_results_command_line_arguments_parser(name_command_line_tool,
-                                                 command).parse_args(argv[1:])
-        # Test if the specified simulation (or last entry) have a 'results_dir'.
-        # Will exit if it doesn't.
-        get.get(name_command_line_tool, command, ["results_dir"] + argv[1:])
-        path_sim_db_cd = os.path.join(
-                os.path.dirname(
-                        os.path.dirname(os.path.abspath(__file__))),
-                        'sim_db_cd.sh')
-        arguments_sim_db_cd = " results_dir"
-        for arg in argv[1:]:
-            arguments_sim_db_cd = arguments_sim_db_cd + " " + arg
-        os.system('"' + path_sim_db_cd + '"' + arguments_sim_db_cd)
+    elif command == 'cd_res' or command == 'cd_results_dir':
+        cd_results_dir.cd_results_dir(name_command_line_tool, command, argv[1:])
     elif command == 'combine_dbs':
         combine_dbs.combine_dbs(name_command_line_tool, command, argv[1:])
     elif command == 'delete_empty_columns':
