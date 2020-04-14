@@ -24,7 +24,7 @@ A number of tips, recommendations and explainations that might be useful is list
 
 * For all commands that end with *_sim*, this ending can be omitted. ``add`` can for instance be used instead of ``add_sim``.
 
-* The ``cd_results`` command call a bash script to change the directory to the '*result_dir*' and then replace the currect shell process with this new one.
+* The ``cd_results_dir`` command replaces the currect shell process with a new one, so one can return to the original directory and shell instance with the ``$ exit`` command.
 
 * The command line tool can be called with ``python sim_db/sim_db/__main__.py'`` instead of just ``'sim_db'`` or ``'sdb'``, if it is perferable.
 

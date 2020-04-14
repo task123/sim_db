@@ -80,7 +80,7 @@ Include in Your Project
 =======================
 (Skip to this section of one have choosen to install **sim_db**.)
 
-**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum. It therefore does not itself **need** to be installed, just included. (The command_line_tool is just python scripts (except the ``cd_results`` command), so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/__main__.py`. It is however much more convenient to just add the command line tool to your *PATH*.)
+**sim_db** is designed to not add any additional dependencies for your project, except a absolute minimum. It therefore does not itself **need** to be installed, just included. (The command_line_tool is just python scripts, so it can be called with :code:`$ python path_to_sim_db_dir/sim_db/__main__.py`. It is however much more convenient to just add the command line tool to your *PATH*.)
 
 It is recommended to add **sim_db** as a git submodule in your project by (inside your project) running:
 

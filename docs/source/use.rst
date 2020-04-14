@@ -129,7 +129,7 @@ The example stored some results in a unique subdirectory, which is the recommend
 
 .. code-block:: console
 
-    $ sdb cd_results --id 'ID' 
+    $ sdb cd_results_dir --id 'ID' 
 
 To run this example or any other simulation on a cluster or a super computer with a job scheduler, just fill out the `Settings for job scheduler` in `settings.txt` and run:
 

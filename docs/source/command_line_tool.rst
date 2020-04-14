@@ -60,10 +60,10 @@ add_sim
 .. argparse::
    :ref: add_sim.command_line_arguments_parser
 
-cd_results
+cd_results_dir
 ----------
 .. argparse::
-   :ref: command_line_tool.cd_results_command_line_arguments_parser
+   :ref: cd_results_dir.command_line_arguments_parser
 
 combine_dbs
 -----------
