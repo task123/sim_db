@@ -69,7 +69,7 @@ C++ API Referance
 .. doxygenclass:: sim_db::Connection
    :project: sim_db
 
-.. doxygenfunction:: sim_db::Connection::Connection(int, char **, bool)
+.. doxygenfunction:: sim_db::Connection::Connection(int, char**, bool)
 .. doxygenfunction:: sim_db::Connection::Connection(std::string, int, bool)
 .. doxygenfunction:: sim_db::Connection::read
 .. doxygenfunction:: sim_db::Connection::write
