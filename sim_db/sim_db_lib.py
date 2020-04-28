@@ -443,7 +443,8 @@ class SimDB:
         # without importing numpy and thereby relying on it being availble.
         elif (type_of_value == 'TEXT'
               and (type(value != None) != bool or value != None)):
-            if type(value) == str:
+            if (type(value) == str 
+                       or (sys.version_info[0] < 3 and type(value) == unicode)):
                 value, correct_type = self.__convert_text_to_correct_type(
                         value, check_type_is)
             elif type(value) == bool:
