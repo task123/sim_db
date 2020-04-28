@@ -32,7 +32,7 @@ minimal_cpp_example_updated:
 	$(MAKE) minimal_cpp_example
 
 minimal_fortran_example_updated: 
-	$(MAKE) -C ../src cpplib # Compile sim_db's Fortran library.
+	$(MAKE) -C ../src flib # Compile sim_db's Fortran library.
 	$(MAKE) minimal_fortran_example
 
 extensive_c_example_updated: 

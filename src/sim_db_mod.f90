@@ -392,7 +392,6 @@ subroutine read_logical_array(self, column, logical_array)
 
     type(sim_db_vec) :: c_bool_vec
     logical(kind=c_bool), dimension(:), pointer :: logical_array_ptr
-    integer :: i 
     type(c_string) :: column_c_str
     column_c_str = c_string(column)
     c_bool_vec = sim_db_read_bool_vec_c(self%sim_db_ptr, column_c_str%to_c_ptr())
