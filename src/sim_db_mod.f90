@@ -300,7 +300,6 @@ subroutine read_int_array(self, column, int_array)
 
     type(sim_db_vec) :: c_int_vec
     integer(kind=c_int), dimension(:), pointer :: int_array_ptr
-    integer :: i
     type(c_string) :: column_c_str
 
     column_c_str = c_string(column)
@@ -319,7 +318,6 @@ subroutine read_real_sp_array(self, column, real_array)
 
     type(sim_db_vec) :: c_double_vec
     real(kind=c_double), dimension(:), pointer :: real_array_ptr
-    integer :: i 
     type(c_string) :: column_c_str
 
     column_c_str = c_string(column)
@@ -338,7 +336,6 @@ subroutine read_real_dp_array(self, column, real_array)
 
     type(sim_db_vec) :: c_double_vec
     real(kind=c_double), dimension(:), pointer :: real_array_ptr
-    integer :: i 
     type(c_string) :: column_c_str
 
     column_c_str = c_string(column)

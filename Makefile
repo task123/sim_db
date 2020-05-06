@@ -1,5 +1,6 @@
 CC = cc
 CXX = c++
+FC = gfortran
 CFLAGS_RELEASE = -std=c99 -O3 -DNDEBUG
 CFLAGS_DEBUG = -std=c99 -Wall
 CXXFLAGS_RELEASE = -O3 -DNDEBUG
@@ -7,7 +8,7 @@ CXXFLAGS_DEBUG = -Wall
 CFLAGS = $(CFLAGS_RELEASE)
 CXXFLAGS = $(CXXFLAGS_RELEASE)
 
-export CC CXX CFLAGS CXXFLAGS
+export CC CXX FC CFLAGS CXXFLAGS
 
 .PHONY: all install include add_to_path libs clib cpplib build_dist upload_pypi clean clean_except_third_party clean_etp
 
