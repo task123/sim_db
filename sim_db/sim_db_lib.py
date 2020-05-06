@@ -23,10 +23,11 @@ class SimDB:
     to add the corrrect metadata.
 
     For multithreading/multiprocessing each thread/process MUST have its
-    own connection (instance of this class).
+    own connection (instance of this class) and MUST provide it with its rank.
     """
 
-    def __init__(self, store_metadata=True, db_id=None):
+    def __init__(self, store_metadata=True, db_id=None, rank=None, 
+                 only_write_on_rank=0):
         """Connect to the **sim_db** database.
 
         :param store_metadata: If False, no metadata is added to the database.
@@ -37,7 +38,19 @@ class SimDB:
             database. If it is 'None', then it is read from the argument passed
             to the program after option '--id'.
         :type db_id: int
+        :param rank: Number identifing the calling process and/or thread. 
+            (Typically the MPI or OpenMP rank.) If provided, only the 'rank' 
+            matching 'only_write_on_rank' will write to the database to avoid 
+            too much concurrent writing to the database. Single process and 
+            threaded programs may ignore this, while 
+            multithreading/multiprocessing programs need to provide it.
+        :type rank: int
+        :param only_write_on_rank: Number identifing the only process/thread
+            that will write to the database. Only used if 'rank' is provided.
+        :type only_write_on_rank: int
         """
+        self.rank = rank
+        self.only_write_on_rank = only_write_on_rank
         self.start_time = time.time()
         self.store_metadata = store_metadata
         self.id, self.path_proj_root = self.__read_from_command_line_arguments(
@@ -47,17 +60,13 @@ class SimDB:
         self.column_names = []
         self.column_types = []
 
-        if self.store_metadata:
-            try:
-                self.write('status', 'running', only_if_empty=True)
-                self.write(
-                        'time_started',
-                        self.__get_date_and_time_as_string(),
-                        only_if_empty=True)
-            except sqlite3.OperationalError:
-                pass
+        if (self.store_metadata 
+               and (self.rank == None or self.rank == self.only_write_on_rank)):
+            self.write('status', 'running')
+            self.write('time_started', self.__get_date_and_time_as_string())
 
-        if self.store_metadata and self.__is_a_git_project():
+        if (self.store_metadata and self.__is_a_git_project()
+               and (self.rank == None or self.rank == self.only_write_on_rank)):
             proc = subprocess.Popen(
                     [
                             'cd "{0}"; git rev-parse HEAD'.format(
@@ -67,13 +76,9 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            try:
-                self.write(
-                        column="git_hash",
-                        value=out.decode('ascii', 'replace'),
-                        only_if_empty=True)
-            except sqlite3.OperationalError:
-                pass
+            self.write(
+                    column="git_hash",
+                    value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     [
@@ -84,13 +89,9 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            try:
-                self.write(
-                        column="commit_message",
-                        value=out.decode('ascii', 'replace'),
-                        only_if_empty=True)
-            except sqlite3.OperationalError:
-                pass
+            self.write(
+                    column="commit_message",
+                    value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     [
@@ -101,13 +102,9 @@ class SimDB:
                     stderr=open(os.devnull, 'w'),
                     shell=True)
             (out, err) = proc.communicate()
-            try:
-                self.write(
-                        column="git_diff_stat",
-                        value=out.decode('ascii', 'replace'),
-                        only_if_empty=True)
-            except sqlite3.OperationalError:
-                pass
+            self.write(
+                    column="git_diff_stat",
+                    value=out.decode('ascii', 'replace'))
 
             proc = subprocess.Popen(
                     ['cd "{0}"; git diff HEAD'.format(self.path_proj_root)],
@@ -119,10 +116,7 @@ class SimDB:
             if len(out) > 3000:
                 warning = "WARNING: Diff limited to first 3000 characters.\n"
                 out = warning + '\n' + out[0:3000] + '\n\n' + warning
-            try:
-                self.write(column="git_diff", value=out, only_if_empty=True)
-            except sqlite3.OperationalError:
-                pass
+            self.write(column="git_diff", value=out)
 
     def read(self, column, check_type_is=''):
         """Read parameter in 'column' from the database.
@@ -167,6 +161,11 @@ class SimDB:
         If value is None and type_of_value is not set, the entry under 'column'
         is set to empty.
 
+        For multithreaded and multiprocess programs only a single will
+        process/thread write to the database to avoid too much concurrent 
+        writing to the database. This is as long as the 'rank' was passed to 
+        SimDB under initialisation.
+
         :param column: Name of the column the parameter is read from.
         :type column: str
         :param value: New value of the specified entry in the database.
@@ -176,15 +175,16 @@ class SimDB:
             float, bool and str.
         :type type_of_value: str or type
         :param only_if_empty: If True, it will only write to the database if the
-            simulation's entry under 'column' is empty. Will avoid any possible 
+            simulation's entry under 'column' is empty. 
         :type only_if_empty: bool
         :raises ValueError: If column exists, but type does not match, or 
             empty list is passed without type_of_value given.
-        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
-            to the database, because other threads/processes are busy writing 
-            to it. Way too much concurrent writing is done and it indicates an 
-            design error in the user program.
         """
+
+        # For multithreaded/multiprocess programs only a single process/thread 
+        # does any writing.
+        if self.rank != None and self.rank != self.only_write_on_rank:
+            return
 
         self.__add_column_if_not_exists_and_check_type(column, type_of_value,
                                                        value)
@@ -197,33 +197,14 @@ class SimDB:
         if (type_dict[column] == 'TEXT' 
                 and (type(value != None) != bool or value != None)):
             value_string = "'{0}'".format(value_string)
-        if only_if_empty:
-            is_busy = True
-            start_time = time.time()
-            while is_busy:
-                is_busy = False
-                is_empty = self.is_empty(column)
-                if is_empty:
-                    self.db_cursor.execute("PRAGMA busy_timeout=0")
-                    self.db.commit()
-                    try:
-                        self.db_cursor.execute(
-                                "UPDATE runs SET \"{0}\" = {1} WHERE \"id\" = "
-                                "{2} AND {0} IS NULL".format(
-                                        column, value_string, self.id))
-                        self.db.commit()
-                    except sqlite3.OperationalError:
-                        is_busy = True
-                        if time.time() > start_time + 5.0:
-                            self.db_cursor.execute("PRAGMA busy_timeout=5000")
-                            self.db.commit()
-                            raise
-                self.db_cursor.execute("PRAGMA busy_timeout=5000")
-                self.db.commit()
+        if only_if_empty and self.is_empty(column):
+            self.db_cursor.execute("UPDATE runs SET \"{0}\" = {1} WHERE \"id\" "
+                "= {2} AND {0} IS NULL".format(column, value_string, self.id))
+            self.db.commit()
         else:
             self.db_cursor.execute(
-                    "UPDATE runs SET \"{0}\" = {1} WHERE id = {2}".format(
-                            column, value_string, self.id))
+                "UPDATE runs SET \"{0}\" = {1} WHERE id = {2}".format(
+                column, value_string, self.id))
             self.db.commit()
 
     def unique_results_dir(self, path_directory):
@@ -241,40 +222,24 @@ class SimDB:
         :type path_directory: str
         :returns: Full path to new subdirectory.
         :rtype: str
-        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
-            to the database, because other threads/processes are busy writing 
-            to it. Way too much concurrent writing is done and it indicates an 
-            design error in the user program.
         """
         results_dir = self.read("results_dir")
-        if (
-                results_dir != None
-                and results_dir[0:32] != "results_dir_is_currenty_made_by_"):
-            return results_dir
-
-        unique_process_thread_name = ("results_dir_is_currenty_made_by_" + str(
-                os.getpid()) + "_" + str(threading.current_thread().ident))
-
-        self.write(
-                "results_dir", unique_process_thread_name, only_if_empty=True)
-
-        results_dir = self.read("results_dir")
-        if results_dir == unique_process_thread_name:
-            if (len(path_directory) >= 5 and path_directory[0:5] == 'root/'):
-                path_directory = os.path.join(self.path_proj_root,
-                                              path_directory[5:])
-            results_dir = os.path.join(path_directory,
-                                       self.__get_date_and_time_as_string())
-            results_dir += '_' + self.read('name') + '_' + str(self.id)
-            results_dir = os.path.abspath(os.path.realpath(results_dir))
-            os.mkdir(results_dir)
-            self.write(
-                    column="results_dir",
-                    value=results_dir,
-                    only_if_empty=False)
-        else:
-            while results_dir[0:32] == "results_dir_is_currenty_made_by_":
-                results_dir = self.read("results_dir")
+        if results_dir == None:
+            if self.rank == None or self.rank == self.only_write_on_rank:
+                if (len(path_directory) >= 5 
+                        and path_directory[0:5] == 'root/'):
+                    path_directory = os.path.join(self.path_proj_root,
+                                                  path_directory[5:])
+                results_dir = os.path.join(path_directory,
+                                           self.__get_date_and_time_as_string())
+                results_dir += '_' + self.read('name') + '_' + str(self.id)
+                results_dir = os.path.abspath(os.path.realpath(results_dir))
+                os.mkdir(results_dir)
+                self.write(column="results_dir", value=results_dir, 
+                           only_if_empty=False)
+            else:
+                while results_dir == None:
+                    results_dir = self.read("results_dir")
 
         return results_dir
 
@@ -311,13 +276,7 @@ class SimDB:
             return False
 
     def set_empty(self, column):
-        """Set entry under 'column' in the database to empty.
-
-        :raises sqlite3.OperationalError: Waited more than 5 seconds to write
-            to the database, because other threads/processes are busy writing 
-            to it. Way too much concurrent writing is done and it indicates an 
-            design error in the user program.
-        """
+        """Set entry under 'column' in the database to empty."""
         self.write(column, None)
 
     def get_id(self):
@@ -349,10 +308,7 @@ class SimDB:
         for executable in executables:
             with open(executable, 'r') as executable_file:
                 sha1.update(executable_file.read())
-        try:
-            self.write('sha1_executables', sha1)
-        except sqlite3.OperationalError:
-            pass
+        self.write('sha1_executables', sha1)
 
     def delete_from_database(self):
         """Delete simulation from database.
@@ -369,15 +325,13 @@ class SimDB:
 
     def close(self):
         """Closes connection to **sim_db** database and add metadata."""
-        if self.store_metadata:
+        if (self.store_metadata 
+               and (self.rank == None or self.rank == self.only_write_on_rank)):
             used_time = time.time() - self.start_time
             used_walltime = "{0}h {1}m {2}s".format(
                     int(used_time / 3600), int(used_time / 60), used_time % 60)
-            try:
-                self.write('used_walltime', used_walltime, only_if_empty=True)
-                self.write('status', 'finished')
-            except sqlite3.OperationalError:
-                pass
+            self.write('used_walltime', used_walltime)
+            self.write('status', 'finished')
         self.db_cursor.close()
         self.db.close()
 
@@ -597,34 +551,20 @@ class SimDB:
                   "'type_of_value' must be provided for it to be added."
                   .format(column))
             exit(1)
-        start_time = time.time()
-        is_busy = True
-        self.db_cursor.execute("PRAGMA busy_timeout=0")
-        while is_busy:
-            is_busy = False
-            try:
-                if type_of_value == 'int' or type_of_value == int:
-                    self.db_cursor.execute(
-                            "ALTER TABLE runs ADD COLUMN {0} INTEGER".format(
-                                    column))
-                elif type_of_value == 'float' or type_of_value == float:
-                    self.db_cursor.execute(
-                            "ALTER TABLE runs ADD COLUMN {0} REAL".format(
-                                    column))
-                else:
-                    self.db_cursor.execute(
-                            "ALTER TABLE runs ADD COLUMN {0} TEXT".format(
-                                    column))
-                self.db.commit()
-            except sqlite3.OperationalError as e:
-                if str(e)[0:12] == "duplicate column name:":
-                    is_busy = False
-                else:
-                    is_busy = True
-                if time.time() > start_time + 5.0:
-                    self.db_cursor.execute("PRAGMA busy_timeout=5000")
-                    raise
-        self.db_cursor.execute("PRAGMA busy_timeout=5000")
+        if self.rank == None or self.rank == self.only_write_on_rank:
+            if type_of_value == 'int' or type_of_value == int:
+                self.db_cursor.execute(
+                        "ALTER TABLE runs ADD COLUMN {0} INTEGER".format(
+                                column))
+            elif type_of_value == 'float' or type_of_value == float:
+                self.db_cursor.execute(
+                        "ALTER TABLE runs ADD COLUMN {0} REAL".format(
+                                column))
+            else:
+                self.db_cursor.execute(
+                        "ALTER TABLE runs ADD COLUMN {0} TEXT".format(
+                                column))
+            self.db.commit()
 
     def __add_column_if_not_exists_and_check_type(self, column, type_of_value,
                                                   value):
