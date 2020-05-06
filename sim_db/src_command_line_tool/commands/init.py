@@ -22,8 +22,8 @@ import shutil
 def command_line_arguments_parser(name_command_line_tool="sim_db",
                                   name_command="init"):
     parser = argparse.ArgumentParser(
-            description=("Initialise ' and must be called before using '. "
-                         "Will create a '.' directory."),
+            description=("Initialises 'sim_db' and must be called before using "
+                         "'sim_db'. Will create a '.sim_db/' directory."),
             prog="{0} {1}".format(name_command_line_tool, name_command))
     parser.add_argument(
             '--path',
