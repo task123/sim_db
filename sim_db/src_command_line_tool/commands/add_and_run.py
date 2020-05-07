@@ -68,7 +68,7 @@ def add_and_run(name_command_line_tool="sim_db",
 
     run_parameters = ['--id', str(added_id)]
     if args.n != None:
-        run_parmeters += ['-n', str(args.n)]
+        run_parameters += ['-n', str(args.n)]
     if args.add_unique_results_dir:
         run_parameters += ['--add_unique_results_dir']
     run_sim.run_sim(argv=run_parameters)
