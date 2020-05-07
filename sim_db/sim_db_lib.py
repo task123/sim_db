@@ -232,7 +232,7 @@ class SimDB:
                                                   path_directory[5:])
                 results_dir = os.path.join(path_directory,
                                            self.__get_date_and_time_as_string())
-                results_dir += '_' + self.read('name') + '_' + str(self.id)
+                results_dir += '_' + str(self.read('name')) + '_' + str(self.id)
                 results_dir = os.path.abspath(os.path.realpath(results_dir))
                 os.mkdir(results_dir)
                 self.write(column="results_dir", value=results_dir, 

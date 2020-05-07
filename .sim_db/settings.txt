@@ -22,6 +22,10 @@ last: -n 1 -v --not_columns time_submitted time_started used_walltime job_id cpu
 (Added to the start of 'run_command' when run or submitted with >1 tasks.)
 (' # ' is replaced with ' N ', where 'N' is the number of tasks.)
 
+## Superdirectory for results directories
+(Where the '--add_unique_results_dir'/'-r' options for the 'run_sim' and 'submit_sim' commands will add a unique subdirectory for results.)
+(If starting with 'root/'  (recommended), it will be replaced be the path to the root directory of the project.)
+
 ## Settings for job scheduler
 
 ### Which job scheduler

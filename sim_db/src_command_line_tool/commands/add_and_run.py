@@ -44,6 +44,13 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             type=int,
             default=None,
             help="Number of threads/core to run the simulation on.")
+    parser.add_argument(
+            '--add_unique_results_dir',
+            '-u',
+            action="store_true",
+            help="Add a unique subdirectory for the simulation in the "
+                 "'superdir_for_results' directory in the settings and write " 
+                 "it to 'results_dir' in the database.")
 
     return parser
 
@@ -59,10 +66,12 @@ def add_and_run(name_command_line_tool="sim_db",
     else:
         added_id = add_sim.add_sim(argv=['--filename', args.filename])
 
-    if args.n == None:
-        run_sim.run_sim(argv=['--id', str(added_id)])
-    else:
-        run_sim.run_sim(argv=['--id', str(added_id), '-n', str(args.n)])
+    run_parameters = ['--id', str(added_id)]
+    if args.n != None:
+        run_parmeters += ['-n', str(args.n)]
+    if args.add_unique_results_dir:
+        run_parameters += ['--add_unique_results_dir']
+    run_sim.run_sim(argv=run_parameters)
 
     return added_id
 

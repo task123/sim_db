@@ -86,6 +86,13 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             '--do_not_submit_job_script',
             action='store_true',
             help="Makes the job script, but does not submit it.")
+    parser.add_argument(
+            '--add_unique_results_dir',
+            '-u',
+            action="store_true",
+            help="Add a unique subdirectory for the simulation in the "
+                 "'superdir_for_results' directory in the settings and write " 
+                 "it to 'results_dir' in the database.")
 
     return parser
 
@@ -124,6 +131,8 @@ def add_and_submit(name_command_line_tool="sim_db",
         submit_parameters.append("--no_confirmation")
     if args.do_not_submit_job_script:
         submit_parameters.append("--do_not_submit_job_script")
+    if args.add_unique_results_dir:
+        submit_parameters.append("--add_unique_results_dir")
 
     name_job_script, job_id = submit_sim.submit_sim(argv=submit_parameters)
 

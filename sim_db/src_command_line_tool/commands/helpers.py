@@ -7,6 +7,7 @@ import sqlite3
 import subprocess
 import os
 from sys import version_info, platform
+import time
 
 # Update 'get_create_table_query' function in sim_db.c if ever changed.
 default_db_columns = {
@@ -42,6 +43,8 @@ class Settings:
             '## Personalized print configurations',
             'prefix_run_command':
             '## Prefix for \'run_command\' for multithreaded/core simultions',
+            'superdir_for_results':
+            '## Superdirectory for results directories',
             'which_job_scheduler':
             '### Which job scheduler',
             'n_cpus_per_node':
@@ -337,6 +340,7 @@ def if_unicode_convert_to_str(value):
     else:
         return value
 
+
 def convert_text_to_correct_type(value, check_type_is):
     correct_type = False
     value_split = value.split('[')
@@ -388,3 +392,33 @@ def convert_text_to_correct_type(value, check_type_is):
         else:
             correct_type = False
     return value, correct_type
+
+
+def unique_results_dir(db_cursor, db_id):
+    superdir_for_results = Settings().read('superdir_for_results')
+    if superdir_for_results == None or len(superdir_for_results) == 0:
+        print("'Superdirectory for results directories' is NOT set in "
+              ".sim_db/settings.txt and it must be when "
+              "'--add_unique_results_dir'/'-u' is passed to the "
+              "'sim_db run_sim/submit_sim' commands.")
+        exit(1)
+    else:
+        superdir_for_results = superdir_for_results[0]
+    db_cursor.execute("SELECT name FROM runs WHERE id = {0};".format(db_id))
+    name = db_cursor.fetchone()
+    if name != None:
+        name = name[0]
+    else:
+        name = str(None)
+    proj_root_dir = os.path.abspath(
+            os.path.join(get_dot_sim_db_dir_path(), os.pardir))
+    if (len(superdir_for_results) >= 5
+            and superdir_for_results[0:5] == 'root/'):
+        superdir_for_results = os.path.join(proj_root_dir,
+                                      superdir_for_results[5:])
+    results_dir = os.path.join(superdir_for_results,
+                               time.strftime("%Y-%b-%d_%H-%M-%S"))
+    results_dir += '_' + name + '_' + str(db_id)
+    results_dir = os.path.abspath(os.path.realpath(results_dir))
+
+    return results_dir

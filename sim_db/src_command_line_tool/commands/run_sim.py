@@ -16,6 +16,7 @@ import argparse
 import sqlite3
 import subprocess
 import sys
+import os
 
 
 def command_line_arguments_parser(name_command_line_tool="sim_db",
@@ -39,6 +40,13 @@ def command_line_arguments_parser(name_command_line_tool="sim_db",
             '--allow_reruns',
             action="store_true",
             help="Allow simulations with non 'new' status to run.")
+    parser.add_argument(
+            '--add_unique_results_dir',
+            '-u',
+            action="store_true",
+            help="Add a unique subdirectory for the simulation in the "
+                 "'superdir_for_results' directory in the settings and write " 
+                 "it to 'results_dir' in the database.")
 
     return parser
 
@@ -73,18 +81,25 @@ def run_sim(name_command_line_tool="sim_db", name_command="run_sim",
                   status))
             exit(1)
 
+    if args.add_unique_results_dir:
+        unique_results_dir = helpers.unique_results_dir(db_cursor, args.id)
+        print(unique_results_dir)
+        os.mkdir(unique_results_dir)
+        update_sim.update_sim(argv=[
+            "--id", str(args.id), "--columns", "results_dir", "--values",
+            unique_results_dir
+        ])
+
     run_command = helpers.get_run_command(db_cursor, args.id, args.n)
     db.commit()
     db_cursor.close()
     db.close()
     update_sim.update_sim(argv=[
-            "--id",
-            str(args.id), "--columns", "cpu_info", "--values",
+            "--id", str(args.id), "--columns", "cpu_info", "--values",
             helpers.get_cpu_and_mem_info()
     ])
     update_sim.update_sim(argv=[
-            "--id",
-            str(args.id), "--columns", "status", "--values", "running"
+            "--id", str(args.id), "--columns", "status", "--values", "running"
     ])
 
     for command in run_command.split(';'):
